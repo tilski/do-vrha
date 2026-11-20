@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Do vrha</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0f1a24; --ink2:#3d4b58; --mute:#6f7d89;
+  --glass:rgba(248,250,251,.78); --glass2:rgba(255,255,255,.62); --stroke:rgba(255,255,255,.7);
+  --red:#e0312d; --red2:#b8211e; --ice:#e9f1f6; --night:#13202c;
+  --shadow:0 20px 50px -18px rgba(12,28,44,.45), 0 2px 6px rgba(12,28,44,.08);
+  --r:22px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;overflow:hidden;font-family:Manrope,system-ui,sans-serif;color:var(--ink);background:#cfdbe5}
+button{font-family:inherit;cursor:pointer;border:0}
+.disp{font-family:"Bricolage Grotesque",Manrope,sans-serif;letter-spacing:-.02em}
+.num{font-variant-numeric:tabular-nums}
+#sky{position:fixed;inset:0;background:linear-gradient(180deg,#5d8fc4 0%,#9fc0de 38%,#e3ebf1 62%,#eef1f2 100%)}
+#sun{position:fixed;width:520px;height:520px;right:-120px;top:-160px;border-radius:50%;background:radial-gradient(circle,rgba(255,241,214,.9) 0%,rgba(255,232,190,.35) 30%,rgba(255,255,255,0) 65%);pointer-events:none}
+#gl{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}
+#labels{position:fixed;inset:0;pointer-events:none;overflow:hidden}
+.lbl{position:absolute;transform:translate(-50%,-100%);white-space:nowrap;font-size:11px;font-weight:700;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.55);padding-bottom:6px;transition:opacity .4s}
+.lbl::after{content:"";position:absolute;left:50%;bottom:0;width:1px;height:6px;background:rgba(255,255,255,.8)}
+.lbl small{display:block;font-weight:600;opacity:.8;font-size:10px;text-align:center}
+.lbl.wp{color:var(--ink);text-shadow:none;background:rgba(255,255,255,.86);padding:3px 8px;border-radius:8px;bottom:auto;transform:translate(-50%,-150%);box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.lbl.wp::after{display:none}
+.lbl.wp.done{background:var(--red);color:#fff}
+.lbl.peak{opacity:.92}
+#climber{position:fixed;left:0;top:0;transform:translate(-50%,-120%);pointer-events:none;z-index:3;transition:opacity .3s}
+#climber .bub{width:44px;height:44px;border-radius:50%;background:#fff;display:grid;place-items:center;font-size:24px;box-shadow:0 6px 16px rgba(0,0,0,.25);border:3px solid var(--red);position:relative}
+#climber .bub::after{content:"";position:absolute;left:50%;bottom:-9px;transform:translateX(-50%);border:6px solid transparent;border-top-color:var(--red)}
+#climber.pop .bub{animation:pop .6s cubic-bezier(.3,1.6,.5,1)}
+@keyframes pop{0%{transform:scale(.6)}100%{transform:scale(1)}}
+
+/* ---------- chrome ---------- */
+.top{position:fixed;left:0;right:0;top:0;display:flex;justify-content:space-between;align-items:flex-start;padding:16px 18px;pointer-events:none;z-index:5}
+.brand{display:flex;align-items:center;gap:10px;pointer-events:auto;background:var(--glass);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);border:1px solid var(--stroke);padding:8px 14px 8px 9px;border-radius:999px;box-shadow:var(--shadow)}
+.mark{width:30px;height:30px;flex:none}
+.brand b{font-size:17px}
+.brand span{font-size:12px;color:var(--mute);font-weight:600}
+.alti{pointer-events:auto;background:var(--night);color:#fff;border-radius:18px;padding:10px 16px 10px;box-shadow:var(--shadow);text-align:right;min-width:150px;transform-origin:top right;transition:transform .5s cubic-bezier(.2,.9,.3,1.2),opacity .4s}
+.alti.hide{opacity:0;transform:scale(.85) translateY(-10px)}
+.alti .lab{font-size:10px;letter-spacing:.14em;color:#9fb3c4;font-weight:700}
+.alti .val{font-size:34px;font-weight:800;line-height:1}
+.alti .val small{font-size:15px;font-weight:700;color:#9fb3c4;margin-left:2px}
+.alti .sub{font-size:12px;color:#cfe0ec;margin-top:4px}
+.alti .bar{height:5px;border-radius:5px;background:rgba(255,255,255,.12);margin-top:8px;overflow:hidden}
+.alti .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#fff,var(--red));border-radius:5px;transition:width 1.4s cubic-bezier(.2,.8,.2,1)}
+.viewbtn{position:fixed;right:18px;bottom:18px;z-index:5;display:flex;background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--stroke);border-radius:999px;padding:4px;box-shadow:var(--shadow)}
+.viewbtn button{background:transparent;padding:8px 14px;border-radius:999px;font-weight:700;font-size:12px;color:var(--ink2);transition:.25s}
+.viewbtn button.on{background:var(--night);color:#fff}
+
+/* ---------- panels ---------- */
+.panel{position:fixed;z-index:6;background:var(--glass);backdrop-filter:blur(22px) saturate(1.5);-webkit-backdrop-filter:blur(22px) saturate(1.5);border:1px solid var(--stroke);border-radius:var(--r);box-shadow:var(--shadow);transition:opacity .55s ease, transform .65s cubic-bezier(.2,.9,.25,1), filter .55s}
+.panel.out{opacity:0;transform:translateY(40px) scale(.97);filter:blur(6px);pointer-events:none}
+#intro{left:22px;top:84px;width:430px;max-height:calc(100vh - 110px);overflow:auto;padding:26px 26px 22px}
+#intro h1{font-size:54px;line-height:.95;margin:4px 0 10px;font-weight:800}
+#intro h1 em{font-style:normal;color:var(--red)}
+.kicker{font-size:11px;font-weight:800;letter-spacing:.16em;color:var(--red)}
+.lead{font-size:15px;line-height:1.55;color:var(--ink2);margin:0 0 16px}
+.route{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--ink2);margin-bottom:14px}
+.route .dash{flex:1;height:2px;background:repeating-linear-gradient(90deg,var(--red) 0 8px,transparent 8px 14px)}
+.profile{width:100%;height:92px;display:block;margin:4px 0 14px}
+.modes{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin:6px 0 4px}
+.mode{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 0 6px;border-radius:12px;transition:.25s}
+.mode:hover{background:rgba(255,255,255,.7);transform:translateY(-2px)}
+.mode .e{font-size:22px;filter:drop-shadow(0 2px 2px rgba(0,0,0,.12))}
+.mode .n{font-size:10px;font-weight:700;text-align:center;line-height:1.1;min-height:22px}
+.mode .v{font-size:10px;color:var(--mute);font-weight:700}
+.scale{display:flex;justify-content:space-between;font-size:10px;font-weight:700;color:var(--mute);margin-bottom:14px;padding:0 4px}
+.scale i{flex:1;height:2px;margin:6px 8px;background:linear-gradient(90deg,#c9d3da,var(--red))}
+.cta{width:100%;background:var(--red);color:#fff;font-weight:800;font-size:17px;padding:16px;border-radius:16px;box-shadow:0 10px 24px -10px rgba(224,49,45,.8);transition:transform .2s, box-shadow .2s, background .2s;display:flex;align-items:center;justify-content:center;gap:10px}
+.cta:hover{transform:translateY(-2px);box-shadow:0 16px 30px -12px rgba(224,49,45,.9)}
+.cta:active{transform:translateY(1px) scale(.99)}
+.cta svg{transition:transform .3s}
+.cta:hover svg{transform:translateX(4px)}
+.rules{margin-top:14px;font-size:13px;color:var(--ink2)}
+.rules summary{cursor:pointer;font-weight:700;list-style:none;display:flex;align-items:center;gap:6px;color:var(--mute)}
+.rules summary::before{content:"";width:8px;height:8px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(-45deg);transition:.25s}
+.rules[open] summary::before{transform:rotate(45deg)}
+.rules ul{margin:10px 0 0;padding:0;list-style:none;display:grid;gap:8px}
+.rules li{display:flex;gap:10px;align-items:flex-start}
+.rules li b{flex:none;width:32px;height:22px;border-radius:7px;background:#fff;display:grid;place-items:center;font-size:11px}
+.status{font-size:12px;color:var(--mute);margin-top:12px;font-weight:600}
+
+/* question */
+#qp{left:50%;bottom:22px;width:min(600px,calc(100% - 28px));transform:translateX(-50%);padding:18px 20px 18px}
+#qp.out{transform:translateX(-50%) translateY(40px) scale(.97)}
+.qhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.chip{font-size:10px;font-weight:800;letter-spacing:.14em;padding:5px 10px;border-radius:999px;background:var(--night);color:#fff}
+.dots{display:flex;gap:5px}
+.dots i{width:9px;height:9px;border-radius:50%;background:rgba(15,26,36,.14);transition:.4s}
+.dots i.cur{background:var(--ink);transform:scale(1.25)}
+.qbody{display:flex;gap:16px;align-items:center}
+.ring{width:66px;height:66px;flex:none;position:relative}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring .t{position:absolute;inset:0;display:grid;place-items:center;font-weight:800;font-size:18px}
+.ring circle{transition:stroke-dashoffset .15s linear, stroke .3s}
+.qtxt{flex:1;min-width:0}
+.qtitle{font-size:clamp(20px,3.6vw,27px);font-weight:800;line-height:1.1;margin:0 0 4px}
+.qhint{font-size:13px;color:var(--mute);font-weight:600}
+.slide{animation:slideIn .55s cubic-bezier(.2,.9,.25,1)}
+@keyframes slideIn{from{opacity:0;transform:translateX(26px);filter:blur(4px)}to{opacity:1;transform:none;filter:none}}
+.ansrow{display:flex;gap:8px;margin-top:14px;position:relative}
+.ansrow input{flex:1;min-width:0;border:2px solid transparent;background:#fff;border-radius:14px;padding:15px 16px;font-size:17px;font-family:inherit;font-weight:600;color:var(--ink);outline:none;box-shadow:inset 0 0 0 1px rgba(15,26,36,.08);transition:border-color .2s, box-shadow .2s}
+.ansrow input:focus{border-color:var(--ink);box-shadow:0 0 0 5px rgba(15,26,36,.08)}
+.ansrow input.bad{animation:shake .4s; border-color:var(--red)}
+@keyframes shake{20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}
+.send{width:54px;border-radius:14px;background:var(--night);color:#fff;display:grid;place-items:center;transition:.2s}
+.send:hover{background:var(--red)}
+.send:active{transform:scale(.94)}
+.msg{font-size:12px;color:var(--mute);margin-top:8px;min-height:16px;font-weight:600;transition:color .2s}
+.msg.err{color:var(--red)}
+.res{display:flex;align-items:center;gap:14px;animation:resIn .6s cubic-bezier(.2,1.3,.4,1)}
+@keyframes resIn{from{opacity:0;transform:scale(.92) translateY(10px)}to{opacity:1;transform:none}}
+.res .big{width:64px;height:64px;border-radius:20px;display:grid;place-items:center;font-size:34px;flex:none;background:#fff;box-shadow:0 8px 18px -8px rgba(0,0,0,.3)}
+.res .a{font-size:20px;font-weight:800;line-height:1.1}
+.res .s{font-size:13px;color:var(--ink2);font-weight:600;margin-top:3px}
+.res .gain{margin-left:auto;text-align:right}
+.res .gain b{display:block;font-size:30px;font-weight:800;line-height:1}
+.res .gain span{font-size:11px;color:var(--mute);font-weight:700}
+.tag{display:inline-block;font-size:11px;font-weight:800;padding:3px 8px;border-radius:7px;margin-left:6px;vertical-align:2px}
+.next{margin-top:14px;width:100%;background:var(--night);color:#fff;padding:14px;border-radius:14px;font-weight:800;font-size:15px;display:flex;justify-content:center;gap:8px;align-items:center;transition:.2s}
+.next:hover{background:#000}
+.next kbd{font-family:inherit;font-size:11px;background:rgba(255,255,255,.15);padding:2px 6px;border-radius:5px}
+
+/* float gain */
+.float{position:fixed;z-index:9;pointer-events:none;font-weight:800;font-size:26px;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.4);animation:floatUp 1.8s ease-out forwards}
+@keyframes floatUp{0%{opacity:0;transform:translate(-50%,0) scale(.6)}15%{opacity:1;transform:translate(-50%,-20px) scale(1.1)}100%{opacity:0;transform:translate(-50%,-110px) scale(1)}}
+
+/* end */
+#endp{left:50%;top:50%;width:min(560px,calc(100% - 28px));max-height:calc(100vh - 110px);overflow:auto;transform:translate(-50%,-50%);padding:24px}
+#endp.out{transform:translate(-50%,-44%) scale(.97)}
+.endhero{text-align:center;padding:4px 0 10px}
+.endhero .e{font-size:54px;animation:bob 2.4s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-6px) rotate(-4deg)}}
+.endhero h2{font-size:34px;line-height:1;margin:6px 0 6px;font-weight:800}
+.endhero p{margin:0;color:var(--ink2);font-weight:600}
+.bigalt{font-size:58px;font-weight:800;text-align:center;line-height:1;margin:14px 0 2px}
+.bigalt small{font-size:22px;color:var(--mute)}
+.altcap{text-align:center;font-size:12px;color:var(--mute);font-weight:700;margin-bottom:16px}
+.sum{display:grid;gap:6px}
+.srow{display:grid;grid-template-columns:36px 1fr auto;gap:10px;align-items:center;background:rgba(255,255,255,.7);border-radius:12px;padding:8px 12px;animation:resIn .5s backwards}
+.srow .e{font-size:20px;text-align:center}
+.srow .c{font-size:11px;color:var(--mute);font-weight:700}
+.srow .a{font-weight:800;font-size:14px}
+.srow .g{font-weight:800}
+.btnrow{display:flex;gap:8px;margin:16px 0 6px}
+.btn2{flex:1;background:#fff;border-radius:12px;padding:12px;font-weight:800;color:var(--ink);box-shadow:inset 0 0 0 1px rgba(15,26,36,.1);transition:.2s}
+.btn2:hover{background:var(--night);color:#fff}
+.sec{font-size:12px;font-weight:800;letter-spacing:.12em;color:var(--mute);margin:20px 0 8px}
+.lb{display:grid;gap:4px}
+.lbr{display:grid;grid-template-columns:28px 1fr auto;gap:8px;padding:8px 12px;border-radius:10px;background:rgba(255,255,255,.6);font-size:14px;font-weight:600}
+.lbr.me{background:var(--night);color:#fff}
+.pops{display:flex;flex-wrap:wrap;gap:5px;margin:4px 0 10px}
+.pops span{font-size:12px;font-weight:700;background:rgba(255,255,255,.75);border-radius:999px;padding:4px 10px}
+.small{font-size:12px;color:var(--mute);font-weight:600}
+.confetti{position:fixed;top:-20px;z-index:20;pointer-events:none;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+.hidden{display:none!important}
+#loading{position:fixed;inset:0;z-index:30;display:grid;place-items:center;background:linear-gradient(180deg,#5d8fc4,#e3ebf1);transition:opacity .8s}
+#loading.done{opacity:0;pointer-events:none}
+#loading .m{width:64px;height:64px;animation:spin 1.6s cubic-bezier(.6,0,.4,1) infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#loading p{font-weight:700;color:var(--night);margin-top:12px;text-align:center}
+
+@media (max-width:760px){
+  .top{padding:10px}
+  .brand span{display:none}
+  .alti{min-width:0;padding:8px 12px}
+  .alti .val{font-size:26px}
+  #intro{left:10px;right:10px;width:auto;top:auto;bottom:10px;max-height:62vh;padding:20px}
+  #intro h1{font-size:40px}
+  .profile{height:70px}
+  #qp{bottom:10px;padding:14px}
+  .ring{width:54px;height:54px}
+  
+  .brand b{white-space:nowrap}
+  #endp{top:auto;bottom:10px;transform:translateX(-50%);max-height:72vh}
+  #endp.out{transform:translateX(-50%) translateY(40px)}
+  .lbl.peak{display:none}
+}
+
+.xbtn{position:sticky;top:0;float:right;margin:-8px -8px 0 0;width:38px;height:38px;border-radius:50%;background:rgba(15,26,36,.08);color:var(--ink);font-size:16px;font-weight:800;display:grid;place-items:center;z-index:2;transition:.2s}
+.xbtn:hover{background:var(--night);color:#fff;transform:rotate(90deg)}
+.reopen{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:7;background:var(--red);color:#fff;font-weight:800;padding:13px 22px;border-radius:999px;box-shadow:0 10px 24px -10px rgba(224,49,45,.8)}
+/* ---------- krst ---------- */
+#krst{position:fixed;inset:0;z-index:40;pointer-events:none;opacity:0;transition:opacity .6s;background:radial-gradient(ellipse at 50% 55%,rgba(0,0,0,0) 55%,rgba(10,20,30,.45) 100%)}
+#krst.on{opacity:1}
+#krst .skip,#krst .ban{pointer-events:auto}
+#krst .cnt{position:absolute;left:50%;top:9%;transform:translateX(-50%);font-size:clamp(70px,13vw,130px);font-weight:800;color:#fff;text-shadow:0 6px 30px rgba(0,0,0,.45);opacity:0}
+#krst .pow3{position:absolute;left:0;top:0;width:130px;height:130px;margin:-65px 0 0 -65px;display:grid;place-items:center;font-weight:800;font-size:22px;color:#b8211e;background:#f2c230;clip-path:polygon(50% 0,61% 30%,95% 18%,72% 46%,100% 62%,66% 66%,72% 100%,50% 75%,26% 98%,32% 66%,0 62%,28% 45%,6% 16%,40% 30%);opacity:0;filter:drop-shadow(0 4px 10px rgba(0,0,0,.3))}
+#krst .cap{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);background:rgba(15,26,36,.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#fff;font-weight:700;font-size:13px;padding:9px 16px;border-radius:999px;white-space:nowrap;max-width:94vw;overflow:hidden;text-overflow:ellipsis}
+#krst .ban{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(.6);opacity:0;background:#fff;border-radius:22px;padding:22px 28px;text-align:center;box-shadow:0 30px 60px -20px rgba(0,0,0,.5);min-width:280px}
+#krst .ban h3{font-size:30px;margin:4px 0 6px;font-weight:800}
+#krst .ban p{margin:0 0 14px;color:var(--ink2);font-weight:600;font-size:14px}
+#krst .skip{position:absolute;right:14px;top:84px;background:rgba(15,26,36,.45);color:#fff;border-radius:999px;padding:8px 14px;font-weight:700;font-size:12px}
+@keyframes flagw{0%,100%{transform:skewY(0) scaleX(1)}50%{transform:skewY(6deg) scaleX(.92)}}
+</style>
+</head>
+<body>
+<div id="sky"></div><div id="sun"></div>
+<canvas id="gl"></canvas>
+<div id="labels"></div>
+<div id="climber" class="hidden"><div class="bub" id="climberIc">🥾</div></div>
+
+<div id="loading"><div><svg class="m" viewBox="0 0 40 40"><circle cx="20" cy="20" r="15" fill="#fff" stroke="#e0312d" stroke-width="8"/></svg><p>Gradim Triglav …</p></div></div>
+
+<div class="top">
+  <div class="brand">
+    <svg class="mark" viewBox="0 0 40 40"><circle cx="20" cy="20" r="19" fill="#fff"/><circle cx="20" cy="20" r="13" fill="#fff" stroke="#e0312d" stroke-width="8"/></svg>
+    <div><b class="disp">Do vrha</b><br><span id="bMeta">#1 · 13. 11. 2026</span></div>
+  </div>
+  <div class="alti hide" id="alti">
+    <div class="lab">NADMORSKA VIŠINA</div>
+    <div class="val num disp"><span id="aVal">1015</span><small>m</small></div>
+    <div class="sub" id="aSub">Aljažev dom v Vratih</div>
+    <div class="bar"><i id="aBar"></i></div>
+  </div>
+</div>
+
+<button class="reopen hidden" id="reopen">Pokaži rezultat</button>
+
+<!-- INTRO -->
+<section class="panel" id="intro">
+  <div class="kicker">DNEVNA IGRA · 8 VPRAŠANJ</div>
+  <h1 class="disp">Do vrha<em>?</em></h1>
+  <div class="route"><span>Aljažev dom</span><span class="dash"></span><span>Triglav</span></div>
+  <p class="lead">Vsak dan 8 slovenskih kategorij, za vsako en odgovor. Bolj kot je tvoj odgovor <b>redek</b> med igralci, hitreje se vzpenjaš čez Prag in Kredarico na vrh.</p>
+  <svg class="profile" id="prof" viewBox="0 0 400 92" preserveAspectRatio="none"></svg>
+  <div class="modes" id="modes"></div>
+  <div class="scale"><span>pogost</span><i></i><span>redek odgovor</span></div>
+  <button class="cta" id="startBtn"><span id="startTxt">Na pot</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+  <details class="rules">
+    <summary>Pravila</summary>
+    <ul>
+      <li><b>25s</b><span>za vsako kategorijo; čas začne teči 5 sekund po tem, ko vidiš vprašanje. Enter pošlje.</span></li>
+      <li><b>%</b><span>metri so odvisni od točnega deleža igralcev z istim odgovorom – vsak odstotek šteje.</span></li>
+      <li><b>↻</b><span>če odgovora ni na seznamu, poskusi znova, dokler teče čas.</span></li>
+      <li><b>⚡</b><span>hitreje ko odgovoriš, več metrov (do ×1,2); počasen odgovor jih da manj.</span></li>
+      <li><b>🌫️</b><span>brez odgovora: megla, ostaneš na mestu.</span></li>
+      <li><b>📅</b><span>vprašanja so vsak dan enaka za vse, nova pot ob polnoči.</span></li>
+    </ul>
+  </details>
+  <div class="status" id="status"></div>
+</section>
+
+<!-- QUESTION -->
+<section class="panel out" id="qp">
+  <div class="qhead"><span class="chip" id="qChip">LJUDJE</span><div class="dots" id="dots"></div></div>
+  <div id="ask">
+    <div class="qbody slide" id="qBody">
+      <div class="ring"><svg viewBox="0 0 66 66"><circle cx="33" cy="33" r="28" fill="none" stroke="rgba(15,26,36,.1)" stroke-width="6"/><circle id="ringC" cx="33" cy="33" r="28" fill="none" stroke="#0f1a24" stroke-width="6" stroke-linecap="round" stroke-dasharray="175.9" stroke-dashoffset="0"/></svg><div class="t num" id="ringT">25</div></div>
+      <div class="qtxt"><h2 class="qtitle disp" id="qTitle"></h2><div class="qhint" id="qHint"></div></div>
+    </div>
+    <form class="ansrow" id="form" autocomplete="off">
+      <input id="ans" placeholder="Tvoj odgovor …" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="send">
+      <button class="send" type="submit" aria-label="Pošlji"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+    </form>
+    <div class="msg" id="msg">Vpiši odgovor in pritisni Enter.</div>
+  </div>
+  <div id="done" class="hidden">
+    <div class="res" id="res"></div>
+    <button class="next" id="nextBtn"><span id="nextTxt">Naprej</span> <kbd>Enter</kbd></button>
+  </div>
+</section>
+
+<!-- END -->
+<section class="panel out" id="endp">
+  <button class="xbtn" id="endX" aria-label="Zapri">✕</button>
+  <div class="endhero"><div class="e" id="eEmoji">🏔️</div><h2 class="disp" id="eTitle"></h2><p id="eSub"></p></div>
+  <div class="bigalt disp num" id="eAlt"></div>
+  <div class="altcap" id="eCap"></div>
+  <div class="sum" id="sum"></div>
+  <div class="btnrow"><button class="btn2" id="copyBtn">Kopiraj rezultat</button></div>
+  <button class="btn2 hidden" id="krstAgain" style="width:100%;margin-top:-4px">🪵 Ponovi krst</button>
+  <div class="sec">DANAŠNJA LESTVICA</div>
+  <div class="lb" id="lb"><div class="small">Nalagam …</div></div>
+  <div class="sec">NAJPOGOSTEJŠI ODGOVORI DANES</div>
+  <div id="pops" class="small">Nalagam …</div>
+  <p class="small" style="margin-top:16px;text-align:center">Nova pot jutri ob polnoči.</p>
+</section>
+
+
+<!-- KRST -->
+<div id="krst" class="hidden">
+  <button class="skip" id="krstSkip">Preskoči</button>
+  <div class="cnt disp num" id="kCnt">1</div>
+  <div class="pow3 disp" id="kPow">PLESK!</div>
+  <div class="cap" id="kCap">Krst na Triglavu: kdor prvič stopi na vrh, dobi tri udarce po zadnjici.</div>
+  <div class="ban" id="kBan"><div style="font-size:40px">🏔️</div><h3 class="disp">Krščen si!</h3><p>Uradno si pravi triglavan.</p><button class="next" id="kDone" style="margin-top:0">Naprej <kbd>Enter</kbd></button></div>
+</div>
+
+<script>
+// varovalka: če se 3D ne naloži, pokaži razlog namesto neskončnega nalaganja
+window.addEventListener('error',e=>{window.__err=(e.message||'')+'';});
+setTimeout(()=>{const l=document.getElementById('loading'); if(l&&!l.classList.contains('done')){ l.querySelector('p').innerHTML='Nalaganje traja predolgo.<br><small>'+(window.__err||'Knjižnica za 3D se ni naložila.')+'</small><br><button onclick="location.reload()" style="margin-top:12px;padding:10px 18px;border-radius:12px;border:0;background:#e0312d;color:#fff;font-weight:800">Poskusi znova</button>'; }},15000);
+</script>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+<script type="module">
+import * as THREE from 'three';
+
+const CATS = [
+/* ---------------- LJUDJE ---------------- */
+ {id:'sport',g:'ljudje',t:'Slovenski športnik ali športnica',h:'Katerikoli šport, katerokoli obdobje',a:`Luka Dončić|doncic|luka;Tadej Pogačar|pogacar|pogi;Primož Roglič|roglic;Jan Oblak|oblak;Janja Garnbret|garnbret;Tina Maze|maze;Peter Prevc;Goran Dragić|dragic;Anže Kopitar|kopitar;Domen Prevc;Nika Prevc;Benjamin Šeško|sesko;Petra Majdič|majdic;Ilka Štuhec|stuhec;Žan Kranjec;Rok Možič|mozic;Josip Iličić|ilicic;Zlatko Zahovič|zahovic;Samir Handanović|handanovic;Bojan Križaj|krizaj;Jure Košir|kosir;Mateja Svet;Leon Štukelj|stukelj;Miroslav Cerar;Primož Kozmus|kozmus;Urška Žolnir|zolnir;Tina Trstenjak|trstenjak;Benjamin Savšek|savsek;Vasilij Žbogar|zbogar;Iztok Čop|cop;Rajmond Debevec|debevec;Martin Strel|strel;Davo Karničar|karnicar;Tomaž Humar|humar;Jure Robič|robic;Matej Mohorič|mohoric;Klemen Prepelič|prepelic;Beno Udrih|udrih;Rašo Nesterović|nesterovic;Zoran Dragić;Ivo Daneu|daneu;Jure Zdovc|zdovc;Primož Peterka|peterka;Anže Lanišek|lanisek;Timi Zajc;Ema Klinec|klinec;Urša Bogataj|bogataj;Robert Kranjec;Polona Hercog|hercog;Katarina Srebotnik|srebotnik;Tamara Zidanšek|zidansek;Kaja Juvan|juvan;Aljaž Bedene|bedene;Jolanda Čeplak|ceplak;Brigita Bukovec|bukovec;Merlene Ottey|ottey;Kristjan Čeh|ceh;Tina Šutej|sutej;Jakov Fak|fak;Teja Gregorin|gregorin;Peter Kauzer|kauzer;Tanja Žakelj|zakelj;Luka Mezgec|mezgec;Jan Tratnik|tratnik;Mitja Petkovšek|petkovsek;Aljaž Pegan|pegan;Sara Isaković|isakovic;Peter Mankoč|mankoc;Andreja Mali;Klemen Bauer;Vesna Fabjan|fabjan;Meta Hrovat|hrovat;Andreja Leški|leski;Tonček Štern|stern;Rok Petrovič|petrovic;Janez Brajkovič|brajkovic;Rok Bagoroš|bagoros;Andraž Vehovar|vehovar;Toni Vilander`},
+ {id:'skoki',g:'ljudje',t:'Slovenski smučarski skakalec ali skakalka',h:'Planica, svetovni pokal, olimpijske igre',a:`Peter Prevc;Domen Prevc;Nika Prevc;Cene Prevc;Anže Lanišek|lanisek;Timi Zajc|zajc;Robert Kranjec;Primož Peterka|peterka;Jurij Tepeš|tepes;Jernej Damjan|damjan;Ema Klinec|klinec;Urša Bogataj|bogataj;Špela Rogelj|rogelj;Maja Vtič|vtic;Nika Križnar|kriznar;Primož Roglič|roglic;Rok Benkovič|benkovic;Primož Ulaga|ulaga;Miran Tepeš;Matjaž Debelak|debelak;Matjaž Zupan;Franci Petek|petek;Peter Žonta|zonta;Damjan Fras|fras;Robert Hrgota|hrgota;Bine Norčič|norcic;Lovro Kos|kos;Žiga Jelar|jelar;Anže Semenič|semenic;Tilen Bartol|bartol;Katra Komar|komar;Jerneja Brecl|brecl;Nejc Dežman|dezman;Rok Urbanc|urbanc;Jure Šinkovec|sinkovec;Primož Pikl|pikl;Mitja Mežnar|meznar;Bor Pavlovčič|pavlovcic;Ajda Košnjek|kosnjek;Taja Bodlaj|bodlaj;Jaka Hvala|hvala;Goran Janus|janus;Jure Radelj|radelj;Rok Mandl? `},
+ {id:'kosarka',g:'ljudje',t:'Slovenski košarkar ali nogometaš',h:'Reprezentant, NBA, Liga prvakov …',a:`Luka Dončić|doncic|luka;Goran Dragić|dragic;Jan Oblak|oblak;Benjamin Šeško|sesko;Josip Iličić|ilicic;Zlatko Zahovič|zahovic;Samir Handanović|handanovic;Zoran Dragić;Klemen Prepelič|prepelic;Beno Udrih|udrih;Rašo Nesterović|nesterovic;Jaka Lakovič|lakovic;Erazem Lorbek|lorbek;Primož Brezec|brezec;Sašo Ožbolt|ozbolt;Boštjan Nachbar|nachbar;Jure Zdovc|zdovc;Ivo Daneu|daneu;Gašper Vidmar|vidmar;Edo Murić|muric;Vlatko Čančar|cancar;Mike Tobey|tobey;Anthony Randolph|randolph;Jaka Blažič|blazic;Aleksej Nikolić|nikolic;Žiga Dimec|dimec;Jure Balažič|balazic;Gregor Hrovat;Matej Rojc|rojc;Josip Iličić;Jasmin Kurtić|kurtic;Kevin Kampl|kampl;Valter Birsa|birsa;Bojan Jokić|jokic;Boštjan Cesar|cesar;Milivoje Novaković|novakovic;Robert Koren|koren;Zlatan Ljubijankić|ljubijankic;Srečko Katanec|katanec;Sašo Udovič|udovic;Ermin Šiljak|siljak;Miran Pavlin|pavlin;Aleš Čeh;Mladen Rudonja|rudonja;Petar Stojanović|stojanovic;Jaka Bijol|bijol;Adam Gnezda Čerin|gnezda cerin|cerin;Timi Max Elšnik|elsnik;Andraž Šporar|sporar;Žan Vipotnik|vipotnik;Jure Balkovec|balkovec;Vanja Drkušić|drkusic;Erik Janža|janza;Žan Karničnik|karnicnik;Vid Belec|belec;Benjamin Verbič|verbic;Sandi Lovrić|lovric;Jon Gorenc Stanković|gorenc stankovic;Domen Črnigoj|crnigoj;Igor Vekić|vekic;Petar Stojanović;Nejc Skubic|skubic;Luka Zahovič`},
+ {id:'glasba',g:'ljudje',t:'Slovenski glasbenik ali skupina',h:'Pop, rock, narodnozabavna, rap … karkoli',strip:['ansambel','skupina'],a:`Joker Out;Siddharta;Laibach;Avsenik|ansambel bratov avsenik|bratje avsenik|slavko avsenik;Magnifico;Vlado Kreslin|kreslin;Nina Pušlar|puslar;Jan Plestenjak|plestenjak;Raiven;Zlatko;Modrijani;Big Foot Mama;Pankrti;Buldožer|buldozer;Elvis Jackson;Zmelkoow;Dan D;Perpetuum Jazzile;Omar Naber|naber;Maja Keuc;Eva Boto;Manca Špik|manca spik;Alya;Helena Blagne|blagne;Oto Pestner|pestner;Pero Lovšin|lovsin;Hamo & Tribute 2 Love|hamo;Mi2;Alfi Nipič|nipic;Atomik Harmonik;Trkaj;Murat & Jose;6pack Čukur|6pack cukur;Kingston;Rok'n'band|roknband;Bepop;Saša Lendero|lendero;Lea Sirk;BQL;LPS|last pizza slice;Sestre;Klemen Slakonja|slakonja|klemen;Tinkara Kovač|tinkara;Darja Švajger|svajger;Regina;1X Band;Werner;Damjan Murko;Gal Gjurin;Neisha;Tabu;Agropop;Lačni Franz|lacni franz;Šank Rock|sank rock;Pop Design;Faraoni;Kameleoni;Anja Rupel|rupel;Lado Leskovar|leskovar;Majda Sepe|sepe;Vili Resnik|resnik;Severa Gjurin|severa;Victory;Ansambel Lojzeta Slaka|lojze slak|slak;Prismojeni profesorji bluesa|ppb;Koala Voice;Ditka;Tomaž Domicelj|domicelj;Andrej Šifrer|sifrer;Čuki|cuki;Rudi Bučar|bucar;Aleksander Mežek|mezek;Mia Žnidarič|znidaric;Natalija Verboten|verboten;Rebeka Dremelj|dremelj;Nika Zorjan|zorjan;Challe Salle;Ajs Nigrutin;Marko Hatlak|hatlak;Nuša Derenda|derenda;Karmen Stavec|stavec;Maraaya;Ana Soklič|soklic;Zala Kralj & Gašper Šantl|zala kralj;Hannah Mancini;Anžej Dežan|dezan;Rok Piletič|piletic;Pero Martić|martic;Wudisban;Mladi Dolenjci;Ansambel Saša Avsenika|sasa avsenik;Gorenjci;Vagabundo? ;Čompe? `},
+ {id:'splet',g:'ljudje',t:'Slovenski youtuber, tiktoker ali influencer',h:'Kanal, profil ali ustvarjalec vsebin s Slovenije',a:`Smidi Plays|smidi;Nepridiprav|pero martic;Marko Žerjal|zerjal;Kaja Furek|furek;Gaja Hribernik|hribernik|pink mess;Nika Erculj|erculj;Lucy TIME|lucija vrankar|lucy time;Andrej Pavličević|pavlicevic;KIKIfamily|kiki family;Nuša Žohar|zohar;Bit Sever|sever;Rok Kostanjšek|kostanjsek;Nik Vuga|vuga;Magic Aleksander|aleksander;Kaja Karba|karba;Fina Jasmina;Desna stran jajca;Brabinjo;Nik Rijavec|rijavec;TaySon;Rok Bagoroš|bagoros;Barbara Horvat;Katarina Cermelj|cermelj;Andrej Šturm|sturm;Dunking Devils;Matjaž & Alja|matjaz in alja;Dijar Domi;Riya Damyanti;Aleksandar Radonjić|radonjic;Alenka Trogrlič|trogrlic;Robert Roškar|roskar;Nimet Dzeladini;Lara Tošić|tosic;Mark Lesjak|lesjak;Mark Vlahović|vlahovic;Slomemer;Eva Centrih|evina lepotilnica;Katarina Benček|bencek;Golden Tree;Zion;Perica Jerković|perica;Tin Vodopivec|vodopivec;Challe Salle;Zlatko`},
+ {id:'tv',g:'ljudje',t:'Znan slovenski TV obraz ali komik',h:'Voditelj, igralec, stand-up komik, radijec …',a:`Jonas Žnidaršič|jonas|znidarsic;Lado Bizovičar|bizovicar;Klemen Slakonja|slakonja;Tadej Toš|tos;Branko Đurić|djuro|duro|branko djuric;Tin Vodopivec|vodopivec;Perica Jerković|perica;Vid Valič|valic;Jure Godler|godler;Peter Poles|poles;Mario Galunič|galunic;Miša Molk|molk;Boštjan Gorenc Pižama|pizama|bostjan gorenc;Sašo Hribar|hribar|radio ga ga;Tilen Artač|artac;Bojan Emeršič|emersic;Uroš Kuzman|kuzman;Andrej Težak Tešky|tesky;Denis Avdić|avdic;Klemen Bunderla|bunderla;Gašper Bergant|bergant;Žan Papič|papic;Marko Žerjal|zerjal;Ula Furlan|furlan;Tina Gorenjak|gorenjak;Mojca Mavec|mavec;Darja Zgonc|zgonc;Bernarda Žarn|zarn;Slavko Bobovnik|bobovnik;Rosvita Pesek|pesek;Igor E. Bergant;Andrej Stare|stare;Boštjan Romih|romih;Polde Bibič|bibic;Radko Polič|polic;Milena Zupančič|zupancic;Boris Cavazza|cavazza;Jernej Šugman|sugman;Gojmir Lešnjak|lesnjak;Zvezdana Mlakar|mlakar;Jurij Zrnec|zrnec;Uroš Smolej|smolej;Tanja Ribič|ribic;Iztok Mlakar;Marko Mandić|mandic;Saša Pavček|pavcek;Lotos Šparovec|sparovec;Jure Henigman|henigman;Ivo Ban|ban;Mojca Funkl|funkl;Nataša Barbara Gračner|gracner;Brane Šturbej|sturbej;Vesna Pernarčič|pernarcic;Gregor Bakovič|bakovic;Nik Škrlec|skrlec;Pia Zemljič|zemljic;Uroš Slak? ;Lili Žagar|zagar;Maja Martina Merljak|merljak;Bine Volčič|volcic;Luka Jezeršek|jezersek`},
+ {id:'chef',g:'ljudje',t:'Slovenski chef ali vrhunska restavracija',h:'Kuhar, chefinja ali restavracija z Michelinovim slovesom',a:`Ana Roš|ros|hisa franko;Tomaž Kavčič|kavcic|pri lojzetu|dvorec zemono;Janez Bratovž|bratovz|jb;Bine Volčič|volcic;Luka Jezeršek|jezersek;David Žefran|zefran|milka;Gregor Vračko|vracko|hisa denk|denk;Uroš Štefelin|stefelin|hisa linhart|vila podvin;Marko Pavčnik|pavcnik|pavus;Ago Špacapan|spacapan|spacapanova hisa;Jorg Zupan|atelje;Igor Jagodic|jagodic|strelec;Luka Košir|kosir|gric;Gostilna Mahorčič|mahorcic;Gostilna Plesnik|plesnik;Hiša Franko;Milka;Pri Lojzetu`},
+ {id:'pisatelj',g:'ljudje',t:'Slovenski pisatelj ali pesnik',h:'Od Trubarja do danes',a:`France Prešeren|preseren;Ivan Cankar|cankar;Primož Trubar|trubar;Srečko Kosovel|kosovel;Oton Župančič|zupancic;Simon Gregorčič|gregorcic;Fran Levstik|levstik;Josip Jurčič|jurcic;Anton Aškerc|askerc;Valentin Vodnik|vodnik;Janko Kersnik|kersnik;Ivan Tavčar|tavcar;France Bevk|bevk;Prežihov Voranc|prezihov voranc|voranc;Edvard Kocbek|kocbek;Dane Zajc;Tomaž Šalamun|salamun;Janez Menart|menart;Tone Pavček|pavcek;Kajetan Kovič|kovic;Dragotin Kette|kette;Josip Murn|murn;Alojz Gradnik|gradnik;Niko Grafenauer|grafenauer;Svetlana Makarovič|makarovic;Vladimir Bartol|bartol;Boris Pahor|pahor;Alojz Rebula|rebula;Lojze Kovačič|kovacic;Drago Jančar|jancar;Miha Mazzini|mazzini;Janja Vidmar|vidmar;Desa Muck|muck;Miško Kranjec|kranjec;Ivan Potrč|potrc;Tone Seliškar|seliskar;Tone Partljič|partljic;Vitomil Zupan|zupan;Simon Jenko|jenko;Josip Stritar|stritar;Fran Erjavec|erjavec;Janez Vajkard Valvasor|valvasor;Anton Tomaž Linhart|linhart;Ciril Kosmač|kosmac;Ela Peroci|peroci;Zofka Kveder|kveder;Fran Milčinski|milcinski;Frane Milčinski Ježek|jezek;Feri Lainšček|lainscek;Tadej Golob|golob;Goran Vojnović|vojnovic;Andrej Rozman Roza|rozman|roza;Primož Suhodolčan|suhodolcan;Leopold Suhodolčan;Slavko Pregl|pregl;Neža Maurer|maurer;Saša Vegri|vegri;Ivan Pregelj|pregelj;Josip Vandot|vandot;Fran Saleški Finžgar|finzgar;Karel Destovnik Kajuh|kajuh;Matej Bor;Evald Flisar|flisar;Aleš Debeljak|debeljak;Suzana Tratnik;Ivan Sivec|sivec`},
+ {id:'politik',g:'ljudje',t:'Slovenski predsednik države ali vlade',h:'Kdorkoli, ki je bil na eni od teh funkcij od 1990',a:`Milan Kučan|kucan;Janez Drnovšek|drnovsek;Borut Pahor|pahor;Janez Janša|jansa;Robert Golob|golob;Nataša Pirc Musar|pirc musar|musar;Danilo Türk|turk;Marjan Šarec|sarec;Miro Cerar|cerar;Alenka Bratušek|bratusek;Lojze Peterle|peterle;Anton Rop|rop;Andrej Bajuk|bajuk`},
+ {id:'izumitelj',g:'ljudje',t:'Slovenski znanstvenik, izumitelj ali umetnik',h:'Znanost, arhitektura, slikarstvo, glasba …',a:`Jožef Stefan|stefan;Jurij Vega|vega;Herman Potočnik Noordung|potocnik|noordung;Jože Plečnik|plecnik;Janez Puhar|puhar;Friderik Pregl|pregl;Edvard Rusjan|rusjan;Stanko Bloudek|bloudek;Ivana Kobilca|kobilca;Rihard Jakopič|jakopic;Ivan Grohar|grohar;Matija Jama|jama;Matej Sternen|sternen;Jakob Gallus|gallus|petelin;Slavoj Žižek|zizek;Rudolf Maister|maister;Ivan Regen|regen;Anton Codelli|codelli;Peter Florjančič|florjancic;Max Fabiani|fabiani;Ivan Vurnik|vurnik;Edvard Ravnikar|ravnikar;Marjan Mušič|music;Janez Bernik? ;Zoran Mušič;Lojze Spacal|spacal;Avgust Černigoj|cernigoj;Hinko Smrekar|smrekar;Maksim Gaspari|gaspari;Božidar Jakac|jakac;France Mihelič|mihelic;Marij Pregelj;Gabrijel Stupica|stupica;Janez Vajkard Valvasor|valvasor;Anton Janša|jansa|cebelar;Baltazar Hacquet? ;Josef Ressel|ressel;Leon Štukelj? ;Marko Pohlin|pohlin;Jernej Kopitar|kopitar;Franc Miklošič|miklosic;Janez Bleiweis|bleiweis;Davorin Jenko|jenko;Lojze Slak? ;Anton Peterlin|peterlin;Robert Blinc|blinc;Ivan Hribar|hribar`},
+/* ---------------- KRAJI ---------------- */
+ {id:'obcina',g:'kraji',t:'Slovenska občina',h:'Katera koli od 212 občin',strip:['obcina','mestna obcina','mestna'],a:`Ljubljana|lj;Maribor|mb;Celje;Koper;Kranj;Velenje;Novo mesto;Ptuj;Murska Sobota|sobota;Nova Gorica;Slovenj Gradec;Piran;Bled;Kamnik;Jesenice;Domžale;Škofja Loka|loka;Trbovlje;Krško;Izola;Postojna;Brežice;Bohinj;Kočevje;Ajdovščina;Lendava;Idrija;Ljutomer;Ormož;Grosuplje;Litija;Vrhnika;Žalec;Logatec;Tolmin;Bovec;Kobarid;Sežana;Ilirska Bistrica;Črnomelj;Metlika;Ribnica;Sevnica;Zagorje ob Savi|zagorje;Hrastnik;Laško;Šentjur;Rogaška Slatina;Slovenska Bistrica;Slovenske Konjice|konjice;Zreče;Ravne na Koroškem|ravne;Dravograd;Radlje ob Dravi|radlje;Mežica;Prevalje;Črna na Koroškem;Mozirje;Nazarje;Ljubno;Gornji Grad;Luče;Solčava;Šoštanj;Šmartno ob Paki;Polzela;Prebold;Braslovče;Vransko;Tabor;Radovljica;Tržič;Kranjska Gora;Gorje;Žirovnica;Naklo;Šenčur;Cerklje na Gorenjskem|cerklje;Preddvor;Jezersko;Medvode;Vodice;Mengeš;Trzin;Komenda;Lukovica;Moravče;Dol pri Ljubljani;Ig;Škofljica;Brezovica;Dobrova - Polhov Gradec|dobrova polhov gradec;Horjul;Borovnica;Log - Dragomer|log dragomer;Velike Lašče;Dobrepolje;Ivančna Gorica;Trebnje;Mirna;Mokronog - Trebelno|mokronog;Šentrupert;Žužemberk;Dolenjske Toplice;Šmarješke Toplice;Škocjan;Šentjernej;Kostanjevica na Krki;Semič;Kostel;Osilnica;Loški Potok;Sodražica;Bloke;Cerknica;Loška dolina;Pivka;Divača;Hrpelje - Kozina|hrpelje kozina;Komen;Miren - Kostanjevica|miren kostanjevica;Renče - Vogrsko|rence vogrsko;Šempeter - Vrtojba|sempeter vrtojba;Brda;Kanal ob Soči|kanal;Cerkno;Gorenja vas - Poljane|gorenja vas poljane;Žiri;Železniki;Vipava;Ankaran;Radeče;Bistrica ob Sotli;Kozje;Podčetrtek;Šmarje pri Jelšah;Rogatec;Dobje;Štore;Vojnik;Dobrna;Oplotnica;Poljčane;Makole;Majšperk;Kidričevo;Hajdina;Markovci;Gorišnica;Videm;Žetale;Podlehnik;Cirkulane;Zavrč;Destrnik;Dornava;Juršinci;Sveti Andraž v Slovenskih goricah;Trnovska vas;Sveti Tomaž;Središče ob Dravi;Miklavž na Dravskem polju|miklavz;Hoče - Slivnica|hoce slivnica;Rače - Fram|race fram;Starše;Duplek;Pesnica;Kungota;Šentilj;Selnica ob Dravi;Ruše;Lovrenc na Pohorju;Podvelka;Ribnica na Pohorju;Vuzenica;Muta;Mislinja;Lenart;Cerkvenjak;Benedikt;Sveta Ana;Sveta Trojica v Slovenskih goricah;Sveti Jurij v Slovenskih goricah;Gornja Radgona|radgona;Radenci;Apače;Sveti Jurij ob Ščavnici;Križevci;Veržej;Razkrižje;Beltinci;Črenšovci;Odranci;Turnišče;Velika Polana;Dobrovnik;Kobilje;Moravske Toplice;Puconci;Tišina;Cankova;Rogašovci;Kuzma;Gornji Petrovci;Šalovci;Hodoš;Grad;Šmartno pri Litiji`},
+ {id:'gora',g:'kraji',t:'Slovenski vrh ali hrib',h:'Od Šmarne gore do Triglava',strip:['gora','vrh'],a:`Triglav;Šmarna gora;Stol;Grintovec;Krn;Mangart;Storžič;Snežnik;Nanos;Jalovec;Škrlatica;Kanin;Prisojnik;Razor;Kočna;Skuta;Ojstrica;Raduha;Peca;Uršlja gora|plesivec;Rogla;Lisca;Kum;Boč;Donačka gora;Golica;Krim;Blegoš;Ratitovec;Porezen;Črna prst;Vogel;Rodica;Slavnik;Begunjščica;Košuta;Velika planina;Krvavec;Mojstrovka;Špik;Rjavina;Cmir;Kanjavec;Mali Triglav;Stenar;Bovški Gamsovec;Kredarica;Viševnik;Tosc;Matajur;Kolovrat;Sabotin;Sveta Gora;Čaven;Kucelj;Pohorje;Velika Kopa;Golte;Smrekovec;Lubnik;Osolnik;Grmada;Tošč;Ulovka;Slivnica;Trdinov vrh;Gorjanci;Mrzlica;Kopitnik;Sveta Planina;Zasavska Sveta gora;Menina planina;Dobrač? ;Kamniško sedlo;Planjava;Brana;Ojstrc;Debela peč;Vrtača;Kepa;Begunjski vrh;Jerebica;Rombon;Bavški Grintavec;Plešivec;Javornik;Kopa;Lipanski vrh;Ostri vrh;Pokljuka;Jelovica;Mežakla`},
+ {id:'reka',g:'kraji',t:'Slovenska reka ali potok',h:'Karkoli teče skozi Slovenijo',strip:['reka','potok'],a:`Sava;Drava;Soča;Mura;Krka;Kolpa;Savinja;Ljubljanica;Idrijca;Vipava;Sora;Kamniška Bistrica;Pesnica;Dravinja;Sotla;Paka;Meža;Mislinja;Ščavnica;Ledava;Rižana;Dragonja;Reka;Pivka;Unica;Gradaščica;Bača;Tolminka;Koritnica;Učja;Nadiža;Hudinja;Voglajna;Mirna;Temenica;Rinža;Lahinja;Iška;Tržiška Bistrica;Kokra;Mestinjščica;Polskava;Radovna;Lepenca;Trebuščica;Sava Dolinka|dolinka;Sava Bohinjka|bohinjka;Selška Sora;Poljanska Sora;Krupa;Dobličica;Cerkniščica;Rak;Branica;Hubelj;Kneža;Dreta;Lučnica;Bolska;Ložnica;Gračnica;Kučnica;Glinščica;Mostnica;Pišnica;Jezernica;Završnica;Nevljica;Rača;Bistra;Ljubija? `},
+ {id:'jezero',g:'kraji',t:'Slovensko jezero ali slap',h:'Naravno ali umetno, veliko ali čisto majhno',strip:['jezero','slap'],a:`Blejsko|bled;Bohinjsko|bohinj;Slap Savica|savica;Cerkniško|cerknica;Velenjsko|velenje;Slap Peričnik|pericnik;Slap Kozjak|kozjak;Slap Boka|boka;Šmartinsko|smartinsko;Slap Rinka|rinka;Divje jezero|divje;Jasna;Krnsko|krn;Ptujsko|ptuj;Zbiljsko|zbilje;Črno|crno;Planšarsko|plansarsko;Gajševsko|gajsevsko;Ledavsko|ledava;Perniško|pernica;Družmirsko|druzmirsko;Škalsko|skalsko;Slivniško|slivnisko;Triglavska jezera|sedmera triglavska jezera|dolina triglavskih jezer;Virje;Slap Šum|sum;Palčje|palcje;Glijun;Čedca|cedca;Šumik|sumik;Lucijin slap|lucija;Martuljški slap|martuljek;Gradiško jezero|gradisko;Rački ribniki|racki ribniki;Podpeško|podpesko;Bloško|blosko;Mariborsko|mariborsko jezero;Ormoško|ormosko;Klivnik;Mola;Zelenci;Slap Orglice|orglice;Slap Kobilji curek|kobilji curek;Veliko jezero;Dvojno jezero;Jezero na Planini pri jezeru|planina pri jezeru;Slap Skočnik|skocnik;Slap Mostnice|mostnica;Slap Šum v Vintgarju|vintgar;Slap Virje;Bloško jezero`},
+ {id:'zname',g:'kraji',t:'Slovenska turistična znamenitost',h:'Kamor bi peljal tujca, ki prvič pride v Slovenijo',a:`Blejski otok|bled|blejsko jezero;Postojnska jama|postojna;Škocjanske jame|skocjanske jame;Predjamski grad|predjama;Ljubljanski grad;Vintgar|blejski vintgar;Piran|tartinijev trg;Logarska dolina|logarska;Velika planina;Lipica|kobilarna lipica|lipicanci;Planica;Vršič|vrsic;Tromostovje;Soča|soska dolina;Bohinj;Triglav;Kranjska Gora;Mangartska cesta|mangart;Slap Savica|savica;Slap Kozjak|kozjak;Rogla;Pohorje;Krvavec;Kobarid|kobariški muzej;Ptujski grad|ptuj;Celjski grad;Stara trta|maribor;Rakov Škocjan|rakov skocjan;Cerkniško jezero;Štanjel|stanjel;Goriška Brda|brda;Kostanjevica na Krki;Žička kartuzija|zicka kartuzija;Pleterje;Otočec|otocec;Velenjsko jezero;Muzej premogovništva Velenje|premogovnik;Hrastovlje|tabor hrastovlje;Sečoveljske soline|soline;Strunjan;Rimske Terme;Terme Čatež|catez;Moravske Toplice;Radenci;Rogaška Slatina;Pokljuka;Vogel;Dolina Trente|trenta;Kekčeva dežela? ;Ljubljanica;Zmajski most;Nebotičnik;Metelkova;Prešernov trg|preseren;Koper;Izola;Bovec;Idrija|rudnik zivega srebra;Kropa;Skofja Loka;Kamniška Bistrica;Snežnik|grad sneznik;Kolpa;Mrzli studenec? ;Pekel|jama pekel;Snežna jama;Zelenci;Jasna;Dom na Kredarici? `},
+ {id:'smucisce',g:'kraji',t:'Slovensko smučišče ali jama',h:'Smučišče ali kraška jama v Sloveniji',strip:['smucisce','jama','jame'],a:`Krvavec;Kranjska Gora;Vogel;Rogla;Mariborsko Pohorje|pohorje;Postojnska jama|postojnska;Škocjanske jame|skocjanske;Cerkno;Stari vrh;Golte;Kanin;Kope;Velika planina;Soriška planina|sorica;Javornik;Zatrnik;Straža|straza bled;Kobla;Ribniško Pohorje;Trije kralji;Areh;Bukovnik;Črnivec|crnivec;Ivarčko|ivarcko;Podkoren;Planica;Kalič;Kofce? ;Bela? ;Kozji vrh? ;Krvavec;Križna jama|krizna;Županova jama|zupanova;Pekel;Snežna jama|snezna;Divaška jama|divaska;Vilenica;Planinska jama|planinska;Kostanjeviška jama|kostanjeviska;Predjamska jama|predjama;Jama Dimnice|dimnice;Huda luknja;Pivka jama;Črna jama|crna jama;Otoška jama;Lipiška jama|lipiska;Ravenska jama|ravenska;Jama pod Babjim zobom|babji zob;Velika Pasica? ;Taborska jama|taborska;Polževa jama|polzeva`},
+ {id:'lj',g:'kraji',t:'Kraj ali stavba v Ljubljani',h:'Znamenitost, trg, most, park, četrt ali stavba v Ljubljani',strip:['most'],a:`Tromostovje;Prešernov trg|preseren;Ljubljanski grad|grad;Zmajski most|zmajcki most;Tivoli;Nebotičnik|neboticnik;Metelkova;Kongresni trg;Mesarski most;Šuštarski most|sustarski most;Plečnikove tržnice|trznica|centralna trznica;NUK|narodna in univerzitetna knjiznica;Križanke|krizanke;Rožnik|roznik;Stožice|stadion stozice;BTC|btc city;Cankarjev dom|cd;Opera|snd opera in balet;Moderna galerija;Narodna galerija;Frančiškanska cerkev|franciskanska cerkev;Stolnica|stolnica sv nikolaja;Rimski zid;Trnovo;Ljubljanica;Krakovo;Kino Šiška|siska;Cukrarna;Plečnikov stadion|bezigrajski stadion;Center Rog|rog;Čopova|copova;Wolfova;Slovenska cesta;Ljubljansko barje|barje;Šmarna gora;Rakova jelša? ;Kodeljevo;Fužine|fuzine;Rudnik;Šiška;Bežigrad|bezigrad;Center;Moste;Vič|vic;Golovec;Rožna dolina|rozna dolina;Ljubljanski živalski vrt|zoo|zivalski vrt;Botanični vrt|botanicni vrt;Park Zvezda|zvezda;Mestna hiša|magistrat;Robbov vodnjak|robba;Kavarna Union|union;Pivovarna Union;Hala Tivoli;Mestni muzej;Muzej sodobne umetnosti|msum;Parlament|drzavni zbor;Trg republike;Navje;Žale|zale;Plečnikova hiša|plecnikova hisa;Ajdovščina|ajdovscina;Emonska vrata? ;Šentjakobski most|sentjakobski;Čevljarski most|cevljarski;Ljubljanski potniški center|avtobusna postaja|zelezniska postaja;Gornji trg;Stari trg;Mestni trg;Pogačarjev trg|pogacarjev trg;Petkovškovo nabrežje|petkovskovo nabrezje;Breg;Ribji trg;Gruberjev kanal;Gramozna jama;Koseški bajer|koseze;Hotel Slon|slon;Hotel Union;Maximarket;Stara Ljubljana;Prule;Trnovski pristan? ;Tobačna|tobacna;Šumi|sumi;Kolizej;Bavarski dvor;Kozolec? `},
+ {id:'regija',g:'kraji',t:'Slovenska pokrajina, regija ali dolina',h:'Pokrajina, dolina, planota ali polje',strip:['dolina','pokrajina','regija'],a:`Gorenjska;Štajerska|stajerska;Dolenjska;Primorska;Prekmurje;Koroška|koroska;Notranjska;Bela krajina;Prlekija;Kras;Goriška|goriska;Istra;Zasavje;Posavje;Savinjska;Pomurje;Podravje;Haloze;Kozjansko;Brkini;Vipavska dolina|vipavska;Goriška brda|brda;Kočevsko|kocevsko;Šaleška dolina|saleska;Zgornja Savinjska dolina|zgornja savinjska;Mežiška dolina|meziska;Idrijsko;Cerkljansko;Posočje|posocje;Bohinj;Goričko|goricko;Slovenske gorice;Dravsko polje;Ptujsko polje;Ljubljansko barje|barje;Suha krajina;Ribniška dolina|ribniska;Pivka;Zgornjesavska dolina|zgornjesavska;Tuhinjska dolina|tuhinjska;Selška dolina|selska;Poljanska dolina|poljanska;Solčavsko|solcavsko;Logarska dolina|logarska;Trenta;Vrata;Planica;Pohorje;Jelovica;Pokljuka;Mežakla|mezakla;Dravska dolina|dravska;Mislinjska dolina|mislinjska;Kamniška Bistrica;Krška kotlina|krska;Celjska kotlina|celjska;Ljubljanska kotlina|ljubljanska;Bloke|bloska planota;Banjška planota|banjska planota;Trnovski gozd;Krakovski gozd;Kozjak;Kobansko;Polhograjsko hribovje|polhograjsko;Škofjeloško|skofjelosko;Dolina Kolpe|kolpa;Zgornje Posočje;Kanalsko;Kobariško|kobarisko;Tolminsko;Bovško|bovsko;Šentjernejsko polje|sentjernejsko;Ljutomersko-ormoške gorice|jeruzalem`},
+ {id:'tablica',g:'kraji',t:'Registrska oznaka na slovenski tablici',h:'Dve črki na začetku tablice (ali mesto, za katero stoji)',a:`LJ|ljubljana;MB|maribor;CE|celje;KR|kranj;KP|koper;NM|novo mesto;MS|murska sobota;GO|nova gorica|gorica;PO|postojna;SG|slovenj gradec;KK|krsko`},
+/* ---------------- HRANA ---------------- */
+ {id:'jed',g:'hrana',t:'Slovenska jed ali sladica',h:'Tradicionalna jed, sladica ali specialiteta',a:`Potica;Kranjska klobasa|kranjska;Prekmurska gibanica|gibanica;Idrijski žlikrofi|zlikrofi|zlinkrofi;Štruklji|struklji;Ajdovi žganci|zganci;Jota;Ričet|ricet;Bograč|bograc;Kremšnita|kremsnita|blejska kremsnita|kremna rezina;Pršut|prsut|kraski prsut;Kislo zelje;Kisla repa;Krvavica|krvavice;Pečenica|pecenica;Ocvirki|ocvirkovca;Matevž|matevz;Bujta repa;Prleška tünka|tunka;Belokranjska pogača|pogaca;Kobariški štruklji|kobariski struklji;Mineštra|minestra;Obara|telecja obara;Frika;Zlevanka;Šarkelj|sarkelj;Mlinci;Prežganka|prezganka;Zaseka;Gobova juha;Fižolova juha|fizolova juha;Goveja juha;Ajdova kaša|kasa;Krapi;Flancati;Miške|miske;Pohorska omleta;Aleluja;Pohorski lonec;Ješprenj|jesprenj;Pražen krompir|prazen krompir;Medenjaki;Krofi|krof;Prekmurska šunka|prekmurska sunka;Prata;Štajerska kisla juha|kisla juha;Ribji brodet|brodet;Kraška jota;Belokranjska povitica|povitica;Kmečka pojedina;Dunajski zrezek|zrezek;Šmorn|smorn;Palačinke|palacinke;Pohorska bunka|bunka;Loška medla|medla;Mohant;Bovški sir;Tolminc;Nanoški sir`},
+ {id:'pijaca',g:'hrana',t:'Slovenska pijača',h:'Pivo, vino, žganje, sok, mineralna … karkoli slovenskega',a:`Cockta;Laško|lasko|zlatorog;Union;Radenska;Cviček|cvicek;Teran;Refošk|refosk;Rebula;Šipon|sipon;Viljamovka;Slivovka;Borovničke|borovnicevec;Medica;Brinjevec;Donat Mg|donat;Fruc;Fructal;Špricer|spricer;Malvazija;Zelen;Pinela;Laški rizling|laski rizling;Renski rizling;Modra frankinja|frankinja;Žametovka|zametovka;Kraški teran;Jeruzalem;Zlata radgonska penina|radgonska penina;Pelinkovec;Hruškovec|hruskovec;Sadjevec;Tepkovec|tepkovec;Šnops|snops;Domači tolkovec|tolkovec;Šmarnica|smarnica;Jabolčnik|jabolcnik|mošt|most;Kuhano vino;Bevanda;Radler;Ilirija? ;Pivo Pelicon|pelicon;Reservoir Dogs;Human Fish;Bevog;Mali grad;Haler? ;Lintvern? ;Pivovarna Vizir|vizir;Tri lipe? ;Rogaška? ;Costella;Jupi? ;Ora? ;Kokta`},
+ {id:'pekarna',g:'hrana',t:'Kaj kupiš v pekarni ali na bencinski',h:'Pecivo, prigrizek ali hitra malica',a:`Burek|burek s sirom|burek z mesom|burek s krompirjem;Rogljiček|rogljic|roglic|kroasan;Sirova štručka|sirova strucka;Pica|pizza|kos pice;Krof|krofi;Štručka|strucka;Žemlja|zemlja;Kajzerica;Kruh;Ajdov kruh;Koruzni kruh;Polnozrnati kruh;Pletenica;Sendvič|sendvic;Hot dog|hotdog;Kifeljc|kifelj;Makovka;Jabolčni zavitek|jabolcni zavitek|strudel|zavitek;Sirov zavitek;Rogljič s čokolado|cokoladni rogljic;Baget|bageta;Pogača|pogaca;Prekmurska gibanica|gibanica;Kremšnita|kremsnita;Bombetka;Polžek|polzek;Pereca|preste;Toast|toastek;Kava|kavica;Sok;Energijska pijača|red bull;Čips|cips;Čokolada|cokolada;Žvečilni|zvecilni;Sendvič s pršutom;Pirin kruh;Mlečni kruh|mlecni kruh;Kvasenka;Kebab;Pleskavica;Čevapčiči|cevapcici|cevapi;Pomfri|pomfrit;Langoš|langos;Sirov burek;Mesni burek;Pita;Baklava;Muffin|mafin;Donut|krof z luknjo;Tortica;Rezina;Lešnikov rogljič|lesnikov rogljic;Marmeladni rogljič|marmeladni rogljic;Pudingov rogljič`},
+/* ---------------- KULTURA ---------------- */
+ {id:'oddaja',g:'kultura',t:'Slovenska TV oddaja, serija ali film',h:'Karkoli, kar je nastalo v Sloveniji za TV ali kino',a:`Kekec;Naša mala klinika|nasa mala klinika;Ena žlahtna štorija|ena zlahtna storija;Kmetija;Ljubezen po domače|ljubezen po domace;Slovenija ima talent;MasterChef Slovenija|masterchef;Big Brother Slovenija|big brother;24ur;TV Dober dan|dober dan;Gremo mi po svoje;Gremo mi po svoje 2;Kajmak in marmelada;Petelinji zajtrk;Cvetje v jeseni;Na svoji zemlji;Vesna;Ne joči Peter|ne joci peter;Sreča na vrvici|sreca na vrvici;Poletje v školjki|poletje v skoljki;Rdeči boogie|rdeci boogie;Kruh in mleko;Pod njenim oknom;Varuh meje;Ekspres ekspres;Outsider;Babica gre na jug;Ples v dežju|ples v dezju;Tistega lepega dne;Šiška deluxe|siska deluxe;Čefurji raus|cefurji raus;Lajkomanija;Reka ljubezni;Usodno vino;Ja, Chef|ja chef;Kriva pota;Lepo je biti sosed;Znan obraz ima svoj glas;Zvezde plešejo|zvezde plesejo;Odmevi;Dnevnik;Tednik;Na lepše|na lepse;Dobro jutro;Spet doma;Moja Slovenija;Preverjeno;Svet na Kanalu A|svet;Ugriznimo znanost;Firbcologi;Radovedni Taček|radovedni tacek;Male sive celice;Studio City;Pod klobukom;Polnočni klub|polnocni klub;Vikend paket? ;Slovenski pozdrav? ;Mi2? ;Bratko? ;Cvetje? ;Gostilna? ;Najboljši slovenski film? ;Dragi Jani? ;Sanjski moški|sanjski moski;Exatlon? ;Družinski dvoboj|druzinski dvoboj;Kolo sreče|kolo srece;Lepo je biti milijonar|milijonar;Vem? ;Ekstrem? ;Moj dom? ;Šola za nevesto|sola za nevesto? ;Kdo bi ga ...? ;Popolna družina|popolna druzina;Vrtičkarji|vrtickarji;Vojna zvezd? `},
+ {id:'postaja',g:'kultura',t:'Slovenski TV kanal ali radijska postaja',h:'Kanal ali radio, ki ga lovimo v Sloveniji',a:`POP TV|pop tv|poptv;Kanal A;TV Slovenija 1|tv slo 1|slo 1|rtv slovenija|rtv|nacionalka;TV Slovenija 2|slo 2;TV Slovenija 3|slo 3;Planet TV|planet;Val 202|val;Radio 1;Radio Center;Radio Ognjišče|ognjisce;Radio Študent|radio student|rs;Prvi program|prvi;Ars|program ars;Radio Si;Radio City;Radio Veseljak|veseljak;Radio Salomon|salomon;Radio Celje;Radio Velenje;Radio Antena|antena;Radio Aktual|aktual;Radio Hit;Radio Ekspres? ;Radio Maribor;Radio Koper;Radio Capodistria;Radio Kranj;Radio Triglav;Radio Krka? ;Radio Štajerski val|stajerski val;Radio Rogla;Radio Ptuj;Radio Murski val|murski val;Radio Sora;Radio Gorenc;Radio Robin;Radio Fantasy;Radio Ga-Ga? ;Brio;Oto;Kino;Nova24TV|nova24;TV3;Golica TV|golica;Net TV;Vaš kanal|vas kanal;TV Pika;Info TV;TV Koper|tv koper capodistria;TV Maribor;Arena Sport|arena;Šport TV|sport tv;Kanal 10;TV Paprika? ;Sportklub|sport klub;Radio Odeon|odeon;Radio Kum? `},
+ {id:'tradicija',g:'kultura',t:'Slovenska tradicija, praznik ali običaj',h:'Ljudski običaj, praznik, prireditev ali navada',a:`Kurentovanje|kurent|kurenti;Pust|pustovanje|pustni torek;Martinovo|martinovanje;Kres|kresovanje;Prešernov dan|presernov dan|kulturni praznik;Dan državnosti|dan drzavnosti;Dan samostojnosti in enotnosti|dan samostojnosti;Velika noč|velika noc|pirhi;Božič|bozic;Miklavž|miklavz;Dedek Mraz|dedek mraz;Silvestrovo;Kolednice|koledovanje;Butara|butarice;Žegnanje|zegnanje;Furež? ;Kravji bal;Kmečka ohcet|kmecka ohcet;Laufarija|cerkljanski laufarji|laufarji;Drežniški pust|dreznisko pustovanje;Ptujsko kurentovanje;Ljubljana Pride? ;Festival Lent|lent;Kamfest? ;Dan reformacije|reformacija;Dan spomina na mrtve|vsi sveti|dan mrtvih;Dan upora proti okupatorju|dan upora;Praznik dela|prvi maj|1 maj|kresovanje za prvi maj;Mlaj|postavljanje mlaja;Gregorjevo|gregorjevo spuscanje luck;Jurjevanje|zeleni jurij;Ohcet|svatba|poroka;Šranga|sranga;Krst? ;Krst na Triglavu|triglavski krst|sibanje na triglavu;Planica|polet v planico;Veselica|gasilska veselica;Trgatev;Koline|furez? ;Kres na Rožniku? ;Ivanjski kres|ivanjska noc;Godovanje|god;Ličkanje|lickanje|lupljenje koruze;Ikebana? ;Pirhi;Blagoslov jedil|zegen;Polnočnica|polnocnica;Jaslice;Pustni krofi? ;Kosci? ;Klopotec|klopotci;Spuščanje luči|spuscanje lucic;Dan zmage? ;Ljubljanski maraton? ;Ana Desetnica? ;Pohod ob žici|pohod ob zici|pot ob zici;Ples kurentov? ;Pustni karneval|karneval`},
+ {id:'pravljica',g:'kultura',t:'Junak slovenske pravljice, pripovedke ali otroške zgodbe',h:'Lik iz slovenske ljudske ali otroške literature',a:`Kekec;Martin Krpan|krpan;Kralj Matjaž|kralj matjaz;Peter Klepec|klepec;Lepa Vida;Zlatorog;Pehta;Bedanec;Mojca;Rožle|rozle;Maček Muri|macek muri|muri;Muca Copatarica|copatarica;Pedenjped;Ciciban;Butalci|butale;Mojca Pokrajculja|pokrajculja;Zvezdica Zaspanka|zaspanka;Kosovirja na leteči žlici|kosovirja;Pekarna Mišmaš|mismas;Desetnica|ana desetnica;Povodni mož|povodni moz;Veronika Deseniška|veronika;Erazem Predjamski|erazem;Kurent;Rojenice;Sojenice;Vile;Pegam in Lambergar|pegam|lambergar;Škrat Kuzma|skrat;Lisica Zvitorepka|zvitorepka;Jurij Muri;Ostržek? ;Hlapec Jernej|jernej;Kozamurnik;Moj dežnik je lahko balon? ;Bobi? ;Juri Muri;Lenuh Poležuh? ;Kekčeva Mojca? ;Volk in sedem kozličkov? ;Trdoglav? ;Zlata ptica? ;Sapramiška|sapramiska;Pastirček|pastircek? ;Mali princ? ;Bratovščina Sinjega galeba|sinji galeb|ivo;Mihec? ;Pastir? ;Pikica? ;Fičko|ficko;Medvedek Uhec? ;Hudi mački|kucki? ;Kapitan Ploh? ;Čarovnica Bimbalina? ;Hiša bibe? ;Jurček|jurcek;Zlatolaska? ;Kralj Samo|samo;Matiček|maticek;Kralj na Betajnovi|kantor;Lisjak? ;Kraljevič Marko? ;Gospodična? ;Mlin? ;Lakotnik? ;Drejček|drejcek? ;Živa|ziva;Vesna? ;Kresnik;Jarnik? `},
+ {id:'sleng',g:'kultura',t:'Slovenska pogovorna ali slengovska beseda',h:'Beseda, ki je ni v šolskem spisu, a jo slišiš vsak dan',a:`Fajn;Ful;Kul;Štala|stala;Fora;Ziher;Šiht|siht;Cajt;Glih;Flaša|flasa;Brija;Frend;Čaga|caga;Šmorn? ;Štekat|stekam;Špeh|speh;Luft;Fraj? ;Pir? ;Kao;Ej;Brate|brat;Bejba;Tip;Šleper|sleper;Šank|sank;Štrudl? ;Purgerji? ;Bajta;Fičo? ;Kišta|kista;Fejst;Pir;Fuzbal;Pajkica? ;Štacuna|stacuna;Šraufenciger|sraufenciger;Gvant;Cuker;Štrom|strom;Gajba;Rajža|rajza;Šnita|snita;Žur|zur;Žurirat|zurat;Hecat|hec;Štos|stos;Lajf;Fuš|fus;Fušar|fusar;Šparat|sparat;Štenge|stenge;Peglat;Šarm? ;Cipa;Pleh;Žlahta|zlahta;Ofen? ;Ajmohtar? ;Joj;Halo;Jao;Ajde|ajd;Lej|lej ga;Mal|mal mal;Pejt|pejd;Čuj|cuj;Lih|lih zdej;Zdej;Kva|kaj;Hoh? ;Res|res ja;Čao|cao;Ciao? ;Ziheraš|ziheras;Pička? ;Trapast|trapa;Ful dobr|ful dobro;Kr neki;Tko|tako;Mega;Hudo;Noro;Gajst? ;Štorija|storija;Šraufa|srauf;Ancug|ancug;Tavžent|tavzent;Lumpat? ;Pucat|pucati;Šparovček|sparovcek;Firbec|firbcen;Šlampast|slampast;Ajmoht? ;Štrudelj? ;Šoder|soder;Žnora|znora;Feder;Ferajn? ;Blesav|bles;Šus|sus;Kurc? ;Prfuknjen|prfuknjen;Bolj ko ne;Ma ja;Ma ne;Pa kaj|pa ja;Ja pa ja`},
+ {id:'kovanec',g:'kultura',t:'Motiv na slovenskem evrskem kovancu ali tolarju',h:'Kaj (ali kdo) je upodobljen na slovenskem denarju',a:`Prešeren|france preseren|2 evra|2 eur;Triglav|50 centov;Trubar|primoz trubar|1 evro|1 eur;Lipicanci|lipicanec|20 centov;Plečnikova katedrala svobode|plecnik|katedrala svobode|parlament|10 centov;Sejalec|grohar|5 centov;Knežji kamen|knezji kamen|2 centa;Štorklja|storklja|1 cent;Ivan Cankar|cankar|10000 tolarjev;Ivana Kobilca|kobilca|5000 tolarjev;Jakob Gallus|gallus|200 tolarjev;Rihard Jakopič|jakopic|100 tolarjev;Jurij Vega|vega|50 tolarjev;Janez Vajkard Valvasor|valvasor|20 tolarjev;Jože Plečnik|500 tolarjev;Primož Trubar na tolarju|10 tolarjev;Lipov list|lipa;Čebela|cebela|tolar cebela;Človeška ribica|cloveska ribica|proteus;Lastovka|lastovica|tolar;Rjavi medved|medved;Ris? ;Zlatorog? `},
+/* ---------------- ZNAMKE ---------------- */
+ {id:'izdelek',g:'znamke',t:'Slovenska znamka ali podjetje',h:'Znamka, izdelek ali podjetje s slovenskimi koreninami',a:`Gorenje;Krka;Lek;Elan;Pipistrel;Akrapovič|akrapovic;Radenska;Cockta;Fructal;Argeta;Gorenjka;Kolinska;Barcaffe;Žito|zito;Mercator;Union;Laško|lasko;Petrol;Tomos;Revoz;Alpina;Rog;Iskra;Hidria;Kolektor;Unior;Ljubljanske mlekarne;Pomurske mlekarne;Mlinotest;Perutnina Ptuj;Panvita;Celjske mesnine;Vipava 1894;Medex;Outfit7|talking tom|my talking tom;NLB;Nova KBM|kbm;Telekom Slovenije|telekom;Steklarna Rogaška|rogaska;Cinkarna;Peko;Bisol;Studio Moderna;Big Bang;Tuš|tus;Jub;Helios;Paloma;Šumi|sumi bonboni;Donat Mg|donat;Ilirija;Saturnus;Eta Cerkno|eta;Labod;Adria Airways;Slovenske železnice|sz;Pošta Slovenije|posta;Zavarovalnica Triglav|triglav;Sava;Luka Koper;Emo Celje|emo;Talum;Impol;Trimo;Cimos;GEN-I|gen i;Kompas;Lesnina;Merkur;Tosama;Kras;Pekarna Grosuplje;Bellabeat;Celtra;Chipolo;Viki krem|viki;Dana|dana mirna;Frutabela;Ptujska klet;Radgonske gorice;Medis;Hisense Gorenje;Petrol klub? ;Atlantic Droga Kolinska|droga kolinska;Kolosej;Spar? ;Sportina;Hervis? ;Lumpi? ;Prima;Kekec bonboni? ;Ledo? ;Jelovica;Marles;Lumar;Riko;Hidria;Akrapovič`},
+ {id:'trgovina',g:'znamke',t:'Trgovina ali veriga, ki jo najdeš v Sloveniji',h:'Kjerkoli nakupuješ – hrana, tehnika, oblačila, bencin …',a:`Mercator;Spar;Hofer;Lidl;Tuš|tus;Eurospin;Jager;Big Bang;Merkur;Bauhaus;OBI;Lesnina;Harvey Norman;dm;Müller|muller;Tedi;Pepco;Action;Petrol;OMV;MOL;Shell;Intersport;Hervis;Decathlon;Sportina;Zara;H&M|hm;Deichmann;Mana? ;Ikea;Jysk;Mömax|momax;Xxxlutz|lutz;Kik;New Yorker;Bershka;Pull&Bear|pull and bear;Primark;Mass;Humanic;Peko;Baby Center;Tom Tailor? ;Planet Tuš? ;Supernova;Citypark;BTC;Europark;Qlandia? ;Mercator center;Emporium;Aleja;Planet Tuš? ;Dom in vrt? ;Kalcer? ;Kmetijska zadruga|kz;Bio? ;Vrtni center? ;Rutar;Mladinska knjiga|mk;Libris? ;Konzum|konzum;Engrotuš|engrotus;Leclerc|e leclerc;Interspar;Mere? ;Kitajska trgovina? ;Telekom center? ;A1;Telemach;Mimovrste;Bigbang;Ceneje? ;Lekarna|lekarne;Lekarna Ljubljana? ;Sanolabor;Optika? ;Foodpanda? ;Wolt;Glovo;Pošta|posta`},
+ {id:'klub',g:'znamke',t:'Slovenski športni klub',h:'Nogomet, košarka, rokomet, hokej, odbojka …',a:`Olimpija|nk olimpija|olimpija ljubljana;Maribor|nk maribor;Celje|nk celje;Cedevita Olimpija|cedevita;Krka|kk krka;Koper|fc koper;Mura|ns mura;Domžale|nk domzale;Bravo|nk bravo;Radomlje;Aluminij;Primorje;Rudar Velenje|rudar;Gorica|nd gorica;Triglav Kranj|triglav;Union Olimpija;Helios Suns|helios;Šentjur|sentjur;Rogaška|rogaska;Zlatorog Laško|zlatorog;Ilirija;Sixt Primorska|primorska;Celje Pivovarna Laško|rk celje|celje pivovarna lasko;Gorenje Velenje|rk gorenje;Trimo Trebnje|trebnje;ACH Volley|ach;Calcit Volley|calcit;HK Jesenice|jesenice|acroni jesenice;HK Olimpija|olimpija hokej|hdd olimpija;Slovan;Krim|rk krim;Ljubljana? ;Nafta Lendava|nafta;Drava Ptuj|drava;Dravograd? ;Šampion? ;Interblock? ;Factor? ;Tabor Sežana|tabor sezana;Ankaran? ;Jadran Dekani? ;Bilje? ;Kalcer Radomlje;Rogaška Slatina? ;Rokometni klub Riko Ribnica|riko ribnica|ribnica;Loka|rk loka? ;Dol TKI Hrastnik? ;Maribor Branik|branik;Hit Gorica? ;Šentvid? ;Partizan? ;Kamnik|rk kamnik? ;Triglav Hokej? ;Hidria? ;Terme Olimia? ;Koper Rokomet? ;Jezica? ;Rogla? ;Krka Novo mesto`},
+];
+
+
+/* ================= MODES ================= */
+const MODES = [
+  {id:'polz', name:'Polž',          e:'🐌', c:'#a1887f', min:0.18},
+  {id:'poh',  name:'Pohodnik',      e:'🚶', c:'#5c8d4e', min:0.10},
+  {id:'plan', name:'Planinec',      e:'🥾', c:'#2f7fbf', min:0.06},
+  {id:'tek',  name:'Gorski tekač',  e:'🏃', c:'#00a69c', min:0.03},
+  {id:'alp',  name:'Alpinist',      e:'🧗', c:'#7b4fd6', min:0.015},
+  {id:'koz',  name:'Kozorog',       e:'🐐', c:'#e07a1f', min:0.005},
+  {id:'heli', name:'Helikopter GRS',e:'🚁', c:'#e0312d', min:0},
+];
+// zvezna lestvica: metri so odvisni od točnega deleža igralcev z istim odgovorom
+const gainFor=share=>{ const t=Math.max(0,Math.min(1,Math.log(0.45/Math.max(share,1e-4))/Math.log(0.45/0.002))); return Math.round(5+335*Math.pow(t,1.25)); };
+MODES.forEach((m,i)=>{ m.hi=gainFor(m.min||0.002); m.lo=i?MODES[i-1].hi:5; m.vm=m.hi; });
+const modeFor=s=>MODES.find(m=>s>=m.min)||MODES[MODES.length-1];
+
+/* ================= PRAVI TEREN (Copernicus DEM 30 m + OpenStreetMap) ================= */
+// x = vzhod (km), z = jug (km), višina v m. Vrh Triglava v izhodišču.
+const META={"core": {"x0": -3.8078622007408884, "z0": -5.745609921000267, "step": 0.01, "w": 930, "h": 867, "off": 500}, "ring": {"x0": -35.06504553874427, "z0": -31.305509920999917, "step": 0.15, "w": 482, "h": 401, "off": 0}, "route": [[0.9171, -3.7741], [0.8961, -3.7634], [0.8833, -3.7415], [0.8768, -3.7322], [0.8708, -3.6856], [0.8345, -3.6405], [0.8117, -3.5871], [0.7752, -3.5493], [0.7266, -3.5332], [0.7008, -3.5138], [0.6713, -3.4682], [0.6479, -3.4441], [0.6404, -3.4237], [0.6364, -3.4066], [0.6123, -3.3992], [0.5971, -3.3766], [0.5908, -3.3397], [0.5918, -3.3067], [0.5892, -3.2558], [0.5764, -3.2316], [0.5356, -3.2165], [0.5187, -3.1964], [0.486, -3.1827], [0.4608, -3.1443], [0.4556, -3.131], [0.4448, -3.123], [0.4266, -3.1021], [0.4134, -3.084], [0.3869, -3.0602], [0.3791, -3.0528], [0.3659, -3.0403], [0.3601, -3.0287], [0.3526, -3.0143], [0.3463, -3.0048], [0.3416, -3.0007], [0.333, -2.9984], [0.325, -2.9953], [0.318, -2.9905], [0.3083, -2.9782], [0.2986, -2.9654], [0.2922, -2.9538], [0.287, -2.9417], [0.2821, -2.9283], [0.2791, -2.9145], [0.2749, -2.9001], [0.2685, -2.8867], [0.261, -2.8752], [0.2512, -2.8645], [0.2435, -2.8531], [0.2361, -2.8411], [0.2275, -2.8331], [0.2168, -2.8258], [0.2074, -2.8181], [0.1996, -2.8081], [0.1896, -2.7923], [0.1843, -2.7826], [0.1805, -2.7731], [0.1786, -2.7641], [0.1762, -2.7556], [0.1703, -2.7392], [0.1629, -2.727], [0.1545, -2.7153], [0.1511, -2.7064], [0.1473, -2.696], [0.1438, -2.6829], [0.1419, -2.6699], [0.1402, -2.6463], [0.1388, -2.6232], [0.1418, -2.6021], [0.1452, -2.5773], [0.1459, -2.5641], [0.1408, -2.5505], [0.1361, -2.5381], [0.1326, -2.5226], [0.1312, -2.503], [0.1252, -2.487], [0.1221, -2.4791], [0.1195, -2.4708], [0.1181, -2.4588], [0.118, -2.4466], [0.1147, -2.4345], [0.1099, -2.4231], [0.1072, -2.4051], [0.1043, -2.3902], [0.1011, -2.3841], [0.093, -2.3733], [0.0866, -2.3592], [0.0846, -2.3424], [0.0814, -2.3272], [0.0766, -2.313], [0.0737, -2.3073], [0.0695, -2.3003], [0.0687, -2.2916], [0.0683, -2.2766], [0.0692, -2.2635], [0.0742, -2.2497], [0.0762, -2.2359], [0.0764, -2.2221], [0.0785, -2.2101], [0.082, -2.1907], [0.0789, -2.1752], [0.0731, -2.1589], [0.0707, -2.1459], [0.0698, -2.1307], [0.0706, -2.1164], [0.0729, -2.0987], [0.0675, -2.0795], [0.0649, -2.0598], [0.0575, -2.0496], [0.0559, -2.0368], [0.0523, -2.026], [0.0519, -2.0087], [0.0515, -1.9949], [0.0532, -1.9889], [0.0537, -1.9832], [0.0541, -1.9779], [0.0491, -1.9668], [0.0438, -1.9602], [0.0383, -1.9514], [0.0274, -1.9388], [0.0171, -1.9252], [0.0135, -1.9184], [0.0108, -1.9129], [0.0077, -1.909], [0.0024, -1.9064], [-0.0029, -1.9034], [-0.0077, -1.9014], [-0.0098, -1.8957], [-0.0096, -1.889], [-0.0099, -1.8837], [-0.0099, -1.8766], [-0.0102, -1.872], [-0.0086, -1.8686], [-0.0074, -1.8668], [-0.0039, -1.8629], [0.0004, -1.8517], [-0.0017, -1.8489], [-0.0013, -1.8443], [-0.0026, -1.8407], [-0.0028, -1.8375], [-0.0004, -1.8372], [0.0019, -1.8368], [0.0028, -1.8346], [0.004, -1.8322], [0.0051, -1.8275], [0.0059, -1.8245], [0.0041, -1.8181], [0.0004, -1.8116], [-0.0046, -1.8088], [-0.0093, -1.8055], [-0.0145, -1.7981], [-0.0158, -1.7918], [-0.017, -1.7855], [-0.0193, -1.781], [-0.0223, -1.7775], [-0.0266, -1.7725], [-0.0314, -1.7694], [-0.0362, -1.7675], [-0.0369, -1.763], [-0.0406, -1.7578], [-0.0426, -1.753], [-0.0448, -1.7464], [-0.0471, -1.7373], [-0.0487, -1.7276], [-0.0505, -1.7208], [-0.0511, -1.7129], [-0.0518, -1.706], [-0.0509, -1.7002], [-0.0541, -1.6925], [-0.0597, -1.6856], [-0.0631, -1.6755], [-0.0653, -1.668], [-0.0693, -1.6616], [-0.077, -1.6497], [-0.0832, -1.6389], [-0.0884, -1.6286], [-0.092, -1.6184], [-0.0978, -1.6087], [-0.1036, -1.5984], [-0.1092, -1.5867], [-0.1151, -1.5791], [-0.1243, -1.5689], [-0.1342, -1.5579], [-0.1345, -1.5476], [-0.1361, -1.5373], [-0.1409, -1.5142], [-0.1247, -1.4986], [-0.1195, -1.49], [-0.1218, -1.4772], [-0.1285, -1.4615], [-0.1092, -1.442], [-0.1063, -1.4387], [-0.1013, -1.4331], [-0.0942, -1.4325], [-0.0886, -1.4298], [-0.0775, -1.4218], [-0.0717, -1.4135], [-0.0698, -1.4126], [-0.0732, -1.409], [-0.0764, -1.4043], [-0.0805, -1.3983], [-0.0837, -1.3924], [-0.0861, -1.3852], [-0.087, -1.3763], [-0.0857, -1.3675], [-0.0872, -1.361], [-0.0874, -1.3532], [-0.0857, -1.3517], [-0.0812, -1.3514], [-0.0812, -1.3485], [-0.0795, -1.3463], [-0.075, -1.3469], [-0.0701, -1.3484], [-0.0695, -1.3456], [-0.0632, -1.3457], [-0.0603, -1.3436], [-0.0546, -1.3441], [-0.0509, -1.3421], [-0.0502, -1.3359], [-0.0482, -1.3304], [-0.045, -1.3309], [-0.0409, -1.3223], [-0.0437, -1.3095], [-0.0448, -1.3039], [-0.0474, -1.2982], [-0.0457, -1.2924], [-0.0429, -1.2824], [-0.0383, -1.2765], [-0.0265, -1.2755], [-0.0163, -1.2779], [-0.0069, -1.2789], [-0.0002, -1.2833], [0.0133, -1.2829], [0.0143, -1.2773], [0.0146, -1.2714], [0.0175, -1.2702], [0.0202, -1.2722], [0.0234, -1.2772], [0.0245, -1.2737], [0.0267, -1.2734], [0.0295, -1.2775], [0.0323, -1.2786], [0.0345, -1.2773], [0.0339, -1.2737], [0.034, -1.271], [0.0356, -1.2686], [0.0426, -1.2728], [0.0543, -1.2767], [0.0651, -1.2817], [0.0731, -1.2847], [0.0765, -1.2873], [0.0797, -1.288], [0.0829, -1.2877], [0.0856, -1.2859], [0.0881, -1.2834], [0.0927, -1.284], [0.099, -1.2864], [0.1027, -1.2896], [0.1089, -1.2924], [0.1134, -1.2977], [0.124, -1.3021], [0.1309, -1.3046], [0.1365, -1.3076], [0.1412, -1.3122], [0.1524, -1.3164], [0.1623, -1.32], [0.1682, -1.3241], [0.1743, -1.3268], [0.1798, -1.3274], [0.184, -1.3294], [0.1906, -1.3326], [0.1984, -1.3369], [0.2164, -1.3394], [0.2216, -1.3412], [0.2261, -1.3478], [0.2303, -1.3531], [0.2314, -1.3571], [0.2326, -1.3615], [0.2364, -1.3558], [0.2381, -1.3597], [0.2402, -1.357], [0.2412, -1.3537], [0.2432, -1.3519], [0.2465, -1.3519], [0.2543, -1.3517], [0.2617, -1.353], [0.2707, -1.3577], [0.2756, -1.3603], [0.2806, -1.3642], [0.2832, -1.3714], [0.2868, -1.3732], [0.2922, -1.3742], [0.2963, -1.3724], [0.3015, -1.3804], [0.3067, -1.3842], [0.3136, -1.3894], [0.3218, -1.395], [0.3283, -1.3938], [0.3355, -1.3941], [0.3463, -1.4025], [0.3545, -1.4082], [0.3611, -1.4103], [0.3662, -1.4155], [0.3702, -1.4199], [0.3774, -1.422], [0.3821, -1.4296], [0.3835, -1.4354], [0.3823, -1.4403], [0.3851, -1.4437], [0.3904, -1.4477], [0.3961, -1.4492], [0.4053, -1.4513], [0.4118, -1.4533], [0.4159, -1.4582], [0.4219, -1.4618], [0.4243, -1.4672], [0.4296, -1.4694], [0.4318, -1.4712], [0.4332, -1.4765], [0.4337, -1.48], [0.4355, -1.4841], [0.4397, -1.4845], [0.442, -1.4886], [0.4499, -1.4887], [0.4539, -1.4901], [0.4586, -1.4943], [0.4618, -1.4947], [0.4641, -1.4963], [0.4681, -1.5016], [0.4728, -1.5036], [0.4777, -1.5064], [0.4836, -1.5082], [0.4878, -1.5112], [0.4892, -1.5157], [0.4933, -1.5191], [0.4971, -1.5239], [0.4998, -1.53], [0.5041, -1.5363], [0.5103, -1.5424], [0.5203, -1.5479], [0.5265, -1.5529], [0.5331, -1.5564], [0.538, -1.5555], [0.5451, -1.556], [0.5515, -1.5628], [0.554, -1.5703], [0.5575, -1.568], [0.5597, -1.572], [0.5663, -1.5725], [0.5717, -1.5767], [0.5781, -1.5841], [0.5878, -1.5924], [0.5972, -1.6003], [0.6025, -1.6041], [0.6083, -1.6084], [0.6105, -1.6136], [0.6106, -1.6183], [0.6118, -1.621], [0.6224, -1.6206], [0.6247, -1.6246], [0.6277, -1.6268], [0.6303, -1.6242], [0.6336, -1.6241], [0.6373, -1.6273], [0.6398, -1.6274], [0.6411, -1.6221], [0.6466, -1.6192], [0.6508, -1.6204], [0.6533, -1.6157], [0.6588, -1.6092], [0.6622, -1.6059], [0.6668, -1.6014], [0.6656, -1.5966], [0.6677, -1.5968], [0.6685, -1.5933], [0.6623, -1.5909], [0.6621, -1.5874], [0.6671, -1.5868], [0.6779, -1.585], [0.674, -1.5817], [0.6639, -1.572], [0.6551, -1.5629], [0.6476, -1.5613], [0.6379, -1.5549], [0.6272, -1.5431], [0.6238, -1.5375], [0.6214, -1.5347], [0.6166, -1.5307], [0.6122, -1.5278], [0.6055, -1.5279], [0.6016, -1.5229], [0.5987, -1.5188], [0.5951, -1.5199], [0.5905, -1.5161], [0.5853, -1.5125], [0.5828, -1.5102], [0.5872, -1.5085], [0.5828, -1.5018], [0.5817, -1.493], [0.5834, -1.4913], [0.5893, -1.4904], [0.5899, -1.4874], [0.59, -1.4845], [0.5896, -1.4821], [0.591, -1.4798], [0.5936, -1.4789], [0.5987, -1.4811], [0.6018, -1.4797], [0.6064, -1.4756], [0.6069, -1.4698], [0.6114, -1.467], [0.6118, -1.4612], [0.6145, -1.4592], [0.6181, -1.4611], [0.6207, -1.4623], [0.6247, -1.4683], [0.6282, -1.4701], [0.6324, -1.4647], [0.6336, -1.4587], [0.6362, -1.4508], [0.6386, -1.4523], [0.645, -1.4612], [0.6538, -1.468], [0.6617, -1.4695], [0.6652, -1.4738], [0.6667, -1.4834], [0.6636, -1.4899], [0.6622, -1.4936], [0.6705, -1.5023], [0.6794, -1.5092], [0.6886, -1.5144], [0.6908, -1.509], [0.6908, -1.4996], [0.6845, -1.4921], [0.6879, -1.485], [0.6933, -1.4838], [0.6949, -1.481], [0.6919, -1.4791], [0.6952, -1.4754], [0.6953, -1.4723], [0.6914, -1.4648], [0.686, -1.4592], [0.6797, -1.4525], [0.6786, -1.4477], [0.6791, -1.4436], [0.682, -1.4417], [0.6873, -1.443], [0.6921, -1.4475], [0.6977, -1.4486], [0.7013, -1.4523], [0.7095, -1.449], [0.7104, -1.4419], [0.7136, -1.4369], [0.7212, -1.4384], [0.7249, -1.4453], [0.7284, -1.446], [0.7318, -1.4386], [0.7343, -1.4273], [0.7371, -1.4361], [0.7383, -1.4436], [0.7383, -1.451], [0.7374, -1.4596], [0.7396, -1.4614], [0.7453, -1.4559], [0.7522, -1.4501], [0.7634, -1.4412], [0.764, -1.4348], [0.764, -1.4288], [0.7704, -1.4229], [0.7805, -1.4179], [0.7883, -1.4048], [0.7958, -1.4007], [0.8027, -1.3951], [0.8067, -1.3879], [0.8202, -1.3791], [0.8268, -1.38], [0.8283, -1.3765], [0.8309, -1.3759], [0.8333, -1.3777], [0.8372, -1.3778], [0.84, -1.3723], [0.8417, -1.3641], [0.8378, -1.3559], [0.8352, -1.3467], [0.8309, -1.3303], [0.8277, -1.3194], [0.8253, -1.31], [0.828, -1.2986], [0.8271, -1.2905], [0.8313, -1.2872], [0.825, -1.2689], [0.8106, -1.2683], [0.8029, -1.2654], [0.8018, -1.2633], [0.8062, -1.2601], [0.8077, -1.2584], [0.8079, -1.2561], [0.8057, -1.2546], [0.8055, -1.2524], [0.8075, -1.2494], [0.8099, -1.2485], [0.8084, -1.2425], [0.8039, -1.237], [0.8063, -1.2287], [0.8105, -1.22], [0.8239, -1.2172], [0.8322, -1.2175], [0.84, -1.2194], [0.8427, -1.2256], [0.847, -1.2257], [0.8511, -1.2274], [0.8528, -1.2319], [0.8603, -1.2305], [0.8679, -1.2329], [0.8742, -1.2334], [0.8714, -1.2281], [0.8681, -1.2228], [0.869, -1.2185], [0.8737, -1.2116], [0.8832, -1.2168], [0.8935, -1.2195], [0.9077, -1.223], [0.9147, -1.2295], [0.9187, -1.2369], [0.9211, -1.2421], [0.926, -1.2471], [0.9326, -1.2509], [0.9433, -1.2548], [0.9485, -1.2525], [0.9518, -1.2555], [0.9524, -1.2596], [0.9554, -1.261], [0.9583, -1.266], [0.9569, -1.2693], [0.9577, -1.2736], [0.9645, -1.2785], [0.9692, -1.2811], [0.9735, -1.2805], [0.9847, -1.2805], [0.9913, -1.2807], [0.9985, -1.2847], [1.0021, -1.284], [1.004, -1.2803], [1.0078, -1.2824], [1.0116, -1.2807], [1.0186, -1.2765], [1.0227, -1.2769], [1.0223, -1.2831], [1.0195, -1.2902], [1.0143, -1.296], [1.0073, -1.3033], [1.0022, -1.3123], [1.0022, -1.3163], [1.006, -1.3275], [1.0111, -1.3382], [1.0189, -1.3412], [1.0323, -1.3425], [1.0407, -1.3462], [1.045, -1.3415], [1.0545, -1.3414], [1.0629, -1.3395], [1.0712, -1.3329], [1.0872, -1.3233], [1.0977, -1.3193], [1.1044, -1.3209], [1.1107, -1.3236], [1.116, -1.3203], [1.1341, -1.3083], [1.1415, -1.3039], [1.1507, -1.3025], [1.16, -1.2999], [1.1665, -1.2897], [1.1708, -1.2795], [1.1814, -1.2601], [1.1796, -1.2508], [1.1886, -1.247], [1.1922, -1.2322], [1.1947, -1.2189], [1.199, -1.2045], [1.2019, -1.1999], [1.2067, -1.1978], [1.2112, -1.1886], [1.2162, -1.1761], [1.2233, -1.1696], [1.2247, -1.1628], [1.2247, -1.1557], [1.2158, -1.1536], [1.2182, -1.1345], [1.2131, -1.1185], [1.2065, -1.1056], [1.2056, -1.0926], [1.2025, -1.0879], [1.2, -1.0786], [1.1947, -1.0691], [1.1861, -1.0574], [1.1761, -1.0507], [1.1713, -1.0425], [1.1661, -1.036], [1.1527, -1.0246], [1.1489, -1.0146], [1.1454, -1.0008], [1.1409, -0.994], [1.1313, -0.9868], [1.1271, -0.9861], [1.1202, -0.9789], [1.1144, -0.9769], [1.1126, -0.9701], [1.1071, -0.9728], [1.104, -0.971], [1.0999, -0.972], [1.091, -0.9577], [1.0847, -0.9402], [1.0876, -0.9371], [1.0894, -0.9246], [1.0802, -0.9131], [1.0769, -0.9022], [1.0776, -0.8936], [1.0785, -0.8855], [1.084, -0.889], [1.0794, -0.8778], [1.0741, -0.8667], [1.0695, -0.8668], [1.0621, -0.8607], [1.0593, -0.8552], [1.0577, -0.8512], [1.0501, -0.8502], [1.0409, -0.8458], [1.0324, -0.8408], [1.0096, -0.8241], [0.9893, -0.8104], [0.9788, -0.7994], [0.9708, -0.7917], [0.966, -0.7853], [0.9596, -0.7852], [0.9619, -0.7804], [0.9567, -0.7733], [0.9588, -0.7614], [0.956, -0.7543], [0.9499, -0.75], [0.9488, -0.743], [0.9537, -0.7336], [0.9513, -0.7277], [0.9468, -0.7233], [0.9457, -0.7147], [0.9489, -0.7081], [0.9491, -0.7039], [0.9533, -0.6994], [0.9541, -0.6806], [0.96, -0.6718], [0.9649, -0.6644], [0.9706, -0.6646], [0.9773, -0.652], [0.9772, -0.6404], [0.9773, -0.6265], [0.9806, -0.6163], [0.9786, -0.6042], [0.9776, -0.5896], [0.9814, -0.5732], [0.9895, -0.5646], [0.9989, -0.5568], [1.0025, -0.5517], [1.0032, -0.5455], [0.9952, -0.536], [0.9911, -0.525], [0.9911, -0.5196], [0.9939, -0.5142], [0.9961, -0.504], [1.0027, -0.4967], [1.0014, -0.4861], [1.0084, -0.4733], [1.0095, -0.4677], [1.0041, -0.4647], [0.9991, -0.4573], [0.988, -0.4413], [0.9822, -0.4304], [0.979, -0.4239], [0.9745, -0.4142], [0.9645, -0.4068], [0.9556, -0.3992], [0.9513, -0.3929], [0.9515, -0.3892], [0.9496, -0.3853], [0.9464, -0.3847], [0.943, -0.3821], [0.9405, -0.3761], [0.938, -0.3671], [0.9302, -0.3526], [0.9194, -0.3343], [0.9215, -0.3246], [0.9295, -0.3187], [0.93, -0.3069], [0.927, -0.2942], [0.9319, -0.2793], [0.9345, -0.2673], [0.9394, -0.2672], [0.9426, -0.2692], [0.9446, -0.2688], [0.9372, -0.2544], [0.9308, -0.2347], [0.9219, -0.2236], [0.9124, -0.2141], [0.9063, -0.204], [0.8995, -0.2011], [0.895, -0.1912], [0.8859, -0.1869], [0.8823, -0.1813], [0.8773, -0.1676], [0.8797, -0.1563], [0.888, -0.1482], [0.8952, -0.1387], [0.8925, -0.1112], [0.8968, -0.0941], [0.9034, -0.0835], [0.916, -0.0902], [0.9249, -0.0942], [0.9302, -0.0951], [0.934, -0.0933], [0.949, -0.091], [0.934, -0.0933], [0.9302, -0.0951], [0.9249, -0.0942], [0.916, -0.0902], [0.9034, -0.0835], [0.9018, -0.0738], [0.8983, -0.0671], [0.8887, -0.0647], [0.8855, -0.0654], [0.8813, -0.0652], [0.8748, -0.0698], [0.8686, -0.0669], [0.8632, -0.0694], [0.858, -0.0657], [0.8555, -0.0594], [0.8562, -0.0528], [0.8549, -0.0472], [0.8452, -0.0421], [0.8368, -0.0392], [0.8287, -0.0318], [0.8187, -0.0234], [0.8079, -0.0185], [0.8048, -0.0163], [0.8115, -0.0111], [0.8135, -0.0031], [0.8076, 0.0028], [0.7997, 0.0019], [0.7856, 0.0098], [0.7796, 0.0123], [0.774, 0.019], [0.7751, 0.0241], [0.7703, 0.0275], [0.7654, 0.0296], [0.7593, 0.0436], [0.7593, 0.0497], [0.7566, 0.0557], [0.7494, 0.0596], [0.7442, 0.0573], [0.7388, 0.0605], [0.7341, 0.0644], [0.7272, 0.0704], [0.7211, 0.075], [0.7159, 0.079], [0.7163, 0.0854], [0.716, 0.0898], [0.7112, 0.0931], [0.7136, 0.0979], [0.7211, 0.0993], [0.7271, 0.103], [0.7292, 0.11], [0.7251, 0.1147], [0.7208, 0.1274], [0.719, 0.1411], [0.7151, 0.1459], [0.7041, 0.1457], [0.6964, 0.1509], [0.6876, 0.1549], [0.6795, 0.156], [0.6716, 0.1549], [0.6572, 0.1462], [0.6513, 0.1471], [0.6432, 0.1501], [0.6365, 0.153], [0.6276, 0.1564], [0.6182, 0.1609], [0.5957, 0.177], [0.584, 0.183], [0.5728, 0.184], [0.558, 0.1808], [0.546, 0.1787], [0.5224, 0.1699], [0.5113, 0.1609], [0.5, 0.154], [0.4891, 0.1471], [0.4792, 0.139], [0.468, 0.1297], [0.4508, 0.1241], [0.4429, 0.1184], [0.4234, 0.1076], [0.4109, 0.1019], [0.3967, 0.096], [0.3875, 0.093], [0.3695, 0.0882], [0.3597, 0.0871], [0.3493, 0.0852], [0.3393, 0.0814], [0.327, 0.0803], [0.3126, 0.0803], [0.2995, 0.0717], [0.2865, 0.0675], [0.2682, 0.0603], [0.2519, 0.0589], [0.2353, 0.0598], [0.2228, 0.0604], [0.2084, 0.0622], [0.1977, 0.0605], [0.1785, 0.0541], [0.1624, 0.044], [0.1498, 0.0409], [0.1371, 0.0407], [0.1208, 0.0394], [0.1127, 0.0387], [0.1048, 0.0397], [0.1023, 0.0405], [0.0999, 0.0418], [0.0973, 0.0437], [0.096, 0.0463], [0.0943, 0.0487], [0.0929, 0.0491], [0.0908, 0.0483], [0.0794, 0.0493], [0.0643, 0.0471], [0.0556, 0.046], [0.0404, 0.0409], [0.0336, 0.0335], [0.0329, 0.0321], [0.0297, 0.0264], [0.0197, 0.0138], [0.011, 0.0049], [0.0, -0.0007]], "peaks": [["Triglav", 0.0, 0.0, 2864], ["Kanjavec", -2.055, 2.021, 2569], ["Kri\u017e", -1.951, -3.529, 2410], ["Bov\u0161ki Gamsovec", -1.837, -2.214, 2392], ["Stenar", -1.384, -3.299, 2501], ["Mali Triglav", 0.489, 0.147, 2738], ["Triglavski steber", -0.368, -0.488, 2470], ["Mala Rjavina", 3.082, -1.352, 2530], ["R\u017e", 1.733, -0.373, 2538], ["Rjavec", 0.214, 0.723, 2571], ["Rjavina", 3.398, -1.513, 2532], ["Mali Dra\u0161ki vrh", 4.223, 1.703, 2132], ["Veliki Dra\u0161ki vrh", 3.01, 2.011, 2240], ["Cmir", 1.803, -2.484, 2393], ["Kali\u0161\u010de", 0.546, -5.315, 1872], ["Kredarica", 1.218, -0.204, 2540], ["Po\u017ear", 3.812, -4.691, 1543], ["Po\u017egana Mlinarica", 3.295, -3.288, 1871], ["Begunjski vrh", 1.37, -1.335, 2462], ["Luknja pe\u010d", 4.291, -1.954, 2249], ["Mali Pr\u0161ivec", 3.595, 0.293, 1990], ["Veliki Pr\u0161ivec", 3.866, -0.349, 2056], ["Dimniki", 4.715, -2.213, 2104], ["Dolkova glava", -0.478, -4.284, 1717], ["Dolkova \u0161pica", -1.672, -5.268, 2591], ["Dov\u0161ki Gamsovec", -2.171, -5.005, 2440], ["Dov\u0161ki Pihavec", -1.934, -2.867, 2215], ["Glava v Zaplanji", -0.659, 0.107, 2556], ["Gubno", -2.22, -4.313, 2404], ["Kri\u0161ki rob", -2.654, -3.505, 2357], ["Lengarjeva glava", 4.194, -5.018, 1498], ["Mali Pihavec", -2.486, -1.127, 2182], ["Mizica", -2.532, -5.593, 1718], ["Nad Kuhinjo \u0161pica", 2.108, -2.714, 2265], ["Rjav\u010deve glave", 1.605, -2.137, 2365], ["Spodnji Stenar", -1.059, -3.055, 2381], ["Spodnja Dolkova \u0161pica", -1.388, -5.049, 2532], ["Spodnja Vrbanova \u0161pica", 2.487, -2.034, 2294], ["Strme police", -0.876, -4.559, 1982], ["Turn pod Stenarjem", -0.823, -2.794, 2177], ["Vernar", 1.912, 1.9, 2216], ["Visoka Vrbanova \u0161pica", 1.958, -1.491, 2410], ["Vrh nad Kamnom", -2.067, -1.77, 2360], ["Glava za \u017dlebom", -1.995, 1.426, 2362], ["\u0160marjetna glava", -0.73, 1.551, 2355], ["\u0160plevta", -2.568, -1.896, 2223], ["Vrh Sne\u017ene konte", 1.434, 0.152, 2361], ["Triglavski Vogel", 0.929, 0.519, 2517], ["Glava", 0.517, -0.41, 2426], ["Plesi\u0161\u010de", 2.43, -1.97, 2284], ["Ru\u0161nata Mlinarica", 3.374, -3.884, 1777], ["Macesni", 0.488, -1.191, 1803], ["Stan", 4.459, -2.64, 1546], ["Pihavec", -2.324, -1.621, 2417], ["Dra\u0161ki rob", 4.662, 1.393, 1981], ["Vrh Zelenic", -1.095, 0.033, 2478], ["Ustoli\u010denje", 0.641, -1.058, 2029], ["Nem\u0161ki turnc", 0.158, -0.732, 1986], ["Grad", 0.137, -0.889, 1804], ["Bavarski turnc", -0.012, -0.83, 1721], ["Skala\u0161ki turnc", -0.109, -0.788, 1865], ["Slovenski turnc", 0.297, -0.587, 2313], ["Gorenjski turnc", -0.145, -0.717, 2016], ["Rjavka", 2.187, 1.657, 1918], ["Vzhodna glava", 0.914, -0.986, 2313], ["Arhova glava", 2.16, 0.788, 1944], ["Kanjav\u010dev \u010dop", -1.63, 1.763, 2403], ["Griva", -2.758, -2.602, 2050], ["Ladja", 2.955, -2.148, 1919], ["Brinova glava", 1.354, -5.546, 1586], ["Rogljica", -1.864, -5.484, 2547], ["Kurica", 1.984, 1.196, 2028], ["\u010cinkelman", 1.813, 1.648, 2124], ["Glava nad Doli\u010dem", -1.0, 1.213, 2345], ["Cesar", 1.612, 1.612, 2093], ["Oklo", 1.654, 1.678, 2082], ["Mokra skala", 0.939, 1.228, 2266], ["Kucelj", -1.312, -5.435, 2372], ["Macesence", -1.289, -3.336, 2472], ["Glave nad Sovatno", -1.422, -2.123, 2128], ["Plemenice", -1.085, -0.482, 2372], ["Sfinga", -0.925, -0.349, 2384], ["Rjav\u010deve glave (ju\u017eni vrh)", 1.329, -1.755, 2361], ["Vratarska Mlinarica", 3.01, -4.113, 1588], ["Suhinjec", -0.095, -5.715, 2161], ["Teme", 3.903, -1.022, 2136]]};
+const perm=new Uint8Array(512);{let s=1337;const p=[...Array(256).keys()];for(let i=255;i>0;i--){s=(s*16807)%2147483647;const j=s%(i+1);[p[i],p[j]]=[p[j],p[i]];}for(let i=0;i<512;i++)perm[i]=p[i&255];}
+const fade=t=>t*t*t*(t*(t*6-15)+10), lerp=(a,b,t)=>a+(b-a)*t, clamp01=v=>v<0?0:v>1?1:v;
+function grad(h,x,y){const g=h&7;const u=g<4?x:y,v=g<4?y:x;return ((g&1)?-u:u)+((g&2)?-2*v:2*v);}
+function noise(x,y){const X=Math.floor(x)&255,Y=Math.floor(y)&255;x-=Math.floor(x);y-=Math.floor(y);const u=fade(x),v=fade(y);const a=perm[X]+Y,b=perm[X+1]+Y;return lerp(lerp(grad(perm[a],x,y),grad(perm[b],x-1,y),u),lerp(grad(perm[a+1],x,y-1),grad(perm[b+1],x-1,y-1),u),v)*0.35;}
+function fbm(x,y,o=4){let s=0,a=1,f=1,n=0;for(let i=0;i<o;i++){s+=a*noise(x*f,y*f);n+=a;a*=.5;f*=2.03;}return s/n;}
+async function loadDEM(url,m){
+  const img=new Image(); img.src=url; await img.decode();
+  const cv=document.createElement('canvas'); cv.width=m.w; cv.height=m.h; const cx=cv.getContext('2d',{willReadFrequently:true}); cx.drawImage(img,0,0);
+  const d=cx.getImageData(0,0,m.w,m.h).data; const a=new Float32Array(m.w*m.h);
+  for(let i=0;i<a.length;i++) a[i]=(d[i*4]*256+d[i*4+1])/10+m.off; return a;
+}
+const CM=META.core, RM=META.ring;
+let DEMC, DEMR;
+try{ [DEMC,DEMR]=await Promise.all([loadDEM('dem_core.png',CM),loadDEM('dem_ring.png',RM)]); }
+catch(e){ window.__err='Višinski podatki gore se niso naložili.'; throw e; }
+function sampleG(A,m,x,z){ let fx=(x-m.x0)/m.step, fz=(z-m.z0)/m.step; fx=Math.max(0,Math.min(m.w-1.001,fx)); fz=Math.max(0,Math.min(m.h-1.001,fz));
+  const i=Math.floor(fx), j=Math.floor(fz), u=fx-i, v=fz-j, k=j*m.w+i; return (A[k]*(1-u)+A[k+1]*u)*(1-v)+(A[k+m.w]*(1-u)+A[k+m.w+1]*u)*v; }
+const CX1=CM.x0+(CM.w-1)*CM.step, CZ1=CM.z0+(CM.h-1)*CM.step;
+function coreW(x,z){ const e=Math.min(x-CM.x0,CX1-x,z-CM.z0,CZ1-z); return clamp01((e-0.02)/0.25); }
+function H(x,z){ const w=coreW(x,z); if(w>=1) return sampleG(DEMC,CM,x,z); const r=sampleG(DEMR,RM,x,z); return w<=0?r:lerp(r,sampleG(DEMC,CM,x,z),w); }
+
+/* ---- pot (OSM: Aljažev dom → Prag → Kredarica → Mali Triglav → Triglav) ---- */
+const RT=META.route.map(([x,z])=>({x,z,h:H(x,z)}));
+const CG=[0], ARC=[0]; for(let i=1;i<RT.length;i++){ CG.push(CG[i-1]+Math.max(0,RT[i].h-RT[i-1].h)); ARC.push(ARC[i-1]+Math.hypot(RT[i].x-RT[i-1].x,RT[i].z-RT[i-1].z)); }
+const GPLUS=CG[CG.length-1], ARCT=ARC[ARC.length-1];
+const BASE=1015, TOP=2864, GAIN=TOP-BASE;
+const nearestIdx=(x,z)=>{ let b=0,bd=1e9; RT.forEach((p,i)=>{const d=(p.x-x)**2+(p.z-z)**2; if(d<bd){bd=d;b=i;}}); return b; };
+const iPrag=RT.findIndex(p=>p.h>1720);
+const WP=[
+  {n:'Aljažev dom v Vratih', e:1015, i:0},
+  {n:'Prag', e:Math.round(RT[iPrag].h/10)*10, i:iPrag},
+  {n:'Kredarica · Triglavski dom', e:2515, i:nearestIdx(0.9466,-0.0891)},
+  {n:'Mali Triglav', e:2725, i:nearestIdx(0.4894,0.1471)},
+  {n:'Triglav', e:2864, i:RT.length-1},
+];
+WP.forEach(w=>{ w.vmAt=Math.round(CG[w.i]/GPLUS*GAIN); w.x=RT[w.i].x; w.z=RT[w.i].z; w.show=1; });
+const PEAKS=(META.peaks||[]).filter(p=>['Stenar','Cmir','Begunjski vrh','Rjavina','Kanjavec','Bovški Gamsovec','Rž','Vernar','Dolkova špica','Visoka Vrbanova špica','Glava v Zaplanji'].includes(p[0]));
+function idxForVm(vm){ const g=clamp01(vm/GAIN)*GPLUS; let lo=0,hi=CG.length-1; while(hi-lo>1){const m=(lo+hi)>>1; if(CG[m]<=g) lo=m; else hi=m;} const f=CG[hi]>CG[lo]?(g-CG[lo])/(CG[hi]-CG[lo]):0; return [lo,hi,f]; }
+function vmToU(vm){ if(vm>=GAIN) return 1; const [a,b,f]=idxForVm(vm); return lerp(ARC[a],ARC[b],f)/ARCT; }
+function altAt(vm){ if(vm>=GAIN) return TOP; const [a,b,f]=idxForVm(vm); const h=lerp(RT[a].h,RT[b].h,f); const t=clamp01(vm/GAIN); return Math.min(TOP-1,Math.round(h+(BASE-RT[0].h)*(1-t)+(TOP-RT[RT.length-1].h)*t)); }
+function placeName(vm){ let p=WP[0]; for(const w of WP){ if(w.vmAt<=vm+0.5) p=w; } const nx=WP.find(w=>w.vmAt>vm+0.5); if(!nx||vm-p.vmAt<40) return p.n; return 'pod: '+nx.n.split(' · ')[0]; }
+
+/* ================= THREE SETUP ================= */
+const canvas=document.getElementById('gl');
+let renderer,scene,camera,ok=true;
+const EX=1.08, Y=e=>e/1000*EX;
+try{ renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true,powerPreference:'high-performance',logarithmicDepthBuffer:true}); }catch(e){ok=false;}
+const MOB=innerWidth<760;
+let pathCurve, tubeMain, tubeDone, tubeSegs=1600, climberMesh, ringMesh, clouds=[], KS=null, KR=null, flag=null;
+// barvna lestvica (sRGB 0..1)
+const PAL={meadow:[.50,.60,.33],forest:[.20,.30,.18],pine:[.28,.35,.22],grass:[.55,.55,.38],scree:[.74,.71,.65],rock:[.66,.64,.60],dark:[.45,.43,.41],snow:[.95,.97,.98]};
+const mix3=(a,b,t,o)=>{o[0]=a[0]+(b[0]-a[0])*t;o[1]=a[1]+(b[1]-a[1])*t;o[2]=a[2]+(b[2]-a[2])*t;return o;};
+function terrainColor(h,slope,x,z,o){
+  const v=fbm(x*4.5+h*0.002,z*4.5,3); const t=[0,0,0];
+  if(h<1250) mix3(PAL.meadow,PAL.forest,clamp01(slope*2.5+0.35+v),o);
+  else if(h<1700) mix3(PAL.forest,PAL.pine,clamp01((h-1250)/450),o);
+  else if(h<2050) mix3(PAL.pine,PAL.grass,clamp01((h-1700)/350),o);
+  else { o[0]=PAL.scree[0];o[1]=PAL.scree[1];o[2]=PAL.scree[2]; }
+  if(slope>0.3||h>2050){ mix3(slope>0.6?PAL.dark:PAL.rock,PAL.scree,clamp01(0.5-slope+v*0.6),t); mix3(o,t,clamp01((slope-0.25)*3+(h>2150?0.7:0)),o); }
+  const sl=2150+v*550; if(h>sl&&slope<0.42) mix3(o,PAL.snow,clamp01((h-sl)/150)*clamp01((0.42-slope)*5),o);
+  if(h>2600&&slope<0.55) mix3(o,PAL.snow,0.5*(1-slope*1.5),o);
+  const k=0.95+v*0.14; o[0]*=k;o[1]*=k;o[2]*=k; return o;
+}
+if(ok){
+  renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+  renderer.setSize(innerWidth,innerHeight);
+  renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+  renderer.toneMapping=THREE.ACESFilmicToneMapping; renderer.toneMappingExposure=1.05;
+  scene=new THREE.Scene();
+  scene.fog=new THREE.FogExp2(0xdfe8ef,0.042);
+  camera=new THREE.PerspectiveCamera(38,innerWidth/innerHeight,0.01,90);
+  scene.add(new THREE.HemisphereLight(0xd6e8ff,0x6b5d48,1.15));
+  const sun=new THREE.DirectionalLight(0xfff1dc,2.6);
+  sun.position.set(5,9,-6); sun.target.position.set(0,1.5,-1); scene.add(sun.target);
+  sun.castShadow=true; sun.shadow.mapSize.set(MOB?1024:2048,MOB?1024:2048); const sc=sun.shadow.camera; sc.left=-6;sc.right=6;sc.top=6;sc.bottom=-6;sc.near=1;sc.far=30;
+  sun.shadow.bias=-0.0004; sun.shadow.normalBias=0.03;
+  scene.add(sun);
+
+  // --- jedro: 10 m tekstura (barva + normale), mreža ~20 m
+  const W=CX1-CM.x0, Hc=CZ1-CM.z0, div=MOB?3:2;
+  const g=new THREE.PlaneGeometry(W,Hc,Math.round((CM.w-1)/div),Math.round((CM.h-1)/div)); g.rotateX(-Math.PI/2); g.translate(CM.x0+W/2,0,CM.z0+Hc/2);
+  const pos=g.attributes.position; for(let i=0;i<pos.count;i++) pos.setY(i,Y(sampleG(DEMC,CM,pos.getX(i),pos.getZ(i))));
+  g.computeVertexNormals();
+  const TW=CM.w, TH=CM.h, nrm=new Uint8Array(TW*TH*4), alb=new Uint8Array(TW*TH*4), o=[0,0,0], st=CM.step*1000;
+  // zamegljena višina (za grape, grebene in senčenje)
+  const blur=(A,rad)=>{ const tmp=new Float32Array(A.length), out=new Float32Array(A.length), n=2*rad+1;
+    for(let j=0;j<TH;j++){ let acc=0; for(let i=-rad;i<=rad;i++) acc+=A[j*TW+Math.min(TW-1,Math.max(0,i))];
+      for(let i=0;i<TW;i++){ tmp[j*TW+i]=acc/n; acc+=A[j*TW+Math.min(TW-1,i+rad+1)]-A[j*TW+Math.max(0,i-rad)]; } }
+    for(let i=0;i<TW;i++){ let acc=0; for(let j=-rad;j<=rad;j++) acc+=tmp[Math.min(TH-1,Math.max(0,j))*TW+i];
+      for(let j=0;j<TH;j++){ out[j*TW+i]=acc/n; acc+=tmp[Math.min(TH-1,j+rad+1)*TW+i]-tmp[Math.max(0,j-rad)*TW+i]; } }
+    return out; };
+  const B1=blur(DEMC,5), B2=blur(DEMC,18);
+  // naklon iz DEM
+  const SL=new Float32Array(TW*TH);
+  for(let j=0;j<TH;j++) for(let i=0;i<TW;i++){ const k=j*TW+i; const dx=(DEMC[j*TW+Math.min(TW-1,i+1)]-DEMC[j*TW+Math.max(0,i-1)])/(2*st), dz=(DEMC[Math.min(TH-1,j+1)*TW+i]-DEMC[Math.max(0,j-1)*TW+i])/(2*st); SL[k]=1-1/Math.hypot(dx,dz,1); }
+  // drobna skalna podrobnost (10–60 m) samo v skali
+  const DH=new Float32Array(TW*TH);
+  for(let j=0;j<TH;j++) for(let i=0;i<TW;i++){ const k=j*TW+i, x=CM.x0+i*CM.step, z=CM.z0+j*CM.step;
+    const rock=clamp01((SL[k]-0.18)/0.3)*clamp01((DEMC[k]-1500)/300);
+    const d=rock>0? (1-Math.abs(noise(x*38+DEMC[k]*0.01,z*38)*2.2))*7 + noise(x*95,z*95)*2.5 : 0;
+    DH[k]=DEMC[k]+rock*d; }
+  const sm=(e0,e1,v)=>{ const t=clamp01((v-e0)/(e1-e0)); return t*t*(3-2*t); };
+  const C={forest:[.19,.28,.17],meadow:[.46,.55,.31],krum:[.25,.30,.20],grass:[.52,.53,.37],lime:[.70,.68,.64],lime2:[.81,.79,.75],scree:[.80,.78,.73],snow:[.93,.95,.975]};
+  const t1=[0,0,0], t2=[0,0,0];
+  for(let r=0;r<TH;r++){ const j=TH-1-r; // vrstica teksture 0 = jug
+    for(let i=0;i<TW;i++){ const k=j*TW+i, h=DEMC[k], slope=SL[k], x=CM.x0+i*CM.step, z=CM.z0+j*CM.step;
+      const hL=DH[j*TW+Math.max(0,i-1)], hR=DH[j*TW+Math.min(TW-1,i+1)], hU=DH[Math.max(0,j-1)*TW+i], hD=DH[Math.min(TH-1,j+1)*TW+i];
+      const dx=(hR-hL)/(2*st)*EX, dn=(hU-hD)/(2*st)*EX; const l=Math.hypot(dx,dn,1);
+      const q=(r*TW+i)*4; nrm[q]=(-dx/l*0.5+0.5)*255; nrm[q+1]=(-dn/l*0.5+0.5)*255; nrm[q+2]=(1/l*0.5+0.5)*255; nrm[q+3]=255;
+      const c1=h-B1[k], c2=h-B2[k]; const n1=fbm(x*6,z*6,3), n2=noise(x*30,z*30);
+      // vegetacija -> skala
+      mix3(C.meadow,C.forest,clamp01(0.55+slope*1.5+n1),o);
+      const tl=1650+n1*250;                                   // gozdna meja
+      if(h>tl-150){ mix3(C.krum,C.grass,sm(1800,2050,h+n1*200),t1); mix3(o,t1,sm(tl-150,tl+100,h),o); }
+      mix3(C.lime,C.lime2,clamp01(0.5+n1*1.4+n2*0.4),t1);       // apnenec
+      const rockAmt=clamp01(sm(0.32,0.62,slope+n2*0.08)+sm(1950,2250,h+n1*250));
+      mix3(o,t1,rockAmt,o);
+      if(c2<0&&slope>0.12&&slope<0.5&&h>1500){ mix3(o,C.scree,clamp01(-c2/60)*0.6*sm(0.12,0.25,slope),o); } // melišča
+      // sneg: na položnih policah in v grapah, mehko
+      const sMask=sm(2000,2300,h+n1*260)*sm(0.46,0.2,slope)*clamp01(0.55+n2*0.7-c1/25);
+      mix3(o,C.snow,clamp01(sMask*1.05),o);
+      // senčenje grap / grebenov
+      const ao=Math.max(0.6,Math.min(1.12,0.98+c1/45+c2/220)); o[0]*=ao; o[1]*=ao; o[2]*=ao;
+      alb[q]=Math.min(255,o[0]*255); alb[q+1]=Math.min(255,o[1]*255); alb[q+2]=Math.min(255,o[2]*255); alb[q+3]=255; } }
+  const nTex=new THREE.DataTexture(nrm,TW,TH,THREE.RGBAFormat); nTex.needsUpdate=true; nTex.generateMipmaps=true; nTex.minFilter=THREE.LinearMipmapLinearFilter; nTex.magFilter=THREE.LinearFilter; nTex.anisotropy=8;
+  const aTex=new THREE.DataTexture(alb,TW,TH,THREE.RGBAFormat); aTex.colorSpace=THREE.SRGBColorSpace; aTex.needsUpdate=true; aTex.generateMipmaps=true; aTex.minFilter=THREE.LinearMipmapLinearFilter; aTex.magFilter=THREE.LinearFilter; aTex.anisotropy=8;
+  const tMat=new THREE.MeshStandardMaterial({map:aTex,normalMap:nTex,roughness:.93,metalness:0});
+  tMat.onBeforeCompile=sh=>{
+    sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nvarying vec3 vW; varying vec3 vNw;')
+      .replace('#include <begin_vertex>','#include <begin_vertex>\nvW=(modelMatrix*vec4(transformed,1.0)).xyz; vNw=normalize(mat3(modelMatrix)*objectNormal);');
+    sh.fragmentShader=sh.fragmentShader.replace('#include <common>',`#include <common>
+varying vec3 vW; varying vec3 vNw;
+float h3(vec3 p){p=fract(p*0.3183099+0.1);p*=17.0;return fract(p.x*p.y*p.z*(p.x+p.y+p.z));}
+float vn(vec3 x){vec3 i=floor(x),f=fract(x);f=f*f*(3.0-2.0*f);
+ return mix(mix(mix(h3(i),h3(i+vec3(1,0,0)),f.x),mix(h3(i+vec3(0,1,0)),h3(i+vec3(1,1,0)),f.x),f.y),
+            mix(mix(h3(i+vec3(0,0,1)),h3(i+vec3(1,0,1)),f.x),mix(h3(i+vec3(0,1,1)),h3(i+vec3(1,1,1)),f.x),f.y),f.z);}
+float fb(vec3 p){float s=0.0,a=0.5;for(int i=0;i<3;i++){s+=a*vn(p);p=p*2.07+vec3(1.7,9.2,3.1);a*=0.5;}return s/0.875;}
+float PX;
+float aa(float f){ return 1.0-smoothstep(0.12,0.45,f*PX); }
+float rockMask(){ float sl=1.0-clamp(vNw.y,0.0,1.0); return smoothstep(0.26,0.55,sl); }
+float strataF(){ return (sin(vW.y*150.0+fb(vW*9.0)*9.0+fb(vW*30.0)*2.0)*0.5+0.5)*aa(30.0); }
+float bumpH(){ float r=rockMask(); return fb(vW*vec3(30.0,45.0,30.0))*aa(80.0)*(0.4+0.6*r) + r*0.08*strataF() + 0.25*fb(vW*90.0)*aa(180.0); }`)
+    .replace('#include <color_fragment>',`#include <color_fragment>
+{ PX=length(fwidth(vW)); float r=rockMask(); float n=fb(vW*11.0); float n2=0.5+(fb(vW*48.0)-0.5)*aa(100.0); float st=strataF();
+  vec3 lime=mix(vec3(0.53,0.52,0.50),vec3(0.80,0.78,0.74),smoothstep(0.25,0.8,n)); lime*=0.9+0.12*st; lime*=0.88+0.24*n2;
+  float snowy=smoothstep(0.80,0.92,dot(diffuseColor.rgb,vec3(0.333)));
+  diffuseColor.rgb=mix(diffuseColor.rgb*(0.92+0.16*n2), diffuseColor.rgb*(0.85+0.3*n)*(0.94+0.1*st), r*(1.0-snowy*0.7));
+  diffuseColor.rgb*=1.0-0.12*r*smoothstep(0.6,0.8,fb(vW*vec3(26.0,7.0,26.0)));
+}`)
+    .replace('#include <normal_fragment_maps>',`#include <normal_fragment_maps>
+{ PX=length(fwidth(vW)); vec3 pos=-vViewPosition; vec3 dpx=dFdx(pos), dpy=dFdy(pos); float b=bumpH();
+  float bx=dFdx(b), by=dFdy(b); vec3 r1=cross(dpy,normal), r2=cross(normal,dpx); float det=dot(dpx,r1);
+  vec3 gr=sign(det)*(bx*r1+by*r2)*(0.003+0.004*rockMask()); normal=normalize(abs(det)*normal-gr); }`);
+  };
+  const terrain=new THREE.Mesh(g,tMat); terrain.receiveShadow=true; terrain.castShadow=true; scene.add(terrain);
+
+  // --- okolica (Julijske Alpe do obzorja) – brez roba mape
+  const RWk=(RM.w-1)*RM.step, RHk=(RM.h-1)*RM.step;
+  const rg=new THREE.PlaneGeometry(RWk,RHk,MOB?200:300,MOB?170:250); rg.rotateX(-Math.PI/2); rg.translate(RM.x0+RWk/2,0,RM.z0+RHk/2);
+  const rp=rg.attributes.position, rc=new Float32Array(rp.count*3), cc=new THREE.Color();
+  for(let i=0;i<rp.count;i++){ const x=rp.getX(i), z=rp.getZ(i); let h=sampleG(DEMR,RM,x,z); const e=Math.min(x-CM.x0,CX1-x,z-CM.z0,CZ1-z); rp.setY(i,Y(h)-(e>0?0.15+Math.min(1,e/0.4)*0.9:0)); } // pod jedrom spuščeno, da groba mreža ne prekriva dolin
+  rg.computeVertexNormals(); const rn=rg.attributes.normal;
+  for(let i=0;i<rp.count;i++){ const x=rp.getX(i), z=rp.getZ(i); terrainColor(sampleG(DEMR,RM,x,z),1-rn.getY(i),x,z,o); cc.setRGB(o[0],o[1],o[2],THREE.SRGBColorSpace); rc[i*3]=cc.r; rc[i*3+1]=cc.g; rc[i*3+2]=cc.b; }
+  rg.setAttribute('color',new THREE.BufferAttribute(rc,3));
+  const ring=new THREE.Mesh(rg,new THREE.MeshStandardMaterial({vertexColors:true,roughness:.95})); ring.receiveShadow=true; scene.add(ring);
+
+  // --- drevesa (gozd v Vratih, rušje)
+  const tgeo=new THREE.ConeGeometry(0.008,0.034,6); tgeo.translate(0,0.017,0);
+  const MAXT=MOB?3500:7000; const trees=new THREE.InstancedMesh(tgeo,new THREE.MeshStandardMaterial({color:0xffffff,roughness:1}),MAXT); let tc=0;
+  const m4=new THREE.Matrix4(), q=new THREE.Quaternion(), sv=new THREE.Vector3(), pv=new THREE.Vector3(); let seed=7; const rnd=()=>{seed=(seed*16807)%2147483647;return seed/2147483647;};
+  for(let k=0;k<90000&&tc<MAXT;k++){
+    const x=CM.x0+0.1+rnd()*(W-0.2), z=CM.z0+0.1+rnd()*(Hc-0.2); const h=sampleG(DEMC,CM,x,z); if(h<850||h>1780) continue;
+    const dh=Math.hypot(sampleG(DEMC,CM,x+.015,z)-h,sampleG(DEMC,CM,x,z+.015)-h)/15; if(dh>1.0) continue;
+    if(rnd()<(h-1400)/380) continue; if(fbm(x*3.2,z*3.2,2)<-0.1) continue;
+    const s=0.6+rnd()*0.8; pv.set(x,Y(h)-0.002,z); sv.set(s,s*(0.8+rnd()*.5),s); m4.compose(pv,q,sv); trees.setMatrixAt(tc,m4);
+    trees.setColorAt(tc,new THREE.Color().setHSL(0.29+rnd()*0.06,0.42,0.13+rnd()*0.09)); tc++; }
+  trees.count=tc; trees.castShadow=true; scene.add(trees);
+
+  // --- pot
+  const pts=RT.map(p=>new THREE.Vector3(p.x,Y(p.h)+0.0055,p.z));
+  pathCurve=new THREE.CatmullRomCurve3(pts,false,'centripetal');
+  tubeMain=new THREE.Mesh(new THREE.TubeGeometry(pathCurve,tubeSegs,0.0028,6,false),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.9}));
+  tubeDone=new THREE.Mesh(new THREE.TubeGeometry(pathCurve,tubeSegs,0.0048,8,false),new THREE.MeshBasicMaterial({color:0xe0312d}));
+  tubeDone.geometry.setDrawRange(0,0); scene.add(tubeMain,tubeDone);
+
+  // --- planinec
+  climberMesh=new THREE.Mesh(new THREE.SphereGeometry(0.011,20,16),new THREE.MeshStandardMaterial({color:0xe0312d,emissive:0x7a0f0d,roughness:.4}));
+  climberMesh.castShadow=true; scene.add(climberMesh);
+  ringMesh=new THREE.Mesh(new THREE.RingGeometry(0.016,0.021,40),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.9,side:THREE.DoubleSide}));
+  ringMesh.rotation.x=-Math.PI/2; scene.add(ringMesh);
+
+  // --- Aljažev stolp, Triglavski dom, Aljažev dom
+  // ===== VRH V PRAVEM MERILU (metri): skalnat vrh, Aljažev stolp, planinca =====
+  { const SUM=RT[RT.length-1];
+    KS=new THREE.Group(); KS.position.set(SUM.x,Y(SUM.h)+0.0004,SUM.z); KS.scale.setScalar(0.001); scene.add(KS);
+    // skalnat vrh
+    const pile=new THREE.CylinderGeometry(4.6,12,7,34,5); pile.translate(0,-3.5,0); const pp=pile.attributes.position;
+    for(let i=0;i<pp.count;i++){ const x=pp.getX(i),y=pp.getY(i),z=pp.getZ(i); const n=noise(x*0.7+3,z*0.7)+noise(x*2.1,z*2.1)*0.4;
+      if(y>-0.1){ const r=Math.hypot(x,z); pp.setY(i, y+n*0.22); } else { pp.setX(i,x*(1+n*0.12)); pp.setZ(i,z*(1+n*0.12)); pp.setY(i,y+n*0.6); } }
+    pile.computeVertexNormals();
+    const rockM=new THREE.MeshStandardMaterial({color:0xbdb6a8,roughness:1,flatShading:true});
+    const pm=new THREE.Mesh(pile,rockM); pm.receiveShadow=true; KS.add(pm);
+    let sd=11; const rr=()=>{sd=(sd*16807)%2147483647;return sd/2147483647;};
+    for(let i=0;i<70;i++){ const a=rr()*Math.PI*2, r=1.6+rr()*5.2, x=Math.cos(a)*r, z=Math.sin(a)*r; if(x>0.4&&Math.abs(z)<1.6&&r<5.2) continue; if(x>0.3&&z>-0.5&&r<5.6) continue; if(x>2.5&&z<0&&z>-3.5) continue;
+      const b=new THREE.Mesh(new THREE.DodecahedronGeometry(0.12+rr()*0.45,0),rockM); b.position.set(x,0.05,z); b.rotation.set(rr()*3,rr()*3,rr()*3); b.scale.y=0.6+rr()*0.5; b.castShadow=true; b.receiveShadow=true; KS.add(b); }
+    // Aljažev stolp
+    const metal=new THREE.MeshStandardMaterial({color:0xc8cfd5,metalness:.55,roughness:.38});
+    const darkM=new THREE.MeshStandardMaterial({color:0x14181c,roughness:.9});
+    const body=new THREE.Mesh(new THREE.CylinderGeometry(0.65,0.67,2.0,40),metal); body.position.y=1.0;
+    const band=new THREE.Mesh(new THREE.CylinderGeometry(0.69,0.69,0.08,40),metal); band.position.y=2.0;
+    const roof=new THREE.Mesh(new THREE.ConeGeometry(0.8,0.78,40),metal); roof.position.y=2.43;
+    const ball=new THREE.Mesh(new THREE.SphereGeometry(0.06,12,10),metal); ball.position.y=2.84;
+    const pole=new THREE.Mesh(new THREE.CylinderGeometry(0.022,0.026,1.5,8),metal); pole.position.y=3.55;
+    const fcv=document.createElement('canvas'); fcv.width=128; fcv.height=80; const fx=fcv.getContext('2d'); fx.fillStyle='#fff'; fx.fillRect(0,0,128,40); fx.fillStyle='#e0312d'; fx.fillRect(0,40,128,40);
+    const fgeo=new THREE.PlaneGeometry(0.75,0.46,8,1); fgeo.translate(0.375,0,0);
+    flag=new THREE.Mesh(fgeo,new THREE.MeshStandardMaterial({map:new THREE.CanvasTexture(fcv),side:THREE.DoubleSide,roughness:.8})); flag.position.set(0.02,4.05,0);
+    // napis
+    const tcv=document.createElement('canvas'); tcv.width=1024; tcv.height=128; const tx=tcv.getContext('2d'); tx.fillStyle='#1f262c'; tx.font='800 86px "Bricolage Grotesque", Manrope, sans-serif'; tx.textAlign='center'; tx.textBaseline='middle'; tx.fillText('ALJAŽEV STOLP',512,68);
+    const ttex=new THREE.CanvasTexture(tcv); ttex.colorSpace=THREE.SRGBColorSpace;
+    const txt=new THREE.Mesh(new THREE.CylinderGeometry(0.663,0.663,0.2,48,1,true,Math.PI/2-0.95,1.9),new THREE.MeshStandardMaterial({map:ttex,transparent:true,roughness:.6,metalness:.2}));
+    txt.position.y=1.72;
+    // vrata (na strani +x) in okence
+    const door=new THREE.Mesh(new THREE.PlaneGeometry(0.62,1.32),darkM); door.rotation.y=Math.PI/2; door.position.set(0.672,0.68,0);
+    const frame=new THREE.Mesh(new THREE.BoxGeometry(0.03,1.38,0.7),metal); frame.position.set(0.665,0.7,0);
+    const dpanel=new THREE.Mesh(new THREE.BoxGeometry(0.03,1.3,0.6),metal); dpanel.position.set(0.97,0.68,0.58); dpanel.rotation.y=-0.95;
+    const win=new THREE.Mesh(new THREE.PlaneGeometry(0.22,0.22),darkM); win.rotation.y=Math.PI/2; win.position.set(0.672,1.42,-0.22); win.rotation.y=Math.PI/2-0.33; win.position.set(Math.cos(0.33)*0.672,1.42,-Math.sin(0.33)*0.672);
+    const stolp=new THREE.Group(); stolp.add(body,band,roof,ball,pole,flag,txt,door,frame,dpanel,win);
+    stolp.traverse(o=>{ if(o.isMesh){o.castShadow=true;o.receiveShadow=true;} }); frame.castShadow=false; KS.add(stolp);
+    // jeklenice
+    const wm=new THREE.LineBasicMaterial({color:0x3e464d});
+    [[1,1],[1,-1],[-1,1],[-1,-1]].forEach(([a,b])=>{ const g=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(a*0.45,2.05,b*0.45),new THREE.Vector3(a*4.2,0.05,b*4.2)]); KS.add(new THREE.Line(g,wm)); });
+    // planinca
+    function person(shirt,helmet,pants){ const M=c=>new THREE.MeshStandardMaterial({color:c,roughness:.75});
+      const skin=M(0xf1c7a3), sh=M(shirt), pt=M(pants), hm=new THREE.MeshStandardMaterial({color:helmet,roughness:.35,metalness:.1}), bt=M(0x4a3426);
+      const g=new THREE.Group(); const hips=new THREE.Group(); hips.position.y=0.92; g.add(hips);
+      const legs=[]; [-0.11,0.11].forEach(x=>{ const L=new THREE.Group(); L.position.set(x,0,0); const leg=new THREE.Mesh(new THREE.CapsuleGeometry(0.085,0.62,4,10),pt); leg.position.y=-0.43; const boot=new THREE.Mesh(new THREE.BoxGeometry(0.15,0.12,0.27),bt); boot.position.set(0,-0.86,0.05); L.add(leg,boot); hips.add(L); legs.push(L); });
+      const butt=new THREE.Mesh(new THREE.SphereGeometry(0.17,18,14),pt); butt.scale.set(1.25,0.85,0.85); butt.position.set(0,0.02,-0.08); hips.add(butt);
+      const up=new THREE.Group(); hips.add(up);
+      const torso=new THREE.Mesh(new THREE.CapsuleGeometry(0.17,0.4,6,14),sh); torso.position.y=0.36; torso.scale.set(1.12,1,0.8);
+      const head=new THREE.Mesh(new THREE.SphereGeometry(0.12,20,16),skin); head.position.y=0.84;
+      const helm=new THREE.Mesh(new THREE.SphereGeometry(0.135,20,12,0,Math.PI*2,0,Math.PI/2),hm); helm.position.y=0.86;
+      const eyeM=M(0x222222); [-0.045,0.045].forEach(x=>{ const e=new THREE.Mesh(new THREE.SphereGeometry(0.016,8,6),eyeM); e.position.set(x,0.86,0.11); up.add(e); });
+      up.add(torso,head,helm);
+      const arms=[]; [-0.25,0.25].forEach(x=>{ const A=new THREE.Group(); A.position.set(x,0.58,0); const arm=new THREE.Mesh(new THREE.CapsuleGeometry(0.058,0.42,4,8),sh); arm.position.y=-0.25; const hand=new THREE.Mesh(new THREE.SphereGeometry(0.06,10,8),skin); hand.position.y=-0.52; A.add(arm,hand); up.add(A); arms.push(A); });
+      g.traverse(o=>{ if(o.isMesh){o.castShadow=true;o.receiveShadow=true;} });
+      return {g,hips,up,legs,arms,butt}; }
+    const hero=person(0xe0312d,0x2f7fbf,0x2f3e4a); const pack=new THREE.Mesh(new THREE.BoxGeometry(0.34,0.44,0.2),new THREE.MeshStandardMaterial({color:0x4c5d38,roughness:.8})); pack.position.set(0,0.42,-0.2); pack.castShadow=true; hero.up.add(pack);
+    const mentor=person(0xf2d335,0xf4f6f8,0x26323b);
+    const stick=new THREE.Mesh(new THREE.CylinderGeometry(0.032,0.042,1.1,10),new THREE.MeshStandardMaterial({color:0x8a5a2b,roughness:.85})); stick.position.y=-1.05; stick.castShadow=true;
+    mentor.arms[0].add(stick); // desna roka (lokalno -x)
+    hero.g.visible=false; mentor.g.visible=false; KS.add(hero.g,mentor.g);
+    // svetloba samo za bližnji prizor (ostre sence)
+    const kl=new THREE.DirectionalLight(0xfff3e0,1.2); kl.position.set(6,9,5); kl.target.position.set(0,0,0); kl.castShadow=true; kl.shadow.mapSize.set(1024,1024);
+    const kc=kl.shadow.camera; kc.left=-6;kc.right=6;kc.top=6;kc.bottom=-6;kc.near=0.5;kc.far=30; kl.shadow.bias=-0.0006; kl.visible=false; KS.add(kl,kl.target);
+    KR={hero,mentor,kl,stolp};
+  }
+  window._flag=flag;
+  const hut=(x,z,w,d,hgt,roofC)=>{const gr=new THREE.Group();const y=Y(H(x,z));const b=new THREE.Mesh(new THREE.BoxGeometry(w,hgt,d),new THREE.MeshStandardMaterial({color:0xf2efe7,roughness:.8}));b.position.y=hgt/2;
+    const r=new THREE.Mesh(new THREE.CylinderGeometry(0.001,w*0.72,d*1.05,4,1),new THREE.MeshStandardMaterial({color:roofC,roughness:.7}));r.rotation.set(Math.PI/2,0,Math.PI/4);r.scale.set(1,1,0.45);r.position.y=hgt+hgt*.25;
+    gr.add(b,r);gr.position.set(x,y-0.003,z);gr.traverse(o=>{o.castShadow=true;o.receiveShadow=true;});scene.add(gr);};
+  hut(0.9466,-0.0891,0.034,0.014,0.011,0xa8322a);
+  hut(RT[0].x+0.03,RT[0].z+0.01,0.026,0.014,0.01,0x6b4a33);
+
+  // --- oblaki
+  const cv=document.createElement('canvas');cv.width=cv.height=128;const cx=cv.getContext('2d');const gr=cx.createRadialGradient(64,64,4,64,64,62);gr.addColorStop(0,'rgba(255,255,255,.95)');gr.addColorStop(.5,'rgba(255,255,255,.45)');gr.addColorStop(1,'rgba(255,255,255,0)');cx.fillStyle=gr;cx.fillRect(0,0,128,128);
+  const ctex=new THREE.CanvasTexture(cv);
+  for(let i=0;i<22;i++){const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:ctex,transparent:true,opacity:.25+Math.random()*.25,depthWrite:false,fog:true}));
+    const s=1.5+Math.random()*3; sp.scale.set(s,s*0.4,1); sp.position.set(-9+Math.random()*18, Y(3150)+Math.random()*0.5, -10+Math.random()*16); sp.userData.v=0.02+Math.random()*0.05; clouds.push(sp); scene.add(sp);}
+}
+
+/* ================= LABELS ================= */
+const labelsEl=document.getElementById('labels'); const LBL=[];
+function addLabel(text,sub,x,z,cls,extraY=0.03){ const el=document.createElement('div'); el.className='lbl '+cls; el.innerHTML=text+(sub?`<small>${sub}</small>`:''); labelsEl.appendChild(el); const y=Y(H(x,z))+extraY; LBL.push({el,v:new THREE.Vector3(x,y,z),cls}); return el; }
+if(ok){
+  WP.forEach(w=>{ w.el=addLabel(w.n,`${w.e} m`,w.x,w.z,'wp',0.02); });
+  PEAKS.forEach(p=>addLabel(p[0],p[3]+' m',p[1],p[2],'peak',0.02));
+}
+const tmpV=new THREE.Vector3();
+function projectLabels(){
+  const w=innerWidth,h=innerHeight;
+  for(const l of LBL){ tmpV.copy(l.v).project(camera); const vis=tmpV.z<1 && Math.abs(tmpV.x)<1.1 && Math.abs(tmpV.y)<1.1;
+    const dist=camera.position.distanceTo(l.v);
+    l.el.style.opacity=vis?(l.cls==='peak'?Math.max(0,Math.min(1,(11-dist)/4)):1):0;
+    l.el.style.left=((tmpV.x+1)/2*w)+'px'; l.el.style.top=((1-tmpV.y)/2*h)+'px'; }
+}
+
+/* ================= KAMERA (brez ročnega premikanja) ================= */
+const climberEl=document.getElementById('climber');
+let curU=0, tgtU=0, animFrom=0, animT0=0, animDur=1, viewMode='intro';
+const cam={pos:new THREE.Vector3(),tgt:new THREE.Vector3(),gPos:new THREE.Vector3(),gTgt:new THREE.Vector3()};
+const KCAM={pos:new THREE.Vector3(),tgt:new THREE.Vector3()};
+function climberPos(u,out){ return pathCurve.getPointAt(Math.max(0,Math.min(1,u)),out); }
+function setClimb(u,dur=1.9){ animFrom=curU; tgtU=u; animT0=performance.now(); animDur=dur*1000; }
+const groundY=(x,z)=>Y(H(x,z));
+function clearSight(p,t){ // dvigni kamero, dokler pogled na cilj ni prost
+  for(let it=0;it<25;it++){ let blocked=false; for(let s=1;s<12;s++){ const f=s/12; const x=lerp(p.x,t.x,f), z=lerp(p.z,t.z,f), y=lerp(p.y,t.y,f); if(groundY(x,z)+0.03>y){blocked=true;break;} } if(!blocked) break; p.y+=0.06; }
+  const gy=groundY(p.x,p.z)+0.1; if(p.y<gy) p.y=gy; return p;
+}
+function followGoal(u){
+  const p=climberPos(u,new THREE.Vector3()), a=climberPos(Math.min(1,u+0.04),new THREE.Vector3()), b=climberPos(Math.max(0,u-0.04),new THREE.Vector3());
+  let dx=a.x-b.x, dz=a.z-b.z; let l=Math.hypot(dx,dz)||1; dx=dx/l*0.5; dz=dz/l*0.5+0.5; l=Math.hypot(dx,dz)||1; dx/=l; dz/=l; // smer poti + splošna smer proti jugu
+  const k=MOB?1.3:1.0;
+  const tgt=p.clone().lerp(a,0.25);
+  const pos=new THREE.Vector3(p.x-dx*1.45*k+dz*0.55*k, p.y+0.70*k, p.z-dz*1.45*k-dx*0.55*k);
+  cam.gTgt.copy(tgt); cam.gPos.copy(clearSight(pos,tgt));
+}
+function overviewGoal(t){ // pogled iz Vrat proti severni steni Triglava, rahlo nihanje
+  const sw=Math.sin(t*0.00008);
+  cam.gTgt.set(0.15+0.15*sw,Y(2150),-0.75);
+  cam.gPos.set(1.05+0.9*sw, Y(MOB?3500:3150), MOB?-6.6:-5.6);
+}
+function summitGoal(t){ const se=climberPos(1,new THREE.Vector3()); const az=t*0.00012; cam.gTgt.copy(se); cam.gPos.set(se.x+Math.cos(az)*0.55,se.y+0.22,se.z+Math.sin(az)*0.55); clearSight(cam.gPos,cam.gTgt); }
+const easeIO=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+let last=performance.now(), camInit=false, vOff=0;
+function loop(now){
+  const dt=Math.min(0.05,(now-last)/1000); last=now;
+  if(ok){
+    const f=Math.min(1,(now-animT0)/animDur); curU=lerp(animFrom,tgtU,easeIO(f));
+    const p=climberPos(curU,tmpV.clone());
+    climberMesh.position.copy(p).add(new THREE.Vector3(0,0.006,0));
+    ringMesh.position.copy(p).add(new THREE.Vector3(0,0.0015,0));
+    const pulse=1+0.35*Math.sin(now/260); ringMesh.scale.setScalar(pulse); ringMesh.material.opacity=0.9-0.4*(pulse-0.65);
+    tubeDone.geometry.setDrawRange(0,Math.floor(curU*tubeSegs)*8*6);
+    if(viewMode==='krst'){ cam.pos.copy(KCAM.pos); cam.tgt.copy(KCAM.tgt); }
+    else { if(viewMode==='follow') followGoal(curU); else if(viewMode==='summit') summitGoal(now); else overviewGoal(now);
+    if(!camInit){ cam.pos.copy(cam.gPos); cam.tgt.copy(cam.gTgt); camInit=true; }
+    const k=1-Math.pow(0.02,dt); cam.pos.lerp(cam.gPos,k*0.9); cam.tgt.lerp(cam.gTgt,k);
+    { const gy=groundY(cam.pos.x,cam.pos.z)+0.08; if(cam.pos.y<gy) cam.pos.y=gy; } }
+    camera.position.copy(cam.pos); camera.lookAt(cam.tgt);
+    { const want=(!MOB && viewMode==='intro')?Math.min(470,innerWidth*0.36):0; vOff+= (want-vOff)*Math.min(1,dt*3); if(Math.abs(vOff)>0.5) camera.setViewOffset(innerWidth+vOff,innerHeight,vOff,0,innerWidth,innerHeight); else camera.clearViewOffset(); }
+    clouds.forEach(c=>{c.position.x+=c.userData.v*dt; if(c.position.x>9) c.position.x=-9;});
+    if(window._flag){ window._flag.rotation.y=Math.sin(now/300)*0.35; const fp=window._flag.geometry.attributes.position; for(let i=0;i<fp.count;i++){ const x=fp.getX(i); fp.setZ(i,Math.sin(x*7-now/180)*0.05*x); } fp.needsUpdate=true; }
+    renderer.render(scene,camera);
+    projectLabels();
+    if(!climberEl.classList.contains('hidden')){ tmpV.copy(climberMesh.position); tmpV.y+=0.008; tmpV.project(camera); climberEl.style.left=((tmpV.x+1)/2*innerWidth)+'px'; climberEl.style.top=((1-tmpV.y)/2*innerHeight)+'px'; climberEl.style.opacity=tmpV.z<1?1:0; }
+  }
+  requestAnimationFrame(loop);
+}
+addEventListener('resize',()=>{ if(!ok) return; renderer.setSize(innerWidth,innerHeight); camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix(); });
+
+/* ================= ANSWERS ================= */
+function norm(s){return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/đ/g,'d').replace(/[^a-z0-9 ]+/g,' ').replace(/\s+/g,' ').trim();}
+function lev(a,b){if(Math.abs(a.length-b.length)>2)return 9;let prev=Array.from({length:b.length+1},(_,i)=>i);for(let i=1;i<=a.length;i++){const cur=[i];for(let j=1;j<=b.length;j++)cur[j]=Math.min(prev[j]+1,cur[j-1]+1,prev[j-1]+(a[i-1]===b[j-1]?0:1));prev=cur;}return prev[b.length];}
+for(const c of CATS){
+  const seen=new Set(); c.items=[];
+  for(const raw of c.a.split(';')){ if(!raw.trim()||raw.includes('?')) continue; const parts=raw.split('|').map(s=>s.trim()).filter(Boolean); const k=norm(parts[0]); if(seen.has(k)) continue; seen.add(k); c.items.push({canon:parts[0],keys:[...new Set(parts.map(norm))]}); }
+  let sum=0; const w=c.items.map((_,r)=>{const v=1/Math.pow(r+1,1.05); sum+=v; return v;}); c.items.forEach((it,r)=>it.base=w[r]/sum);
+  c.map=new Map(); c.items.forEach(it=>it.keys.forEach(k=>{ if(!c.map.has(k)) c.map.set(k,it); }));
+  if(c.g==='ljudje'){ const cnt={}; c.items.forEach(it=>{const w=norm(it.canon).split(' '); if(w.length>1){const l=w[w.length-1]; cnt[l]=(cnt[l]||0)+1;}});
+    c.items.forEach(it=>{const w=norm(it.canon).split(' '); const l=w[w.length-1]; if(w.length>1&&cnt[l]===1&&l.length>3&&!c.map.has(l)) c.map.set(l,it);}); }
+}
+function match(cat,input){
+  const k=norm(input); if(!k) return null; const tries=[k];
+  (cat.strip||[]).forEach(p=>{const pp=norm(p); if(k.startsWith(pp+' ')) tries.push(k.slice(pp.length+1)); if(k.endsWith(' '+pp)) tries.push(k.slice(0,-pp.length-1));});
+  for(const t of tries) if(cat.map.has(t)) return cat.map.get(t);
+  for(const t of tries){ if(t.length<5) continue; let best=null,bd=9; for(const [key,it] of cat.map){ if(key.length<5) continue; const d=lev(t,key); const lim=t.length>=9?2:1; if(d<=lim&&d<bd){bd=d;best=it;} } if(best) return best; }
+  return null;
+}
+const GL={ljudje:'LJUDJE',kraji:'KRAJI',hrana:'HRANA IN PIJAČA',kultura:'KULTURA',znamke:'ZNAMKE IN KLUBI'};
+function todayStr(){return new Date().toLocaleDateString('sv-SE',{timeZone:'Europe/Ljubljana'});}
+function fmtDate(d){const [y,m,dd]=d.split('-');return `${+dd}. ${+m}. ${y}`;}
+function hash(s){let h=2166136261;for(const ch of s){h^=ch.charCodeAt(0);h=Math.imul(h,16777619);}return h>>>0;}
+function rng(seed){return()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function pickCats(date){
+  const r=rng(hash('dovrha-'+date)); const a=CATS.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  const out=[],cnt={}; for(const c of a){ if(out.length>=8) break; const lim=c.g==='ljudje'||c.g==='kraji'?3:2; if((cnt[c.g]||0)>=lim) continue; cnt[c.g]=(cnt[c.g]||0)+1; out.push(c); }
+  return out;
+}
+const $=id=>document.getElementById(id);
+const TODAY=todayStr();
+const GAMENO=Math.max(1,Math.round((Date.parse(TODAY)-Date.parse('2026-11-13'))/864e5)+1);
+const DAY=pickCats(TODAY);
+
+/* ================= SHARED DATA ================= */
+let db=null,user=null,myId=null,plays=[];
+async function initDb(){
+  try{ if(!window.claude||!claude.use) return; const [d,u]=await Promise.all([claude.use('db'),claude.use('user')]); if(!d||!u) return; db=d;user=u; myId=await user.id(); await loadToday();
+    $('status').textContent=plays.length?`Danes se je vzpenjalo že ${plays.length} ${plural(plays.length)}.`:'Bodi danes prvi na poti!';
+    const mine=plays.find(p=>p.uid===myId); if(mine&&mine.done&&mine.vm!=null&&!st.done){ st={i:8,vm:mine.vm,done:true,res:DAY.map(c=>({cat:c.id,ans:mine.answers?.[c.id]||null,vm:0,mode:null}))}; persist(); setStartLabel(); }
+  }catch(e){ console.log('db',e); db=null; }
+}
+function plural(n){const m=n%100;return m===1?'planinec':m===2?'planinca':(m===3||m===4)?'planinci':'planincev';}
+async function loadToday(){ if(!db) return; const snap=await Promise.race([db.collection('plays').where('date','==',TODAY).get(),new Promise((_,r)=>setTimeout(()=>r('timeout'),10000))]); const arr=[]; (snap.docs||snap).forEach(d=>{const v=d.data?d.data():d; arr.push({...v,uid:d.id||v.uid});}); plays=arr.filter(p=>p.vm!=null); }
+function shareFor(cat,it){ const K=20; let c=0,t=0; for(const p of plays){ if(p.uid===myId) continue; const a=p.answers&&p.answers[cat.id]; if(a!==undefined){t++; if(a===it.canon)c++;} } return (c+K*it.base)/(t+K); }
+let chain=Promise.resolve();
+function save(){ if(!db||!myId) return; const payload={date:TODAY,uid:myId,vm:Math.round(st.vm),answers:Object.fromEntries(st.res.filter(r=>r&&r.ans).map(r=>[r.cat,r.ans])),done:!!st.done,ts:Date.now()}; chain=chain.then(()=>db.collection('plays').doc(myId).set(payload)).catch(e=>console.log('save',e)); }
+
+/* ================= STATE ================= */
+const LS='dovrha-'+TODAY; let st={i:0,vm:0,res:[],done:false};
+try{const s=JSON.parse(localStorage.getItem(LS)||'null'); if(s) st=s;}catch(e){}
+function persist(){try{localStorage.setItem(LS,JSON.stringify(st));}catch(e){}}
+
+/* ================= UI BUILD ================= */
+$('bMeta').textContent=`#${GAMENO} · ${fmtDate(TODAY)}`;
+$('modes').innerHTML=MODES.map(m=>`<div class="mode" title="${m.name}"><div class="e">${m.e}</div><div class="n">${m.name}</div><div class="v">${m.lo}–${m.hi} m</div></div>`).join('');
+$('dots').innerHTML='<i></i>'.repeat(8);
+function drawProfile(){
+  const W=400,Hh=92; const pts=[]; const N=80; for(let i=0;i<=N;i++){ const u=i/N; const s=u*ARCT; let k=0; while(k<ARC.length-2&&ARC[k+1]<s) k++; const e=RT[k].h; pts.push([u*W, Hh-8-(e-900)/(2950-900)*(Hh-16)]); }
+  const d='M'+pts.map(p=>p.map(v=>v.toFixed(1)).join(',')).join(' L');
+  let s=`<defs><linearGradient id="pg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0f1a24" stop-opacity=".22"/><stop offset="1" stop-color="#0f1a24" stop-opacity="0"/></linearGradient></defs>
+  <path d="${d} L${W},${Hh} L0,${Hh}Z" fill="url(#pg)"/><path d="${d}" fill="none" stroke="#0f1a24" stroke-width="2" stroke-linejoin="round"/>`;
+  WP.forEach(w=>{ const u=ARC[w.i]/ARCT; const p=pts[Math.round(u*N)]; s+=`<circle cx="${p[0]}" cy="${p[1]}" r="4" fill="#fff" stroke="#e0312d" stroke-width="2.5"/>`; });
+  s+=`<text x="2" y="${Hh-2}" font-size="10" font-weight="700" fill="#6f7d89">1015 m</text><text x="${W-2}" y="10" text-anchor="end" font-size="10" font-weight="700" fill="#e0312d">2864 m</text>`;
+  $('prof').innerHTML=s;
+}
+function setStartLabel(){ $('startTxt').textContent= st.done?'Poglej današnji vzpon': st.i>0?'Nadaljuj vzpon':'Na pot'; }
+setStartLabel();
+
+/* altitude counter */
+let altShown=BASE; let altAnim=null;
+function setAlt(vm,label){
+  const target=altAt(vm); const from=altShown; const t0=performance.now();
+  cancelAnimationFrame(altAnim);
+  const step=t=>{ const f=Math.min(1,(t-t0)/1500); const v=Math.round(lerp(from,target,easeIO(f))); $('aVal').textContent=v.toLocaleString('sl-SI'); altShown=v; if(f<1) altAnim=requestAnimationFrame(step); };
+  altAnim=requestAnimationFrame(step);
+  $('aSub').textContent = vm>=GAIN ? `Na vrhu! +${Math.round(vm-GAIN)} m rezerve` : `${label} · še ${Math.round(GAIN-vm)} m do vrha`;
+  $('aBar').style.width=Math.min(100,vm/GAIN*100)+'%';
+}
+function markWaypoints(vm){ WP.forEach(w=>{ if(w.el) w.el.classList.toggle('done', w.vmAt<=vm+0.5); }); }
+
+/* ================= GAME FLOW ================= */
+const PRE=5,DUR=25; let timer=null,tStart=0,answered=false;
+function show(id){ $(id).classList.remove('out'); }
+function hide(id){ $(id).classList.add('out'); }
+function startGame(){
+  if(st.done){ return showEnd(); }
+  hide('intro'); $('alti').classList.remove('hide'); climberEl.classList.remove('hidden');
+  viewMode='follow'; if(ok){ curU=animFrom=tgtU=vmToU(st.vm); }
+  setAlt(st.vm,placeName(st.vm)); markWaypoints(st.vm);
+  setTimeout(()=>{ show('qp'); showQ(); },550);
+}
+function showQ(){
+  const c=DAY[st.i];
+  $('qChip').textContent=GL[c.g]; [...$('dots').children].forEach((d,i)=>{ d.className=i===st.i?'cur':''; const r=st.res[i]; d.style.background=r? (r.mode?MODES.find(m=>m.id===r.mode).c:'#9aa7b1'):''; });
+  $('ask').classList.remove('hidden'); $('done').classList.add('hidden');
+  const b=$('qBody'); b.classList.remove('slide'); void b.offsetWidth; b.classList.add('slide');
+  $('qTitle').textContent=c.t; $('qHint').textContent=c.h;
+  $('ans').value=''; $('msg').textContent='Vpiši odgovor in pritisni Enter.'; $('msg').className='msg';
+  answered=false; tStart=performance.now(); setTimeout(()=>$('ans').focus(),80);
+  clearInterval(timer); timer=setInterval(tick,100); tick();
+}
+function tick(){
+  const el=(performance.now()-tStart)/1000; const C=175.9; const rc=$('ringC');
+  if(el<PRE){ rc.style.strokeDashoffset=0; rc.style.stroke='#9aa7b1'; $('ringT').textContent=DUR; return; }
+  const left=Math.max(0,DUR-(el-PRE)); rc.style.strokeDashoffset=(C*(1-left/DUR)).toFixed(1); rc.style.stroke=left<7?'#e0312d':'#0f1a24'; $('ringT').textContent=Math.ceil(left);
+  if(left<=0){ clearInterval(timer); if(!answered) finish(null,{m:1,l:''}); }
+}
+function speed(){ const el=Math.max(0,(performance.now()-tStart)/1000-PRE); const m=Math.round((1.2-0.32*Math.min(1,el/DUR))*100)/100;
+  return {m, l: m>=1.03?`⚡ ×${m.toFixed(2).replace('.',',')}`: m<=0.97?`🐢 ×${m.toFixed(2).replace('.',',')}`:''}; }
+$('form').addEventListener('submit',e=>{ e.preventDefault(); if(answered) return; const v=$('ans').value; if(!v.trim()) return;
+  const it=match(DAY[st.i],v);
+  if(!it){ const i=$('ans'); i.classList.remove('bad'); void i.offsetWidth; i.classList.add('bad'); $('msg').textContent=`»${v.trim()}« ni na seznamu – poskusi znova.`; $('msg').className='msg err'; i.select(); return; }
+  finish(it,speed());
+});
+function esc(s){return String(s).replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));}
+const pct=s=>{const p=s*100;return (p<1?'<1':Math.round(p))+' %';};
+function finish(it,sp){
+  answered=true; clearInterval(timer);
+  const c=DAY[st.i]; let r;
+  if(!it) r={cat:c.id,ans:null,vm:0,mode:null,share:0,sp:''};
+  else { const share=shareFor(c,it); const m=modeFor(share); r={cat:c.id,ans:it.canon,vm:Math.max(1,Math.round(gainFor(share)*sp.m)),mode:m.id,share,sp:sp.l}; }
+  st.res[st.i]=r; const before=st.vm; st.vm+=r.vm; persist(); save();
+  const m=r.mode&&MODES.find(x=>x.id===r.mode);
+  $('res').innerHTML = m
+    ? `<div class="big" style="box-shadow:0 0 0 3px ${m.c} inset, 0 8px 18px -8px rgba(0,0,0,.3)">${m.e}</div><div><div class="a">${esc(r.ans)}</div><div class="s">${pct(r.share)} igralcev · <b style="color:${m.c}">${m.name}</b>${r.sp?`<span class="tag" style="background:${sp.m>1?'#fff3c4':'#eef1f4'}">${r.sp}</span>`:''}</div></div><div class="gain"><b class="num" style="color:${m.c}">+${r.vm}</b><span>višinskih m</span></div>`
+    : `<div class="big">🌫️</div><div><div class="a">Megla</div><div class="s">Brez odgovora – počakaš, da se zjasni.</div></div><div class="gain"><b class="num">+0</b><span>višinskih m</span></div>`;
+  $('ask').classList.add('hidden'); $('done').classList.remove('hidden');
+  $('nextTxt').textContent=st.i===7?'Poglej rezultat':'Naprej';
+  setTimeout(()=>$('nextBtn').focus(),60);
+  const dot=$('dots').children[st.i]; dot.style.background=m?m.c:'#9aa7b1';
+  // move
+  if(m){ $('climberIc').textContent=m.e; climberEl.classList.remove('pop'); void climberEl.offsetWidth; climberEl.classList.add('pop'); }
+  if(ok){ setClimb(vmToU(st.vm), r.vm?1.4+Math.min(1.4,r.vm/200):0.3); }
+  setTimeout(()=>{ setAlt(st.vm,placeName(st.vm)); markWaypoints(st.vm); },250);
+  if(r.vm){ const f=document.createElement('div'); f.className='float num disp'; f.textContent=`+${r.vm} m`; const rect=climberEl.getBoundingClientRect(); f.style.left=(rect.left+rect.width/2||innerWidth/2)+'px'; f.style.top=(rect.top||innerHeight/3)+'px'; document.body.appendChild(f); setTimeout(()=>f.remove(),1900); }
+  // reached a waypoint?
+  const passed=WP.filter(w=>w.vmAt>before+0.5&&w.vmAt<=st.vm+0.5).pop();
+  if(passed) $('msg').textContent='';
+}
+$('nextBtn').addEventListener('click',next);
+addEventListener('keydown',e=>{ if(e.key==='Enter' && !$('done').classList.contains('hidden') && document.activeElement!==$('nextBtn')){ e.preventDefault(); next(); } });
+function next(){ if($('done').classList.contains('hidden')) return; st.i++; persist(); if(st.i>=8){ st.done=true; persist(); save(); hide('qp'); const top=st.vm>=GAIN; if(top&&!st.krst){ st.krst=true; persist(); if(ok){ viewMode='summit'; } setTimeout(()=>krst().then(showEnd),1600); } else setTimeout(showEnd,500); } else showQ(); }
+
+
+/* ================= KRST NA TRIGLAVU ================= */
+let actx=null;
+function thwack(i){ try{ actx=actx||new (window.AudioContext||window.webkitAudioContext)(); const t=actx.currentTime;
+  const len=0.18, buf=actx.createBuffer(1,actx.sampleRate*len,actx.sampleRate), d=buf.getChannelData(0);
+  for(let k=0;k<d.length;k++){ const e=Math.pow(1-k/d.length,4); d[k]=(Math.random()*2-1)*e; }
+  const src=actx.createBufferSource(); src.buffer=buf; const f=actx.createBiquadFilter(); f.type='lowpass'; f.frequency.value=1800-i*200;
+  const g=actx.createGain(); g.gain.value=0.9; src.connect(f).connect(g).connect(actx.destination); src.start(t);
+  const o=actx.createOscillator(); o.type='sine'; o.frequency.setValueAtTime(180,t); o.frequency.exponentialRampToValueAtTime(60,t+.12);
+  const og=actx.createGain(); og.gain.setValueAtTime(.6,t); og.gain.exponentialRampToValueAtTime(.001,t+.15); o.connect(og).connect(actx.destination); o.start(t); o.stop(t+.16);
+ }catch(e){} }
+function krst(){
+  return new Promise(res=>{
+    const K=$('krst'), pow=$('kPow'), cnt=$('kCnt'), ban=$('kBan');
+    if(!ok||!KR){ res(); return; }
+    K.classList.remove('hidden'); requestAnimationFrame(()=>K.classList.add('on'));
+    const {hero,mentor,kl}=KR; hero.g.visible=mentor.g.visible=true; kl.visible=true;
+    const hidden=[climberMesh,ringMesh,tubeMain,tubeDone]; hidden.forEach(o=>o.visible=false);
+    $('labels').style.display='none'; climberEl.style.display='none'; $('alti').classList.add('hide');
+    const prevMode=viewMode; viewMode='krst'; camera.near=0.0002; camera.updateProjectionMatrix();
+    const startPos=camera.position.clone(), startTgt=cam.tgt.clone();
+    // postavitev (metri, lokalno v KS)
+    const HIP=new THREE.Vector3(1.02,0,0);            // kje stoji planinec pred vrati
+    const BUTT=new THREE.Vector3(1.2,0.92,0);
+    const md=new THREE.Vector3(0.62,0,0.78).normalize(), yawM=Math.atan2(-md.x,-md.z);
+    const MPOS=BUTT.clone().addScaledVector(md,1.18); MPOS.y=0;
+    MPOS.x+=Math.cos(yawM)*0.25; MPOS.z+=-Math.sin(yawM)*0.25; // poravnaj desno roko z ritjo
+    mentor.g.position.copy(MPOS); mentor.g.rotation.y=yawM;
+    const W0=new THREE.Vector3(2.4,0,3.9);
+    const T0=1000, HITS=[T0+2350,T0+3350,T0+4350];
+    const ease=p=>p<0?0:p>1?1:1-Math.pow(1-p,3), c01=p=>Math.max(0,Math.min(1,p));
+    const back=p=>{p=c01(p);const c=1.5;return 1+(c+1)*Math.pow(p-1,3)+c*Math.pow(p-1,2);};
+    let fired=new Set(), finished=false, t0=performance.now(), raf, shake=0;
+    ban.style.opacity='0'; cnt.style.opacity='0'; pow.style.opacity='0';
+    const tmp=new THREE.Vector3();
+    const toScreen=(v)=>{ tmp.copy(v); KS.localToWorld(tmp); tmp.project(camera); return [(tmp.x+1)/2*innerWidth,(1-tmp.y)/2*innerHeight]; };
+    const cleanup=()=>{ cancelAnimationFrame(raf); removeEventListener('keydown',key); hero.g.visible=mentor.g.visible=false; kl.visible=false; hidden.forEach(o=>o.visible=true);
+      $('labels').style.display=''; climberEl.style.display=''; $('alti').classList.remove('hide'); camera.near=0.01; camera.updateProjectionMatrix(); viewMode=prevMode==='krst'?'summit':prevMode; camInit=false; };
+    const done=()=>{ if(finished) return; finished=true; K.classList.remove('on'); setTimeout(()=>{ cleanup(); K.classList.add('hidden'); res(); },450); };
+    const key=e=>{ if(e.key==='Enter'&&ban.style.opacity==='1'){ e.preventDefault(); done(); } };
+    addEventListener('keydown',key); $('kDone').onclick=done; $('krstSkip').onclick=done;
+    function armAngle(t){ let a=0.15; for(const h of HITS){ const d=t-h; if(d<0||d>950) continue;
+        if(d<400) a=0.15+2.3*ease(d/400); else if(d<520) a=2.45-3.55*Math.pow((d-400)/120,2); else if(d<640) a=-1.1; else a=-1.1+1.25*ease((d-640)/310); }
+      return a; }
+    function frame(now){
+      const t=now-t0;
+      // kamera: prelet z višine na vrh, nato počasno kroženje
+      const az=-0.78+0.2*Math.sin(t*0.00025)+t*0.00002, R=MOB?7.8:6.3;
+      const lp=new THREE.Vector3(0.9+Math.cos(az)*R, 2.55, 0.4+Math.sin(az)*R), lt=new THREE.Vector3(0.9,0.95,0.45);
+      if(shake>0){ lp.x+=(Math.random()-.5)*shake; lp.y+=(Math.random()-.5)*shake; shake*=0.86; if(shake<0.002) shake=0; }
+      KS.localToWorld(lp); KS.localToWorld(lt);
+      const fl=ease(t/T0*0.9);
+      KCAM.pos.copy(startPos).lerp(lp,fl); KCAM.tgt.copy(startTgt).lerp(lt,fl);
+      // hoja k vratom
+      const wp=c01((t-T0*0.6)/1700), we=ease(wp);
+      const pos=W0.clone().lerp(HIP,we); hero.g.position.copy(pos);
+      const dir=HIP.clone().sub(W0); const walkYaw=Math.atan2(dir.x,dir.z);
+      const turn=c01((t-(T0*0.6+1500))/400); hero.g.rotation.y=lerp(walkYaw,-Math.PI/2,ease(turn));
+      const sw=wp>0&&wp<1?Math.sin(t/140)*0.55:0;
+      hero.legs[0].rotation.x=sw; hero.legs[1].rotation.x=-sw; hero.arms[0].rotation.x=-sw*0.8; hero.arms[1].rotation.x=sw*0.8; hero.hips.position.y=0.92+Math.abs(Math.sin(t/140))*0.03*(wp>0&&wp<1?1:0);
+      // sklon v vrata
+      const tb=T0+1650; let ang= t<tb?0: t<tb+550? 1.47*back((t-tb)/550) : 1.47;
+      for(const h of HITS){ const d=t-h-520; if(d>0&&d<320) ang+=0.14*Math.sin(d/320*Math.PI)*Math.exp(-d/200); }
+      if(t>T0+5450) ang=1.47*(1-ease((t-T0-5450)/600));
+      hero.up.rotation.x=ang; hero.arms.forEach(a=>{ if(!(wp>0&&wp<1)) a.rotation.x=-ang*0.6; });
+      // ritka
+      let sx=1,sy=1; for(const h of HITS){ const d=(t-h-520)/420; if(d>0&&d<1.2){ const k=Math.exp(-4*d)*Math.cos(11*d); sx+=0.22*k; sy-=0.14*k; } }
+      hero.butt.scale.set(1.25*sx,0.85*sy,0.85);
+      // skok od veselja
+      const jt=t-(T0+5900); hero.g.position.y= jt>0&&jt<560? 0.42*Math.sin(Math.PI*jt/560):0;
+      if(jt>0&&jt<560){ hero.arms.forEach(a=>a.rotation.x=-2.6); }
+      // vodnik
+      mentor.arms[0].rotation.x=armAngle(t); mentor.arms[1].rotation.x=0.1; mentor.up.rotation.x=0.12;
+      // udarci
+      HITS.forEach((h,i)=>{ if(t>=h+520&&!fired.has(i)){ fired.add(i); thwack(i); shake=0.09;
+          const [sx2,sy2]=toScreen(BUTT); pow.style.left=(sx2+(i%2?-18:18))+'px'; pow.style.top=(sy2-30)+'px';
+          pow.animate([{opacity:0,transform:'scale(.2) rotate(-20deg)'},{opacity:1,transform:'scale(1.15) rotate(6deg)',offset:.25},{opacity:1,transform:'scale(1)',offset:.6},{opacity:0,transform:'scale(1.3)'}],{duration:650,easing:'ease-out',fill:'forwards'});
+          cnt.textContent=i+1; cnt.animate([{opacity:0,transform:'translateX(-50%) scale(.4)'},{opacity:1,transform:'translateX(-50%) scale(1.15)',offset:.3},{opacity:1,transform:'translateX(-50%) scale(1)',offset:.7},{opacity:0,transform:'translateX(-50%) scale(1)'}],{duration:850,easing:'ease-out'}); } });
+      if(t>=T0+6400&&!fired.has('b')){ fired.add('b'); confetti(); ban.style.opacity='1';
+        ban.animate([{opacity:0,transform:'translate(-50%,-50%) scale(.6)'},{opacity:1,transform:'translate(-50%,-50%) scale(1.05)',offset:.7},{opacity:1,transform:'translate(-50%,-50%) scale(1)'}],{duration:550,easing:'cubic-bezier(.2,1.4,.4,1)',fill:'forwards'});
+        setTimeout(()=>$('kDone').focus(),100); }
+      if(!finished) raf=requestAnimationFrame(frame);
+    }
+    raf=requestAnimationFrame(frame);
+    window.__kt0=v=>{t0=performance.now()-v;};
+  });
+}
+
+/* ================= END ================= */
+async function showEnd(){
+  hide('intro'); hide('qp'); $('alti').classList.remove('hide'); climberEl.classList.remove('hidden');
+  const vm=Math.round(st.vm); const top=vm>=GAIN;
+  if(ok){ curU=animFrom=tgtU=vmToU(vm); viewMode=top?'summit':'all'; }
+  const lastM=[...st.res].reverse().find(r=>r&&r.mode); if(lastM) $('climberIc').textContent=MODES.find(m=>m.id===lastM.mode).e;
+  setAlt(vm,placeName(vm)); markWaypoints(vm);
+  $('eEmoji').textContent=top?'🏔️':'⛺';
+  { const pn=placeName(vm); $('eTitle').textContent=top?'Na vrhu Triglava!':(pn.startsWith('pod: ')?`Obstal si ${pn.replace(': ',' ')}`:`Prišel si do: ${pn}`); }
+  $('eSub').textContent=top?'Zdaj si pravi Slovenec. Krst z vrvjo te čaka ob Aljaževem stolpu.':`Do vrha ti je zmanjkalo ${GAIN-vm} m. Jutri nov poskus.`;
+  $('eAlt').innerHTML=`${altAt(vm).toLocaleString('sl-SI')}<small> m</small>`;
+  $('eCap').textContent=`+${vm} višinskih metrov od Aljaževega doma`;
+  $('sum').innerHTML=DAY.map((c,i)=>{ const r=st.res[i]||{}; const m=r.mode&&MODES.find(x=>x.id===r.mode);
+    return `<div class="srow" style="animation-delay:${i*60}ms"><div class="e">${m?m.e:'🌫️'}</div><div><div class="c">${esc(c.t)}</div><div class="a">${r.ans?esc(r.ans):'—'}</div></div><div class="g num" style="color:${m?m.c:'#9aa7b1'}">+${r.vm||0}</div></div>`; }).join('');
+  setTimeout(()=>show('endp'),400);
+  if(top) confetti();
+  $('krstAgain').classList.toggle('hidden',!top);
+  await chain; renderBoard();
+}
+function confetti(){ const cols=['#e0312d','#ffffff','#2f7fbf','#f2c230']; for(let i=0;i<90;i++){ const d=document.createElement('div'); d.className='confetti'; const s=6+Math.random()*8; d.style.cssText=`left:${Math.random()*100}vw;width:${s}px;height:${s*0.5}px;background:${cols[i%4]};border-radius:2px;animation-duration:${2.5+Math.random()*2.5}s;animation-delay:${Math.random()*1.2}s`; document.body.appendChild(d); setTimeout(()=>d.remove(),6500);} }
+async function renderBoard(){
+  if(!db){ $('lb').innerHTML='<div class="small">Lestvica deluje, ko si prijavljen v claude.ai.</div>'; $('pops').textContent='—'; return; }
+  try{ await loadToday(); }catch(e){}
+  const done=plays.filter(p=>p.done).sort((a,b)=>b.vm-a.vm);
+  let names={}; try{ names=await user.profiles(done.slice(0,20).map(p=>p.uid)); }catch(e){}
+  $('lb').innerHTML=done.length?done.slice(0,20).map((p,i)=>{ const nm=(names&&names[p.uid]&&names[p.uid].name)||(p.uid===myId?'Ti':'Planinec'); const alt=altAt(p.vm);
+    return `<div class="lbr ${p.uid===myId?'me':''}"><span class="num">${i+1}.</span><span>${esc(nm)}${p.vm>=GAIN?' 🏔️':''}</span><span class="num">${alt.toLocaleString('sl-SI')} m</span></div>`; }).join(''):'<div class="small">Še nihče ni končal.</div>';
+  let h=''; for(const c of DAY){ const cnt={}; let t=0; plays.forEach(p=>{const a=p.answers&&p.answers[c.id]; if(a){cnt[a]=(cnt[a]||0)+1;t++;}}); const top=Object.entries(cnt).sort((a,b)=>b[1]-a[1]).slice(0,4); if(!top.length) continue;
+    h+=`<div style="margin-top:6px"><b style="color:var(--ink)">${esc(c.t)}</b><div class="pops">${top.map(([a,n])=>`<span>${esc(a)} · ${Math.round(n/t*100)} %</span>`).join('')}</div></div>`; }
+  $('pops').innerHTML=h||'—';
+}
+$('krstAgain').addEventListener('click',()=>{ hide('endp'); krst().then(()=>show('endp')); });
+$('copyBtn').addEventListener('click',async()=>{ const line=DAY.map((c,i)=>{const r=st.res[i];const m=r&&r.mode&&MODES.find(x=>x.id===r.mode);return m?m.e:'🌫️';}).join(''); const vm=Math.round(st.vm);
+  const txt=`Do vrha? #${GAMENO} 🏔️\n${line}\n${altAt(vm)} m · ${vm>=GAIN?'Triglav ✅':placeName(vm)}`;
+  try{ await navigator.clipboard.writeText(txt); $('copyBtn').textContent='Kopirano ✓'; }catch(e){ $('copyBtn').textContent='Ni uspelo'; } setTimeout(()=>$('copyBtn').textContent='Kopiraj rezultat',1800); });
+let endHidden=false;
+$('endX').addEventListener('click',()=>{ hide('endp'); $('reopen').classList.remove('hidden'); });
+$('reopen').addEventListener('click',()=>{ $('reopen').classList.add('hidden'); show('endp'); });
+function showBackBtn(){ let b=$('backBtn'); if(!b){ b=document.createElement('button'); b.id='backBtn'; b.className='cta'; b.style.cssText='position:fixed;left:50%;bottom:22px;transform:translateX(-50%);width:auto;padding:12px 22px;z-index:7;font-size:15px'; b.textContent='Nazaj na rezultat'; b.onclick=()=>{ b.remove(); show('endp'); }; document.body.appendChild(b);} }
+
+/* view toggle */
+
+$('startBtn').addEventListener('click',startGame);
+
+/* ================= BOOT ================= */
+if(ok){ drawProfile(); curU=animFrom=tgtU=0; viewMode='intro'; }
+else { drawProfile(); $('status').textContent='Tvoja naprava ne podpira 3D prikaza – igra deluje tudi brez njega.'; }
+$('loading').classList.add('done'); setTimeout(()=>$('loading').remove(),900);
+requestAnimationFrame(loop);
+initDb();
+</script>
+</body>
+</html>
