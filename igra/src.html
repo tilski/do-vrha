@@ -1214,13 +1214,19 @@ function renderAcct(){ const ids=(me&&me.identities)||[]; const g=ids.find(i=>i.
     $('odjava').onclick=async()=>{ if(!confirm('Odjaviš se s te naprave? Napredek ostane shranjen v tvojem Google računu.')) return; await sb.auth.signOut(); try{localStorage.removeItem(LS);}catch(e){} location.reload(); }; return; }
   $('acct').innerHTML=`<button class="gbtn" id="gLink">${G} Shrani napredek z Googlom</button><div class="small" style="margin-top:6px">Tvoj vzdevek, zgodovina in skupine se povežejo z Google računom, da jih vidiš tudi na drugih napravah.</div><div style="margin-top:8px"><button class="lnk" id="gIn">Že imaš povezan račun? Prijava z Googlom</button></div>`;
   $('gLink').onclick=async()=>{ const {error}=await sb.auth.linkIdentity({provider:'google',options:{redirectTo:NAZAJ()}});
+    if(error&&/already|exists/i.test(error.message)&&confirm('Ta Google račun že uporabljaš na drugi napravi. Se prijavim z njim tudi tukaj?')){ sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:NAZAJ()}}); return; }
     if(error) sporocilo('acctMsg',/already|exists/i.test(error.message)?'Ta Google račun je že povezan z drugim profilom – uporabi »Prijava z Googlom«.':/not enabled|disabled|manual/i.test(error.message)?'Prijava z Googlom še ni vklopljena.':error.message); };
   $('gIn').onclick=async()=>{ if(!confirm('Na tej napravi boš namesto trenutnega profila uporabljal/a profil svojega Google računa. Današnji napredek na tej napravi se ne prenese. Nadaljujem?')) return;
     const {error}=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:NAZAJ()}}); if(error) sporocilo('acctMsg',/not enabled|disabled/i.test(error.message)?'Prijava z Googlom še ni vklopljena.':error.message); };
 }
 
 function povratekGoogle(){ const q=new URLSearchParams(OAUTH_URL); const err=q.get('error_description')||q.get('error');
-  if(err){ history.replaceState(null,'',location.pathname); alert('Prijava z Googlom ni uspela:\n'+err.replace(/\+/g,' ')); return; }
+  if(err){ history.replaceState(null,'',location.pathname); const t=err.replace(/\+/g,' ');
+    if(/already linked|already exists|identity_already_exists/i.test(t)){
+      if(confirm('Ta Google račun že uporabljaš na drugi napravi.\n\nSe prijavim z njim tudi tukaj? Dobiš svoj vzdevek, zgodovino in skupine (današnji napredek na tej napravi se ne prenese).'))
+        sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:NAZAJ()}});
+      return; }
+    alert('Prijava z Googlom ni uspela:\n'+t); return; }
   if(!q.get('access_token')&&!q.get('code')) return; history.replaceState(null,'',location.pathname);
   const g=me&&(me.identities||[]).find(i=>i.provider==='google'); const mail=me&&(me.email||(g&&g.identity_data&&g.identity_data.email))||'';
   const el=$('zmag'); el.textContent=g?`✓ Prijavljen/a z Googlom${mail?' ('+mail+')':''}`:'Prijava z Googlom ni uspela – poskusi znova.'; el.classList.remove('hidden'); }
