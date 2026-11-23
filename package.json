@@ -35,7 +35,8 @@
     "lint": "expo lint",
     "igra": "node scripts/zgradi-igro.js",
     "baza": "node scripts/napolni-bazo.js",
-    "zgreseni": "node scripts/zgreseni.js"
+    "zgreseni": "node scripts/zgreseni.js",
+    "test:iskanje": "node scripts/test-iskanje.js"
   },
   "private": true
 }

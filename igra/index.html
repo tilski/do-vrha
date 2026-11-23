@@ -668,45 +668,65 @@ function loop(now){
 addEventListener('resize',()=>{ if(!ok) return; renderer.setSize(innerWidth,innerHeight); camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix(); });
 
 /* ================= ANSWERS ================= */
+/* ===ISKANJE=== (scripts/test-iskanje.js izloči ta del in ga preizkusi na celotni bazi) */
 function norm(s){return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/đ/g,'d').replace(/[^a-z0-9 ]+/g,' ').replace(/\s+/g,' ').trim();}
 // Fonetični ključ: različni zapisi istega imena dobijo enak ključ (Fidži = fiji, Šakira = shakira, Jimi = Džimi)
 function fon(s){ let t=String(s).toLowerCase().replace(/dž/g,'j').replace(/đ/g,'dj'); t=norm(t);
   return t.replace(/sch/g,'s').replace(/tch/g,'c').replace(/ch/g,'c').replace(/sh/g,'s').replace(/zh/g,'z').replace(/ph/g,'f').replace(/th/g,'t')
     .replace(/ck/g,'k').replace(/qu/g,'kv').replace(/q/g,'k').replace(/x/g,'ks').replace(/w/g,'v').replace(/\by(?=[aeiou])/g,'j').replace(/y/g,'i')
     .replace(/dz/g,'j').replace(/([a-z])\1+/g,'$1'); }
-function lev(a,b){if(Math.abs(a.length-b.length)>3)return 9;let prev=Array.from({length:b.length+1},(_,i)=>i);for(let i=1;i<=a.length;i++){const cur=[i];for(let j=1;j<=b.length;j++)cur[j]=Math.min(prev[j]+1,cur[j-1]+1,prev[j-1]+(a[i-1]===b[j-1]?0:1));prev=cur;}return prev[b.length];}
+// razdalja med nizoma; zamenjani sosednji črki (»vonj« ↔ »vojn«) štejeta kot ena napaka
+function lev(a,b){if(Math.abs(a.length-b.length)>3)return 9;let pp=null,prev=Array.from({length:b.length+1},(_,i)=>i);for(let i=1;i<=a.length;i++){const cur=[i];for(let j=1;j<=b.length;j++){cur[j]=Math.min(prev[j]+1,cur[j-1]+1,prev[j-1]+(a[i-1]===b[j-1]?0:1));if(pp&&i>1&&j>1&&a[i-1]===b[j-2]&&a[i-2]===b[j-1])cur[j]=Math.min(cur[j],pp[j-2]+1);}pp=prev;prev=cur;}return prev[b.length];}
+// členi na začetku (»the Lion King«, »la Traviata«) – brez njih je odgovor enak
+const CLENI=new Set(['the','a','an','la','le','les','il','el','der','die','das','los','las','lo']);
+function brezClenov(k){ const w=k.split(' '); while(w.length>1&&CLENI.has(w[0])) w.shift(); return w.join(' '); }
+const brezPresl=k=>k.replace(/ /g,'');
+// Sklanjatve in množina: »mačke«, »mačko« = Mačka · »Kranja« = Kranj · »Petra« = Peter · »gobo« = Gobe
+const KONC=new Set(['a','e','i','o','u','om','em','ov','ev','ih','im','ah','ama','ami','mi','ega','emu','ja','je','ji','jo','ju','jem','jev','jih','jim','jah','jami']);
+function osnove(w){ const o=[]; if(/[aeiou]$/.test(w)) o.push(w.slice(0,-1)); else { o.push(w); const m=w.match(/^(.*[^aeiou])e([lnrkc])$/); if(m) o.push(m[1]+m[2]); } return o.filter(b=>b.length>=3); }
+function sklon(v,k){ if(v===k||k.length<4||v.length<4) return false; for(const b of osnove(k)) if(v.length>b.length&&v.startsWith(b)&&KONC.has(v.slice(b.length))) return true; return false; }
+function sklonFraze(v,k){ const a=v.split(' '),b=k.split(' '); if(a.length!==b.length) return false; let n=0; for(let i=0;i<a.length;i++){ if(a[i]===b[i]) continue; if(!sklon(a[i],b[i])) return false; n++; } return n>0; }
 // c.ans = [{o:'Novo mesto', s:['NM']}, …] razvrščeno po rangu (najpogostejši prvi)
 function prep(c){
   const seen=new Set(); c.items=[];
   for(const a of c.ans){ const parts=[a.o,...(a.s||[])].map(s=>String(s).trim()).filter(Boolean); if(!parts.length) continue; const k=norm(parts[0]); if(!k||seen.has(k)) continue; seen.add(k); c.items.push({canon:parts[0],keys:[...new Set(parts.map(norm).filter(Boolean))]}); }
   let sum=0; const w=c.items.map((_,r)=>{const v=1/Math.pow(r+1,1.05); sum+=v; return v;}); c.items.forEach((it,r)=>it.base=w[r]/sum);
   c.map=new Map(); c.items.forEach(it=>it.keys.forEach(k=>{ if(!c.map.has(k)) c.map.set(k,it); }));
+  c.items.forEach(it=>it.keys.forEach(k=>{ const b=brezClenov(k); if(b.length>=3&&!c.map.has(b)) c.map.set(b,it); }));
   c.fmap=new Map(); c.items.forEach(it=>it.keys.forEach(k=>{ const fk=fon(k); if(fk&&!c.fmap.has(fk)) c.fmap.set(fk,it); }));
+  c.nmap=new Map(); c.items.forEach(it=>it.keys.forEach(k=>{ const nk=brezPresl(brezClenov(k)); if(nk.length>=4&&!c.nmap.has(nk)) c.nmap.set(nk,it); }));
   if(c.g==='ljudje'){ const cnt={}; c.items.forEach(it=>{const w=norm(it.canon).split(' '); if(w.length>1){const l=w[w.length-1]; cnt[l]=(cnt[l]||0)+1;}});
     c.items.forEach(it=>{const w=norm(it.canon).split(' '); const l=w[w.length-1]; if(w.length>1&&cnt[l]===1&&l.length>3&&!c.map.has(l)) c.map.set(l,it);}); }
 }
+function stripTries(cat,k){ const tries=[k]; (cat.strip||[]).forEach(p=>{const pp=norm(p); if(k.startsWith(pp+' ')) tries.push(k.slice(pp.length+1)); if(k.endsWith(' '+pp)) tries.push(k.slice(0,-pp.length-1));});
+  for(const t of [...tries]){ const b=brezClenov(t); if(b!==t) tries.push(b); } return tries.filter(Boolean); }
+// Samodejno sprejme: točen zapis, drug zapis istega zvoka, brez presledkov, sklanjano obliko (če ustreza samo enemu odgovoru)
 function match(cat,input){
-  const k=norm(input); if(!k) return null; const tries=[k];
-  (cat.strip||[]).forEach(p=>{const pp=norm(p); if(k.startsWith(pp+' ')) tries.push(k.slice(pp.length+1)); if(k.endsWith(' '+pp)) tries.push(k.slice(0,-pp.length-1));});
+  const k=norm(input); if(!k) return null; const tries=stripTries(cat,k);
   for(const t of tries) if(cat.map.has(t)) return cat.map.get(t);
   for(const t of tries){ const ft=fon(t); if(cat.fmap&&cat.fmap.has(ft)) return cat.fmap.get(ft); }
+  for(const t of tries){ const nt=brezPresl(t); if(cat.nmap&&cat.nmap.has(nt)) return cat.nmap.get(nt); }
+  for(const t of tries){ const zad=new Set(); for(const it of cat.items) for(const key of it.keys) if(sklonFraze(t,key)||sklonFraze(t,brezClenov(key))){ zad.add(it); break; }
+    if(zad.size===1) return [...zad][0]; }
   return null;
 }
 // Ne sprejme samodejno – vrne najbolj podoben odgovor, ki ga igralec potrdi
-function stripTries(cat,k){ const tries=[k]; (cat.strip||[]).forEach(p=>{const pp=norm(p); if(k.startsWith(pp+' ')) tries.push(k.slice(pp.length+1)); if(k.endsWith(' '+pp)) tries.push(k.slice(0,-pp.length-1));}); return tries; }
+const brezKonc=w=>w.split(' ').map(x=>x.length>=5?x.replace(/[aeiou]+$/,''):x).join(' ');
 function suggest(cat,input){
   const k=norm(input); if(k.length<4) return null; let best=null,bd=9;
   for(const t of stripTries(cat,k)){ if(t.length<4) continue; const lim=t.length>=11?3:t.length>=7?2:1;
-    for(const [key,it] of cat.map){ if(key.length<3) continue; const d=lev(t,key); if(d<=lim&&d<bd){bd=d;best=it;} }
-    // tipkarska napaka v drugem zapisu (npr. »tchaikovski« ≈ Čajkovski)
-    if(cat.fmap){ const ft=fon(t); for(const [key,it] of cat.fmap){ if(key.length<3) continue; const d=lev(ft,key); if(d<=lim&&d<bd){bd=d;best=it;} } } }
+    const ft=fon(t), nt=brezPresl(t), kt=brezKonc(t);
+    for(const it of cat.items) for(const key of it.keys){ if(key.length<3) continue;
+      const d=Math.min(lev(t,key), lev(ft,fon(key)), nt.length>=6?lev(nt,brezPresl(key)):9, kt.length>=4?lev(kt,brezKonc(key))+0.5:9);
+      if(d<=lim&&d<bd){bd=d;best=it;} } }
   if(best) return best;
   // del odgovora: vnos je cela beseda (ali začetek, vsaj 5 črk) daljšega odgovora – predlagaj najpogostejšega takega
   for(const t of stripTries(cat,k)){ if(t.length<4) continue; const ft=fon(t);
     for(const it of cat.items) for(const key of it.keys){ const besede=key.split(' '); if(besede.length<2) continue;
-      if(besede.some(w=>w===t||fon(w)===ft||(t.length>=5&&w.length>t.length&&w.startsWith(t)))) return it; } }
+      if(besede.some(w=>w===t||fon(w)===ft||sklon(t,w)||(t.length>=5&&w.length>t.length&&w.startsWith(t)))) return it; } }
   return null;
 }
+/* ===/ISKANJE=== */
 function todayStr(){return new Date().toLocaleDateString('sv-SE',{timeZone:'Europe/Ljubljana'});}
 function fmtDate(d){const [y,m,dd]=d.split('-');return `${+dd}. ${+m}. ${y}`;}
 function hash(s){let h=2166136261;for(const ch of s){h^=ch.charCodeAt(0);h=Math.imul(h,16777619);}return h>>>0;}
