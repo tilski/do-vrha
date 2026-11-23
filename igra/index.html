@@ -3,7 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<title>Do vrha</title>
+<title>Do vrha? – dnevni izziv</title>
+<meta name="description" content="8 vprašanj na dan. Redkejši odgovor te pripelje višje na Triglav. Slovenska dnevna besedna igra.">
+<meta name="theme-color" content="#3f78b5">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Do vrha?">
+<meta property="og:title" content="Do vrha? – dnevni izziv">
+<meta property="og:description" content="8 vprašanj na dan. Redkejši odgovor te pripelje višje na Triglav.">
+<meta property="og:url" content="https://dovrha.top/">
+<meta property="og:image" content="https://dovrha.top/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="sl_SI">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://dovrha.top/og.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -145,6 +158,8 @@ button{font-family:inherit;cursor:pointer;border:0}
 .bigalt small{font-size:22px;color:var(--mute)}
 .altcap{text-align:center;font-size:12px;color:var(--mute);font-weight:700;margin-bottom:16px}
 .sum{display:grid;gap:6px}
+.stats{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin:-6px 0 16px}
+.stats span{font-size:13px;font-weight:800;background:rgba(255,255,255,.8);border-radius:999px;padding:6px 12px;color:var(--ink)}
 .srow{display:grid;grid-template-columns:36px 1fr auto;gap:10px;align-items:center;background:rgba(255,255,255,.7);border-radius:12px;padding:8px 12px;animation:resIn .5s backwards}
 .srow .e{font-size:20px;text-align:center}
 .srow .c{font-size:11px;color:var(--mute);font-weight:700}
@@ -277,8 +292,9 @@ button{font-family:inherit;cursor:pointer;border:0}
   <div class="endhero"><div class="e" id="eEmoji">🏔️</div><h2 class="disp" id="eTitle"></h2><p id="eSub"></p></div>
   <div class="bigalt disp num" id="eAlt"></div>
   <div class="altcap" id="eCap"></div>
+  <div class="stats" id="eStats"></div>
   <div class="sum" id="sum"></div>
-  <div class="btnrow"><button class="btn2" id="copyBtn">Kopiraj rezultat</button></div>
+  <div class="btnrow"><button class="btn2" id="copyBtn">Deli rezultat</button></div>
   <button class="btn2 hidden" id="krstAgain" style="width:100%;margin-top:-4px">🪵 Ponovi krst</button>
   <div class="sec">DANAŠNJA LESTVICA</div>
   <div class="lb" id="lb"><div class="small">Nalagam …</div></div>
@@ -1008,10 +1024,25 @@ async function showEnd(){
   await chain; renderBoard();
 }
 function confetti(){ const cols=['#e0312d','#ffffff','#2f7fbf','#f2c230']; for(let i=0;i<90;i++){ const d=document.createElement('div'); d.className='confetti'; const s=6+Math.random()*8; d.style.cssText=`left:${Math.random()*100}vw;width:${s}px;height:${s*0.5}px;background:${cols[i%4]};border-radius:2px;animation-duration:${2.5+Math.random()*2.5}s;animation-delay:${Math.random()*1.2}s`; document.body.appendChild(d); setTimeout(()=>d.remove(),6500);} }
+// niz dni: zaporedni dnevi s končano igro (danes ali včeraj je zadnji)
+let streak=0;
+async function loadStreak(){ if(!sb||!myId) return 0;
+  try{ const {data}=await sb.from('igre').select('datum').eq('uid',myId).eq('koncano',true).order('datum',{ascending:false}).limit(400);
+    const dni=new Set((data||[]).map(r=>r.datum)); if(st.done) dni.add(TODAY);
+    const d=new Date(TODAY+'T12:00:00Z'); if(!dni.has(TODAY)) d.setUTCDate(d.getUTCDate()-1);
+    let n=0; while(dni.has(d.toISOString().slice(0,10))){ n++; d.setUTCDate(d.getUTCDate()-1); } return n; }catch(e){ return 0; } }
+function dniTxt(n){const m=n%100;return m===1?'dan':m===2?'dneva':(m===3||m===4)?'dnevi':'dni';}
+async function renderStats(done){
+  const vm=Math.round(st.vm); const drugi=done.filter(p=>p.uid!==myId); const out=[];
+  if(drugi.length){ const pod=drugi.filter(p=>p.vm<vm).length; out.push(`🏆 Višje od ${Math.round(pod/drugi.length*100)} % današnjih planincev`); }
+  streak=await loadStreak(); if(streak>=2) out.push(`🔥 ${streak} ${dniTxt(streak)} zapored`);
+  $('eStats').innerHTML=out.map(t=>`<span>${t}</span>`).join('');
+}
 async function renderBoard(){
   if(!sb||!myId){ $('lb').innerHTML='<div class="small">Lestvica ni na voljo – ni povezave z bazo.</div>'; $('pops').textContent='—'; return; }
   try{ await loadToday(); }catch(e){}
   const done=plays.filter(p=>p.done).sort((a,b)=>b.vm-a.vm);
+  renderStats(done);
   $('lb').innerHTML=done.length?done.slice(0,20).map((p,i)=>{ const nm=p.uid===myId?'Ti':'Planinec'; const alt=altAt(p.vm);
     return `<div class="lbr ${p.uid===myId?'me':''}"><span class="num">${i+1}.</span><span>${esc(nm)}${p.vm>=GAIN?' 🏔️':''}</span><span class="num">${alt.toLocaleString('sl-SI')} m</span></div>`; }).join(''):'<div class="small">Še nihče ni končal.</div>';
   let h=''; for(const c of DAY){ const cnt={}; let t=0; plays.forEach(p=>{const a=p.answers&&p.answers[c.id]; if(a){cnt[a]=(cnt[a]||0)+1;t++;}}); const top=Object.entries(cnt).sort((a,b)=>b[1]-a[1]).slice(0,4); if(!top.length) continue;
@@ -1020,8 +1051,11 @@ async function renderBoard(){
 }
 $('krstAgain').addEventListener('click',()=>{ hide('endp'); krst().then(()=>show('endp')); });
 $('copyBtn').addEventListener('click',async()=>{ const line=DAY.map((c,i)=>{const r=st.res[i];const m=r&&r.mode&&MODES.find(x=>x.id===r.mode);return m?m.e:'🌫️';}).join(''); const vm=Math.round(st.vm);
-  const txt=`Do vrha? #${GAMENO} 🏔️\n${line}\n${altAt(vm)} m · ${vm>=GAIN?'Triglav ✅':placeName(vm)}`;
-  try{ await navigator.clipboard.writeText(txt); $('copyBtn').textContent='Kopirano ✓'; }catch(e){ $('copyBtn').textContent='Ni uspelo'; } setTimeout(()=>$('copyBtn').textContent='Kopiraj rezultat',1800); });
+  const txt=`Do vrha? #${GAMENO} 🏔️\n${line}\n${altAt(vm).toLocaleString('sl-SI')} m · ${vm>=GAIN?'Triglav ✅':placeName(vm).replace(/^pod: /,'pod ')}${streak>=2?` · 🔥${streak}`:''}\n`;
+  const url='https://dovrha.top';
+  const mobi=matchMedia('(pointer:coarse)').matches;
+  if(navigator.share&&mobi){ try{ await navigator.share({text:txt,url}); return; }catch(e){ if(e&&e.name==='AbortError') return; } }
+  try{ await navigator.clipboard.writeText(txt+url); $('copyBtn').textContent='Kopirano ✓ – prilepi prijateljem'; }catch(e){ $('copyBtn').textContent='Ni uspelo'; } setTimeout(()=>$('copyBtn').textContent='Deli rezultat',2200); });
 let endHidden=false;
 $('endX').addEventListener('click',()=>{ hide('endp'); $('reopen').classList.remove('hidden'); });
 $('reopen').addEventListener('click',()=>{ $('reopen').classList.add('hidden'); show('endp'); });

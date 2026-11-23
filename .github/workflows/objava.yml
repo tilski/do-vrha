@@ -28,7 +28,7 @@ jobs:
       - name: Sestavi stran
         run: |
           mkdir -p _site
-          cp igra/index.html igra/dem_core.png igra/dem_ring.png _site/
+          cp igra/index.html igra/dem_core.png igra/dem_ring.png igra/og.png _site/
           cp docs/zasebnost.html _site/
           touch _site/.nojekyll
       - uses: actions/configure-pages@v5
