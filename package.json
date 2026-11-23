@@ -33,7 +33,9 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "lint": "expo lint",
-    "igra": "node scripts/zgradi-igro.js"
+    "igra": "node scripts/zgradi-igro.js",
+    "baza": "node scripts/napolni-bazo.js",
+    "zgreseni": "node scripts/zgreseni.js"
   },
   "private": true
 }

@@ -115,6 +115,7 @@ button{font-family:inherit;cursor:pointer;border:0}
 .send:active{transform:scale(.94)}
 .msg{font-size:12px;color:var(--mute);margin-top:8px;min-height:16px;font-weight:600;transition:color .2s}
 .msg.err{color:var(--red)}
+.sug{font:inherit;font-weight:800;color:#fff;background:#0f1a24;border:0;border-radius:999px;padding:3px 10px;margin:0 2px;cursor:pointer}
 .res{display:flex;align-items:center;gap:14px;animation:resIn .6s cubic-bezier(.2,1.3,.4,1)}
 @keyframes resIn{from{opacity:0;transform:scale(.92) translateY(10px)}to{opacity:1;transform:none}}
 .res .big{width:64px;height:64px;border-radius:20px;display:grid;place-items:center;font-size:34px;flex:none;background:#fff;box-shadow:0 8px 18px -8px rgba(0,0,0,.3)}
@@ -230,7 +231,7 @@ button{font-family:inherit;cursor:pointer;border:0}
   <div class="kicker">DNEVNA IGRA · 8 VPRAŠANJ</div>
   <h1 class="disp">Do vrha<em>?</em></h1>
   <div class="route"><span>Aljažev dom</span><span class="dash"></span><span>Triglav</span></div>
-  <p class="lead">Vsak dan 8 slovenskih kategorij, za vsako en odgovor. Bolj kot je tvoj odgovor <b>redek</b> med igralci, hitreje se vzpenjaš čez Prag in Kredarico na vrh.</p>
+  <p class="lead">Vsak dan 8 vprašanj – 4 o Sloveniji in 4 o svetu – za vsako en odgovor. Bolj kot je tvoj odgovor <b>redek</b> med igralci, hitreje se vzpenjaš čez Prag in Kredarico na vrh.</p>
   <svg class="profile" id="prof" viewBox="0 0 400 92" preserveAspectRatio="none"></svg>
   <div class="modes" id="modes"></div>
   <div class="scale"><span>pogost</span><i></i><span>redek odgovor</span></div>
@@ -298,13 +299,14 @@ button{font-family:inherit;cursor:pointer;border:0}
 <script>
 // varovalka: če se 3D ne naloži, pokaži razlog namesto neskončnega nalaganja
 window.addEventListener('error',e=>{window.__err=(e.message||'')+'';});
-setTimeout(()=>{const l=document.getElementById('loading'); if(l&&!l.classList.contains('done')){ l.querySelector('p').innerHTML='Nalaganje traja predolgo.<br><small>'+(window.__err||'Knjižnica za 3D se ni naložila.')+'</small><br><button onclick="location.reload()" style="margin-top:12px;padding:10px 18px;border-radius:12px;border:0;background:#e0312d;color:#fff;font-weight:800">Poskusi znova</button>'; }},15000);
+setTimeout(()=>{const l=document.getElementById('loading'); if(l&&!l.classList.contains('done')&&!window.__ustavi){ l.querySelector('p').innerHTML='Nalaganje traja predolgo.<br><small>'+(window.__err||'Knjižnica za 3D se ni naložila.')+'</small><br><button onclick="location.reload()" style="margin-top:12px;padding:10px 18px;border-radius:12px;border:0;background:#e0312d;color:#fff;font-weight:800">Poskusi znova</button>'; }},15000);
 </script>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 <script type="module">
 import * as THREE from 'three';
 
-/*CATS*/
+// Vprašanja in igre so v Supabase (supabase/shema.sql). Naslov in javni ključ vgradi npm run igra iz .env.
+const SUPA=/*SUPA*/null;
 
 /* ================= MODES ================= */
 const MODES = [
@@ -666,10 +668,11 @@ addEventListener('resize',()=>{ if(!ok) return; renderer.setSize(innerWidth,inne
 
 /* ================= ANSWERS ================= */
 function norm(s){return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/đ/g,'d').replace(/[^a-z0-9 ]+/g,' ').replace(/\s+/g,' ').trim();}
-function lev(a,b){if(Math.abs(a.length-b.length)>2)return 9;let prev=Array.from({length:b.length+1},(_,i)=>i);for(let i=1;i<=a.length;i++){const cur=[i];for(let j=1;j<=b.length;j++)cur[j]=Math.min(prev[j]+1,cur[j-1]+1,prev[j-1]+(a[i-1]===b[j-1]?0:1));prev=cur;}return prev[b.length];}
-for(const c of CATS){
+function lev(a,b){if(Math.abs(a.length-b.length)>3)return 9;let prev=Array.from({length:b.length+1},(_,i)=>i);for(let i=1;i<=a.length;i++){const cur=[i];for(let j=1;j<=b.length;j++)cur[j]=Math.min(prev[j]+1,cur[j-1]+1,prev[j-1]+(a[i-1]===b[j-1]?0:1));prev=cur;}return prev[b.length];}
+// c.ans = [{o:'Novo mesto', s:['NM']}, …] razvrščeno po rangu (najpogostejši prvi)
+function prep(c){
   const seen=new Set(); c.items=[];
-  for(const raw of c.a.split(';')){ if(!raw.trim()||raw.includes('?')) continue; const parts=raw.split('|').map(s=>s.trim()).filter(Boolean); const k=norm(parts[0]); if(seen.has(k)) continue; seen.add(k); c.items.push({canon:parts[0],keys:[...new Set(parts.map(norm))]}); }
+  for(const a of c.ans){ const parts=[a.o,...(a.s||[])].map(s=>String(s).trim()).filter(Boolean); if(!parts.length) continue; const k=norm(parts[0]); if(!k||seen.has(k)) continue; seen.add(k); c.items.push({canon:parts[0],keys:[...new Set(parts.map(norm).filter(Boolean))]}); }
   let sum=0; const w=c.items.map((_,r)=>{const v=1/Math.pow(r+1,1.05); sum+=v; return v;}); c.items.forEach((it,r)=>it.base=w[r]/sum);
   c.map=new Map(); c.items.forEach(it=>it.keys.forEach(k=>{ if(!c.map.has(k)) c.map.set(k,it); }));
   if(c.g==='ljudje'){ const cnt={}; c.items.forEach(it=>{const w=norm(it.canon).split(' '); if(w.length>1){const l=w[w.length-1]; cnt[l]=(cnt[l]||0)+1;}});
@@ -679,40 +682,86 @@ function match(cat,input){
   const k=norm(input); if(!k) return null; const tries=[k];
   (cat.strip||[]).forEach(p=>{const pp=norm(p); if(k.startsWith(pp+' ')) tries.push(k.slice(pp.length+1)); if(k.endsWith(' '+pp)) tries.push(k.slice(0,-pp.length-1));});
   for(const t of tries) if(cat.map.has(t)) return cat.map.get(t);
-  for(const t of tries){ if(t.length<5) continue; let best=null,bd=9; for(const [key,it] of cat.map){ if(key.length<5) continue; const d=lev(t,key); const lim=t.length>=9?2:1; if(d<=lim&&d<bd){bd=d;best=it;} } if(best) return best; }
   return null;
 }
-const GL={ljudje:'LJUDJE',kraji:'KRAJI',hrana:'HRANA IN PIJAČA',kultura:'KULTURA',znamke:'ZNAMKE IN KLUBI'};
+// Ne sprejme samodejno – vrne najbolj podoben odgovor, ki ga igralec potrdi
+function stripTries(cat,k){ const tries=[k]; (cat.strip||[]).forEach(p=>{const pp=norm(p); if(k.startsWith(pp+' ')) tries.push(k.slice(pp.length+1)); if(k.endsWith(' '+pp)) tries.push(k.slice(0,-pp.length-1));}); return tries; }
+function suggest(cat,input){
+  const k=norm(input); if(k.length<4) return null; let best=null,bd=9;
+  for(const t of stripTries(cat,k)){ if(t.length<4) continue; const lim=t.length>=11?3:t.length>=7?2:1;
+    for(const [key,it] of cat.map){ if(key.length<3) continue; const d=lev(t,key); if(d<=lim&&d<bd){bd=d;best=it;} } }
+  return best;
+}
 function todayStr(){return new Date().toLocaleDateString('sv-SE',{timeZone:'Europe/Ljubljana'});}
 function fmtDate(d){const [y,m,dd]=d.split('-');return `${+dd}. ${+m}. ${y}`;}
 function hash(s){let h=2166136261;for(const ch of s){h^=ch.charCodeAt(0);h=Math.imul(h,16777619);}return h>>>0;}
 function rng(seed){return()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
-function pickCats(date){
-  const r=rng(hash('dovrha-'+date)); const a=CATS.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
-  const out=[],cnt={}; for(const c of a){ if(out.length>=8) break; const lim=c.g==='ljudje'||c.g==='kraji'?3:2; if((cnt[c.g]||0)>=lim) continue; cnt[c.g]=(cnt[c.g]||0)+1; out.push(c); }
+function pickCats(date,cats){
+  const r=rng(hash('dovrha-'+date)); const a=cats.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  // 4 kategorije o Sloveniji + 4 o svetu, največ 2 iz istega področja
+  const out=[],cnt={},obs=[0,0]; for(const c of a){ if(out.length>=8) break; const k=c.g; if(obs[c.s]>=4||(cnt[k]||0)>=2) continue; cnt[k]=(cnt[k]||0)+1; obs[c.s]++; out.push(c); }
   return out;
 }
 const $=id=>document.getElementById(id);
 const TODAY=todayStr();
 const GAMENO=Math.max(1,Math.round((Date.parse(TODAY)-Date.parse('2026-11-13'))/864e5)+1);
-const DAY=pickCats(TODAY);
+
+/* ================= NALAGANJE IZ BAZE ================= */
+let sb=null;
+async function sbClient(){
+  if(sb) return sb;
+  if(!SUPA) throw new Error('Baza ni nastavljena – v .env vpiši EXPO_PUBLIC_SUPABASE_URL in EXPO_PUBLIC_SUPABASE_ANON_KEY ter zaženi npm run igra.');
+  const {createClient}=await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/+esm');
+  return sb=createClient(SUPA.url,SUPA.key);
+}
+// Supabase vrne največ 1000 vrstic naenkrat – beri po straneh
+async function vse(q){ const out=[]; for(let od=0;;od+=1000){ const {data,error}=await q().range(od,od+999); if(error) throw new Error(error.message); out.push(...data); if(data.length<1000) return out; } }
+async function naloziDan(date){
+  // današnja vprašanja si zapomnimo – ob ponovnem odprtju so enaka, tudi brez povezave
+  const KEY='dovrha-vpr3-'+date;
+  try{ const c=JSON.parse(localStorage.getItem(KEY)||'null'); if(Array.isArray(c)&&c.length===8){ c.forEach(prep); return c; } }catch(e){}
+  await sbClient();
+  const vpr=await vse(()=>sb.from('vprasanja').select('id,kategorija_id,vprasanje,namig,slovenija,odstrani').eq('aktivno',true).order('vrstni_red').order('id'));
+  const day=pickCats(date,vpr.map(v=>({id:v.id,g:v.kategorija_id,s:v.slovenija?0:1,t:v.vprasanje,h:v.namig,strip:v.odstrani||[]})));
+  if(day.length<8) throw new Error('V bazi je premalo vprašanj za današnji vzpon.');
+  const odg=await vse(()=>sb.from('odgovori').select('vprasanje_id,odgovor,sopomenke').in('vprasanje_id',day.map(c=>c.id)).order('vprasanje_id').order('rang'));
+  day.forEach(c=>{ c.ans=odg.filter(o=>o.vprasanje_id===c.id).map(o=>({o:o.odgovor,s:o.sopomenke})); });
+  try{ localStorage.setItem(KEY,JSON.stringify(day)); }catch(e){}
+  day.forEach(prep); return day;
+}
+let DAY;
+try{ DAY=await naloziDan(TODAY); }
+catch(e){
+  console.log('vprasanja',e); window.__ustavi=true;
+  $('loading').querySelector('p').innerHTML='Vprašanj ni bilo mogoče naložiti.<br><small>'+esc(e.message||'Preveri internetno povezavo.')+'</small><br><button onclick="location.reload()" style="margin-top:12px;padding:10px 18px;border-radius:12px;border:0;background:#e0312d;color:#fff;font-weight:800">Poskusi znova</button>';
+  throw e;
+}
 
 /* ================= SHARED DATA ================= */
-let db=null,user=null,myId=null,plays=[];
+let myId=null,plays=[];
 async function initDb(){
-  try{ if(!window.claude||!claude.use) return; const [d,u]=await Promise.all([claude.use('db'),claude.use('user')]); if(!d||!u) return; db=d;user=u; myId=await user.id(); await loadToday();
+  try{ await sbClient();
+    // anonimna prijava: vsak igralec dobi svoj id, brez gesla (v Supabase vklopi Anonymous sign-ins)
+    let {data:{session}}=await sb.auth.getSession();
+    if(!session){ const r=await sb.auth.signInAnonymously(); if(r.error) console.log('prijava',r.error.message); session=r.data&&r.data.session; }
+    myId=session&&session.user?session.user.id:null;
+    await loadToday();
     $('status').textContent=plays.length?`Danes se je vzpenjalo že ${plays.length} ${plural(plays.length)}.`:'Bodi danes prvi na poti!';
     const mine=plays.find(p=>p.uid===myId); if(mine&&mine.done&&mine.vm!=null&&!st.done){ st={i:8,vm:mine.vm,done:true,res:DAY.map(c=>({cat:c.id,ans:mine.answers?.[c.id]||null,vm:0,mode:null}))}; persist(); setStartLabel(); }
-  }catch(e){ console.log('db',e); db=null; }
+  }catch(e){ console.log('db',e); }
 }
 function plural(n){const m=n%100;return m===1?'planinec':m===2?'planinca':(m===3||m===4)?'planinci':'planincev';}
-async function loadToday(){ if(!db) return; const snap=await Promise.race([db.collection('plays').where('date','==',TODAY).get(),new Promise((_,r)=>setTimeout(()=>r('timeout'),10000))]); const arr=[]; (snap.docs||snap).forEach(d=>{const v=d.data?d.data():d; arr.push({...v,uid:d.id||v.uid});}); plays=arr.filter(p=>p.vm!=null); }
-function shareFor(cat,it){ const K=20; let c=0,t=0; for(const p of plays){ if(p.uid===myId) continue; const a=p.answers&&p.answers[cat.id]; if(a!==undefined){t++; if(a===it.canon)c++;} } return (c+K*it.base)/(t+K); }
+async function loadToday(){ if(!sb) return; const rows=await vse(()=>sb.from('igre').select('uid,vm,odgovori,koncano').eq('datum',TODAY)); plays=rows.map(p=>({uid:p.uid,vm:p.vm,answers:p.odgovori||{},done:p.koncano})); }
+// Delež igralcev z istim odgovorom. Dokler ni dovolj igralcev, je ocena iz vrstnega reda na seznamu,
+// a nikoli pod PRIOR_MIN – brez podatkov ne vemo, ali je odgovor res redek. Z več igralci odločajo pravi odgovori.
+const PRIOR_MIN=0.012;
+function shareFor(cat,it){ const K=20; let c=0,t=0; for(const p of plays){ if(p.uid===myId) continue; const a=p.answers&&p.answers[cat.id]; if(a!==undefined){t++; if(a===it.canon)c++;} } return (c+K*Math.max(it.base,PRIOR_MIN))/(t+K); }
 let chain=Promise.resolve();
-function save(){ if(!db||!myId) return; const payload={date:TODAY,uid:myId,vm:Math.round(st.vm),answers:Object.fromEntries(st.res.filter(r=>r&&r.ans).map(r=>[r.cat,r.ans])),done:!!st.done,ts:Date.now()}; chain=chain.then(()=>db.collection('plays').doc(myId).set(payload)).catch(e=>console.log('save',e)); }
+function save(){ if(!sb||!myId) return; const payload={datum:TODAY,uid:myId,vm:Math.round(st.vm),odgovori:Object.fromEntries(st.res.filter(r=>r&&r.ans).map(r=>[r.cat,r.ans])),koncano:!!st.done,posodobljeno:new Date().toISOString()};
+  chain=chain.then(async()=>{ const {error}=await sb.from('igre').upsert(payload); if(error) throw new Error(error.message); }).catch(e=>console.log('save',e)); }
 
 /* ================= STATE ================= */
-const LS='dovrha-'+TODAY; let st={i:0,vm:0,res:[],done:false};
+const LS='dovrha2-'+TODAY; let st={i:0,vm:0,res:[],done:false};
 try{const s=JSON.parse(localStorage.getItem(LS)||'null'); if(s) st=s;}catch(e){}
 function persist(){try{localStorage.setItem(LS,JSON.stringify(st));}catch(e){}}
 
@@ -757,11 +806,11 @@ function startGame(){
 }
 function showQ(){
   const c=DAY[st.i];
-  $('qChip').textContent=GL[c.g]; [...$('dots').children].forEach((d,i)=>{ d.className=i===st.i?'cur':''; const r=st.res[i]; d.style.background=r? (r.mode?MODES.find(m=>m.id===r.mode).c:'#9aa7b1'):''; });
+  $('qChip').textContent=((c.s?'SVET · ':'SLO · ')+c.g).toUpperCase(); [...$('dots').children].forEach((d,i)=>{ d.className=i===st.i?'cur':''; const r=st.res[i]; d.style.background=r? (r.mode?MODES.find(m=>m.id===r.mode).c:'#9aa7b1'):''; });
   $('ask').classList.remove('hidden'); $('done').classList.add('hidden');
   const b=$('qBody'); b.classList.remove('slide'); void b.offsetWidth; b.classList.add('slide');
   $('qTitle').textContent=c.t; $('qHint').textContent=c.h;
-  $('ans').value=''; $('msg').textContent='Vpiši odgovor in pritisni Enter.'; $('msg').className='msg';
+  $('ans').value=''; sugIt=null; $('msg').textContent='Vpiši odgovor in pritisni Enter.'; $('msg').className='msg';
   answered=false; tStart=performance.now(); setTimeout(()=>$('ans').focus(),80);
   clearInterval(timer); timer=setInterval(tick,100); tick();
 }
@@ -775,9 +824,18 @@ function speed(){ const el=Math.max(0,(performance.now()-tStart)/1000-PRE); cons
   return {m, l: m>=1.03?`⚡ ×${m.toFixed(2).replace('.',',')}`: m<=0.97?`🐢 ×${m.toFixed(2).replace('.',',')}`:''}; }
 $('form').addEventListener('submit',e=>{ e.preventDefault(); if(answered) return; const v=$('ans').value; if(!v.trim()) return;
   const it=match(DAY[st.i],v);
-  if(!it){ const i=$('ans'); i.classList.remove('bad'); void i.offsetWidth; i.classList.add('bad'); $('msg').textContent=`»${v.trim()}« ni na seznamu – poskusi znova.`; $('msg').className='msg err'; i.select(); return; }
+  if(!it){ const i=$('ans'); const sg=suggest(DAY[st.i],v);
+    if(sg){ sugIt=sg; $('msg').innerHTML=`Si mislil/a <button type="button" class="sug" id="sugBtn">${esc(sg.canon)}</button> ?`; $('msg').className='msg'; $('sugBtn').addEventListener('click',()=>{ if(!answered&&sugIt) finish(sugIt,speed()); }); return; }
+    zgresen(DAY[st.i],v);
+    i.classList.remove('bad'); void i.offsetWidth; i.classList.add('bad'); $('msg').textContent=`»${v.trim()}« ni na seznamu – poskusi znova.`; $('msg').className='msg err'; i.select(); return; }
   finish(it,speed());
 });
+let sugIt=null;
+// zapomni si vnos, ki ga ni na seznamu (enkrat na vprašanje in vnos) – tabela zgreseni v Supabase
+const zgreseniPoslani=new Set();
+function zgresen(cat,v){ const vnos=v.trim().slice(0,80); const k=cat.id+"|"+norm(vnos); if(!sb||!myId||!norm(vnos)||zgreseniPoslani.has(k)) return; zgreseniPoslani.add(k);
+  sb.from('zgreseni').insert({vprasanje_id:cat.id,vnos,datum:TODAY}).then(({error})=>{ if(error) console.log('zgreseni',error.message); }); }
+$('ans').addEventListener('input',()=>{ if(sugIt){ sugIt=null; $('msg').textContent='Vpiši odgovor in pritisni Enter.'; $('msg').className='msg'; } });
 function esc(s){return String(s).replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));}
 const pct=s=>{const p=s*100;return (p<1?'<1':Math.round(p))+' %';};
 function finish(it,sp){
@@ -916,11 +974,10 @@ async function showEnd(){
 }
 function confetti(){ const cols=['#e0312d','#ffffff','#2f7fbf','#f2c230']; for(let i=0;i<90;i++){ const d=document.createElement('div'); d.className='confetti'; const s=6+Math.random()*8; d.style.cssText=`left:${Math.random()*100}vw;width:${s}px;height:${s*0.5}px;background:${cols[i%4]};border-radius:2px;animation-duration:${2.5+Math.random()*2.5}s;animation-delay:${Math.random()*1.2}s`; document.body.appendChild(d); setTimeout(()=>d.remove(),6500);} }
 async function renderBoard(){
-  if(!db){ $('lb').innerHTML='<div class="small">Lestvica deluje, ko si prijavljen v claude.ai.</div>'; $('pops').textContent='—'; return; }
+  if(!sb||!myId){ $('lb').innerHTML='<div class="small">Lestvica ni na voljo – ni povezave z bazo.</div>'; $('pops').textContent='—'; return; }
   try{ await loadToday(); }catch(e){}
   const done=plays.filter(p=>p.done).sort((a,b)=>b.vm-a.vm);
-  let names={}; try{ names=await user.profiles(done.slice(0,20).map(p=>p.uid)); }catch(e){}
-  $('lb').innerHTML=done.length?done.slice(0,20).map((p,i)=>{ const nm=(names&&names[p.uid]&&names[p.uid].name)||(p.uid===myId?'Ti':'Planinec'); const alt=altAt(p.vm);
+  $('lb').innerHTML=done.length?done.slice(0,20).map((p,i)=>{ const nm=p.uid===myId?'Ti':'Planinec'; const alt=altAt(p.vm);
     return `<div class="lbr ${p.uid===myId?'me':''}"><span class="num">${i+1}.</span><span>${esc(nm)}${p.vm>=GAIN?' 🏔️':''}</span><span class="num">${alt.toLocaleString('sl-SI')} m</span></div>`; }).join(''):'<div class="small">Še nihče ni končal.</div>';
   let h=''; for(const c of DAY){ const cnt={}; let t=0; plays.forEach(p=>{const a=p.answers&&p.answers[c.id]; if(a){cnt[a]=(cnt[a]||0)+1;t++;}}); const top=Object.entries(cnt).sort((a,b)=>b[1]-a[1]).slice(0,4); if(!top.length) continue;
     h+=`<div style="margin-top:6px"><b style="color:var(--ink)">${esc(c.t)}</b><div class="pops">${top.map(([a,n])=>`<span>${esc(a)} · ${Math.round(n/t*100)} %</span>`).join('')}</div></div>`; }

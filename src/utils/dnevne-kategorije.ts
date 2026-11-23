@@ -1,15 +1,14 @@
 // Pomožne funkcije za dnevni izbor kategorij.
 // Algoritem je enak kot v igri (igra/src.html), zato aplikacija pokaže iste kategorije.
 
-import { CATS, Kategorija } from './kategorije';
+import type { Kategorija } from './baza';
 
-export const SKUPINE: Record<string, string> = {
-  ljudje: 'Ljudje',
-  kraji: 'Kraji',
-  hrana: 'Hrana in pijača',
-  kultura: 'Kultura',
-  znamke: 'Znamke in klubi',
-};
+export const OBSEGI = ['Slovenija', 'Svet'];
+
+/** Oznaka kategorije, npr. "Svet · Kraji". */
+export function oznakaKategorije(k: Kategorija): string {
+  return `${OBSEGI[k.s]} · ${k.g}`;
+}
 
 /** Današnji datum v obliki 2026-11-20 (po slovenskem času). */
 export function danes(): string {
@@ -46,21 +45,23 @@ function rng(seed: number) {
   };
 }
 
-/** Vrne 8 kategorij za izbrani dan (največ 3 iz ljudi/krajev, 2 iz ostalih skupin). */
-export function dnevneKategorije(datum: string): Kategorija[] {
+/** Vrne 8 kategorij za izbrani dan: 4 o Sloveniji in 4 o svetu, največ 2 iz istega področja. */
+export function dnevneKategorije(datum: string, vsa: Kategorija[]): Kategorija[] {
   const r = rng(hash('dovrha-' + datum));
-  const a = CATS.slice();
+  const a = vsa.slice();
   for (let i = a.length - 1; i > 0; i--) {
     const j = Math.floor(r() * (i + 1));
     [a[i], a[j]] = [a[j], a[i]];
   }
   const izbor: Kategorija[] = [];
   const stevec: Record<string, number> = {};
+  const poObsegu = [0, 0];
   for (const c of a) {
     if (izbor.length >= 8) break;
-    const meja = c.g === 'ljudje' || c.g === 'kraji' ? 3 : 2;
-    if ((stevec[c.g] || 0) >= meja) continue;
-    stevec[c.g] = (stevec[c.g] || 0) + 1;
+    const kljuc = c.g;
+    if (poObsegu[c.s] >= 4 || (stevec[kljuc] || 0) >= 2) continue;
+    stevec[kljuc] = (stevec[kljuc] || 0) + 1;
+    poObsegu[c.s]++;
     izbor.push(c);
   }
   return izbor;

@@ -1,0 +1,1001 @@
+﻿#,Kategorija,Področje,Namig / primer,Slovenija
+1,Država v Evropi,Geografija – svet,Katera koli evropska država,Ne
+2,Država v Afriki,Geografija – svet,Katera koli afriška država,Ne
+3,Država v Aziji,Geografija – svet,Katera koli azijska država,Ne
+4,Država v Južni Ameriki,Geografija – svet,Katera koli južnoameriška država,Ne
+5,Država v Severni ali Srednji Ameriki,Geografija – svet,Vključno s Karibi,Ne
+6,Otoška država,Geografija – svet,"Država, ki leži v celoti na otokih",Ne
+7,Država brez morja,Geografija – svet,Država brez izhoda na morje,Ne
+8,"Država, ki meji na Nemčijo",Geografija – svet,Ena od devetih,Ne
+9,"Država, ki meji na Kitajsko",Geografija – svet,Kopenska meja s Kitajsko,Ne
+10,Država članica EU,Geografija – svet,Ena od 27 članic,Ne
+11,Država z evrom,Geografija – svet,"Država, ki uporablja evro",Ne
+12,Glavno mesto evropske države,Geografija – svet,Prestolnica v Evropi,Ne
+13,Glavno mesto izven Evrope,Geografija – svet,Prestolnica na drugi celini,Ne
+14,Mesto z več kot 5 milijoni prebivalcev,Geografija – svet,Velemesto,Ne
+15,Mesto v ZDA,Geografija – svet,Katero koli mesto v ZDA,Ne
+16,Zvezna država ZDA,Geografija – svet,Ena od 50,Ne
+17,Mesto v Italiji,Geografija – svet,Katero koli italijansko mesto,Ne
+18,Mesto v Nemčiji,Geografija – svet,Katero koli nemško mesto,Ne
+19,Mesto v Avstriji,Geografija – svet,Katero koli avstrijsko mesto,Ne
+20,Mesto na Hrvaškem,Geografija – svet,Katero koli hrvaško mesto,Ne
+21,Hrvaški otok,Geografija – svet,"Otok v Jadranu, ki pripada Hrvaški",Ne
+22,Mesto v Franciji,Geografija – svet,Katero koli francosko mesto,Ne
+23,Mesto v Španiji,Geografija – svet,Katero koli špansko mesto,Ne
+24,Mesto v Veliki Britaniji,Geografija – svet,"Anglija, Škotska, Wales, S. Irska",Ne
+25,Mesto na Balkanu,Geografija – svet,"Srbija, BiH, Črna gora, S. Makedonija …",Ne
+26,Morje,Geografija – svet,Katero koli morje na svetu,Ne
+27,Ocean ali zaliv,Geografija – svet,"Ocean, zaliv ali preliv",Ne
+28,Reka v Evropi,Geografija – svet,Velika ali majhna,Ne
+29,Reka izven Evrope,Geografija – svet,Na drugih celinah,Ne
+30,Jezero na svetu,Geografija – svet,Katero koli jezero izven Slovenije,Ne
+31,Gora višja od 4000 m,Geografija – svet,Vrh nad 4000 m,Ne
+32,Gorovje,Geografija – svet,Gorska veriga kjer koli na svetu,Ne
+33,Vrh v Alpah,Geografija – svet,Kateri koli alpski vrh,Ne
+34,Puščava,Geografija – svet,Puščava na svetu,Ne
+35,Otok na svetu,Geografija – svet,Kateri koli otok,Ne
+36,Polotok,Geografija – svet,Polotok kjer koli na svetu,Ne
+37,Vulkan,Geografija – svet,Aktiven ali ugasel,Ne
+38,Slap na svetu,Geografija – svet,Slap izven Slovenije,Ne
+39,Narodni park na svetu,Geografija – svet,Izven Slovenije,Ne
+40,Turistična znamenitost v Evropi,Geografija – svet,Kar obiščejo turisti,Ne
+41,Svetovno čudo ali UNESCO dediščina,Geografija – svet,Znamenitost s seznama UNESCO,Ne
+42,Grški otok,Geografija – svet,Kateri koli grški otok,Ne
+43,Smučišče v Avstriji ali Italiji,Geografija – svet,Smučarsko središče,Ne
+44,Letališče,Geografija – svet,Ime ali mesto letališča,Ne
+45,Država z rdečo barvo na zastavi,Geografija – svet,Rdeča je na zastavi,Ne
+46,Država z zvezdo na zastavi,Geografija – svet,Zvezda na zastavi,Ne
+47,Uradni jezik države,Geografija – svet,"Jezik, ki je uradni v vsaj eni državi",Ne
+48,Valuta,Geografija – svet,Denarna enota katere koli države,Ne
+49,"Država, kjer vozijo po levi",Geografija – svet,Levostranski promet,Ne
+50,"Država, ki je gostila olimpijske igre",Geografija – svet,Poletne ali zimske,Ne
+51,Država na ekvatorju,Geografija – svet,Ekvator gre čez njo,Ne
+52,Kanadska provinca ali mesto,Geografija – svet,Provinca ali mesto v Kanadi,Ne
+53,Avstralsko mesto,Geografija – svet,Mesto v Avstraliji,Ne
+54,Japonsko mesto,Geografija – svet,Mesto na Japonskem,Ne
+55,Mesto na Kitajskem,Geografija – svet,Mesto v Kitajski,Ne
+56,Indijsko mesto,Geografija – svet,Mesto v Indiji,Ne
+57,Mesto v Južni Ameriki,Geografija – svet,Katero koli,Ne
+58,Afriško mesto,Geografija – svet,Katero koli mesto v Afriki,Ne
+59,Pristanišče ali pristaniško mesto,Geografija – svet,Mesto z velikim pristaniščem,Ne
+60,Pokrajina ali regija v Italiji,Geografija – svet,Npr. Toskana,Ne
+61,Slovenska občina,Slovenija – kraji,Ena od 212,Da
+62,Slovensko mesto,Slovenija – kraji,Kraj s statusom mesta,Da
+63,Vas v Sloveniji,Slovenija – kraji,"Kraj, ki ni mesto",Da
+64,Kraj na Gorenjskem,Slovenija – kraji,Mesto ali vas,Da
+65,Kraj na Štajerskem,Slovenija – kraji,Mesto ali vas,Da
+66,Kraj na Dolenjskem,Slovenija – kraji,Mesto ali vas,Da
+67,Kraj na Primorskem,Slovenija – kraji,Mesto ali vas,Da
+68,Kraj v Prekmurju,Slovenija – kraji,Mesto ali vas,Da
+69,Kraj na Koroškem,Slovenija – kraji,Mesto ali vas,Da
+70,Kraj v Savinjski dolini,Slovenija – kraji,Mesto ali vas,Da
+71,Kraj ob slovenski obali,Slovenija – kraji,Obala in zaledje,Da
+72,Slovenska pokrajina ali regija,Slovenija – kraji,Npr. Prlekija,Da
+73,Slovenski vrh ali hrib,Slovenija – kraji,Od Šmarne gore do Triglava,Da
+74,Slovenski dvatisočak,Slovenija – kraji,Vrh nad 2000 m,Da
+75,Slovenska reka ali potok,Slovenija – kraji,Karkoli teče skozi Slovenijo,Da
+76,Slovensko jezero,Slovenija – kraji,Naravno ali umetno,Da
+77,Slovenski slap,Slovenija – kraji,Kateri koli slap,Da
+78,Kraška jama,Slovenija – kraji,Jama v Sloveniji,Da
+79,Slovenski grad ali dvorec,Slovenija – kraji,"Grad, dvorec, razvalina",Da
+80,Slovensko smučišče,Slovenija – kraji,Kateri koli,Da
+81,Planinska koča,Slovenija – kraji,Koča v slovenskih gorah,Da
+82,Slovenske toplice ali terme,Slovenija – kraji,Zdravilišče,Da
+83,Kraj v Ljubljani,Slovenija – kraji,"Trg, most, četrt, stavba",Da
+84,Kraj v Mariboru,Slovenija – kraji,"Trg, ulica, četrt",Da
+85,Kraj v Celju ali Velenju,Slovenija – kraji,Znamenitost ali četrt,Da
+86,Ljubljanska četrt ali predmestje,Slovenija – kraji,Npr. Šiška,Da
+87,Slovenski narodni ali krajinski park,Slovenija – kraji,Zavarovano območje,Da
+88,Turistična znamenitost v Sloveniji,Slovenija – kraji,Kamor bi peljal tujca,Da
+89,Slovenski muzej,Slovenija – kraji,Kateri koli muzej,Da
+90,Slovenska cerkev ali božja pot,Slovenija – kraji,Npr. Brezje,Da
+91,Kraj s 'Sveti' v imenu,Slovenija – kraji,Npr. Sveti Tomaž,Da
+92,Kraj s 'Gornji' ali 'Spodnji',Slovenija – kraji,Npr. Gornji Grad,Da
+93,"Kraj, ki se konča na -ica",Slovenija – kraji,Npr. Bistrica,Da
+94,"Kraj, ki se konča na -je",Slovenija – kraji,Npr. Velenje,Da
+95,"Kraj, ki se začne na K",Slovenija – kraji,Npr. Kranj,Da
+96,"Kraj, ki se začne na S ali Š",Slovenija – kraji,Npr. Sežana,Da
+97,"Kraj, ki se začne na P",Slovenija – kraji,Npr. Ptuj,Da
+98,Slovenska avtocestna izvozna točka,Slovenija – kraji,Ime izvoza ali počivališča,Da
+99,Mejni prehod,Slovenija – kraji,Prehod na meji Slovenije,Da
+100,Slovenski otok ali polotok,Slovenija – kraji,Npr. Blejski otok,Da
+101,Slovensko vinorodno območje ali vino,Slovenija – kraji,"Npr. Goriška Brda, cviček",Da
+102,Dolina v Sloveniji,Slovenija – kraji,Npr. Logarska dolina,Da
+103,Slovenska planota ali polje,Slovenija – kraji,Npr. Bloke,Da
+104,Kraj z znanim festivalom,Slovenija – kraji,Npr. Lent,Da
+105,"Kraj, ki ima nogometni ali košarkarski klub v 1. ligi",Slovenija – kraji,Npr. Domžale,Da
+106,Kraj s srednjo šolo,Slovenija – kraji,"Kraj, kjer je srednja šola",Da
+107,Šolski center v Sloveniji,Slovenija – kraji,Npr. ŠC Velenje,Da
+108,Slovenska univerza ali fakulteta,Slovenija – kraji,Npr. FRI,Da
+109,Kraj z železniško postajo,Slovenija – kraji,Postaja Slovenskih železnic,Da
+110,Kraj z ženskim imenom ali besedo v imenu,Slovenija – kraji,Npr. Ana (Sveta Ana),Da
+111,Slovenski športnik ali športnica,Ljudje – šport,Kateri koli šport,Da
+112,Slovenski smučarski skakalec,Ljudje – šport,Skakalec ali skakalka,Da
+113,Slovenski alpski smučar,Ljudje – šport,Smučar ali smučarka,Da
+114,Slovenski kolesar,Ljudje – šport,Cestni ali gorski,Da
+115,Slovenski košarkar,Ljudje – šport,Reprezentant ali klubski,Da
+116,Slovenski nogometaš,Ljudje – šport,Reprezentant ali klubski,Da
+117,Slovenski rokometaš,Ljudje – šport,Rokometaš ali rokometašica,Da
+118,Slovenski odbojkar,Ljudje – šport,Odbojkar ali odbojkarica,Da
+119,Slovenski hokejist,Ljudje – šport,Hokejist na ledu,Da
+120,Slovenski olimpijski kolajnar,Ljudje – šport,Poletne ali zimske OI,Da
+121,Slovenski atlet,Ljudje – šport,Atlet ali atletinja,Da
+122,Slovenski plezalec,Ljudje – šport,Športno plezanje ali alpinizem,Da
+123,Slovenski judoist,Ljudje – šport,Judoist ali judoistka,Da
+124,Slovenski tenisač,Ljudje – šport,Tenisač ali tenisačica,Da
+125,Slovenski selektor ali trener,Ljudje – šport,Trener reprezentance ali kluba,Da
+126,"Nogometaš, ki je osvojil zlato žogo",Ljudje – šport,Ballon d'Or,Ne
+127,Svetovno znan nogometaš,Ljudje – šport,"Kateri koli, aktiven ali upokojen",Ne
+128,Košarkar lige NBA,Ljudje – šport,Aktiven ali upokojen,Ne
+129,Teniški igralec ali igralka,Ljudje – šport,Kateri koli profesionalec,Ne
+130,Dirkač formule 1,Ljudje – šport,Aktiven ali upokojen,Ne
+131,Kolesar na Touru,Ljudje – šport,Profesionalni kolesar,Ne
+132,Boksar ali MMA borec,Ljudje – šport,Profesionalec,Ne
+133,Svetovno znan smučar,Ljudje – šport,Alpsko smučanje,Ne
+134,Smučarski skakalec (tujec),Ljudje – šport,Ne Slovenec,Ne
+135,Olimpijski prvak (kateri koli),Ljudje – šport,Zlata kolajna,Ne
+136,Atlet ali atletinja (svet),Ljudje – šport,Kateri koli,Ne
+137,Plavalec ali plavalka,Ljudje – šport,Kateri koli,Ne
+138,Golfist,Ljudje – šport,Profesionalni golfist,Ne
+139,Šahist,Ljudje – šport,Velemojster ali znan šahist,Ne
+140,Nogometni trener,Ljudje – šport,Klubski ali reprezentančni,Ne
+141,Hokejist lige NHL,Ljudje – šport,Aktiven ali upokojen,Ne
+142,Športni komentator,Ljudje – šport,Slovenski ali tuji,Ne
+143,Športnica (ženska),Ljudje – šport,Katera koli športnica,Ne
+144,Nogometni vratar,Ljudje – šport,Kateri koli,Ne
+145,Igralec Reala ali Barcelone,Ljudje – šport,Nekdanji ali sedanji,Ne
+146,Igralec Manchester Uniteda ali Liverpoola,Ljudje – šport,Nekdanji ali sedanji,Ne
+147,Igralec Bayerna ali Juventusa,Ljudje – šport,Nekdanji ali sedanji,Ne
+148,Košarkar Lakersov ali Bullsov,Ljudje – šport,Nekdanji ali sedanji,Ne
+149,Ekstremni športnik,Ljudje – šport,Npr. Martin Strel,Ne
+150,Alpinist ali himalajec,Ljudje – šport,Kateri koli,Ne
+151,Športnik na slovenski znamki ali kovancu,Ljudje – šport,Npr. Leon Štukelj,Da
+152,Esport igralec ali streamer,Ljudje – šport,Igralec iger,Ne
+153,Paraolimpijec,Ljudje – šport,Paraolimpijski športnik,Ne
+154,"Športnik, ki je postal politik ali TV obraz",Ljudje – šport,Kateri koli,Ne
+155,Nogometni klub v Evropi,Ljudje – šport,Klub iz katere koli lige,Ne
+156,Klub lige NBA,Ljudje – šport,Ena od 30 ekip,Ne
+157,Klub NFL ali NHL,Ljudje – šport,Ameriški klubi,Ne
+158,Slovenski športni klub,Ljudje – šport,Kateri koli šport,Da
+159,Formula 1 moštvo,Ljudje – šport,Npr. Ferrari,Ne
+160,Kolesarska ekipa,Ljudje – šport,Npr. UAE Team Emirates,Ne
+161,Slovenski glasbenik ali skupina,"Ljudje – glasba, film, TV",Kateri koli žanr,Da
+162,Slovenski raper,"Ljudje – glasba, film, TV",Rap ali hip-hop,Da
+163,Narodnozabavni ansambel,"Ljudje – glasba, film, TV",Slovenski ansambel,Ne
+164,Slovenski pevec ali pevka,"Ljudje – glasba, film, TV",Solist,Da
+165,Slovenski predstavnik na Evroviziji,"Ljudje – glasba, film, TV",Kadar koli,Da
+166,Slovenski youtuber,"Ljudje – glasba, film, TV",Kanal ali ustvarjalec,Da
+167,Slovenski tiktoker ali influencer,"Ljudje – glasba, film, TV",Ustvarjalec vsebin,Da
+168,Slovenski TV voditelj,"Ljudje – glasba, film, TV",Voditelj ali voditeljica,Da
+169,Slovenski igralec ali igralka,"Ljudje – glasba, film, TV","Film, gledališče, TV",Da
+170,Slovenski komik ali stand-up,"Ljudje – glasba, film, TV",Komik,Da
+171,Slovenski kuhar ali chef,"Ljudje – glasba, film, TV",TV ali restavracija,Da
+172,Slovenski radijec,"Ljudje – glasba, film, TV",Radijski voditelj,Da
+173,Svetovna pop zvezda,"Ljudje – glasba, film, TV",Pevec ali pevka,Ne
+174,Rock skupina,"Ljudje – glasba, film, TV",Katera koli,Ne
+175,Raper (svet),"Ljudje – glasba, film, TV",Kateri koli,Ne
+176,DJ ali producent,"Ljudje – glasba, film, TV",Elektronska glasba,Ne
+177,Pevec ali pevka iz 80-ih,"Ljudje – glasba, film, TV",Popularen v 80-ih,Ne
+178,Skupina iz 60-ih ali 70-ih,"Ljudje – glasba, film, TV",Npr. The Beatles,Ne
+179,Hollywoodski igralec,"Ljudje – glasba, film, TV",Igralec,Ne
+180,Hollywoodska igralka,"Ljudje – glasba, film, TV",Igralka,Ne
+181,Filmski režiser,"Ljudje – glasba, film, TV",Kateri koli,Ne
+182,Dobitnik oskarja,"Ljudje – glasba, film, TV","Igralec, igralka ali režiser",Ne
+183,YouTuber (svet),"Ljudje – glasba, film, TV",Kateri koli,Ne
+184,Streamer na Twitchu,"Ljudje – glasba, film, TV",Kateri koli,Ne
+185,Influencer z več kot 10 milijoni sledilcev,"Ljudje – glasba, film, TV","Instagram, TikTok",Ne
+186,Komik ali stand-up (svet),"Ljudje – glasba, film, TV",Kateri koli,Ne
+187,TV voditelj (svet),"Ljudje – glasba, film, TV",Npr. Jimmy Fallon,Ne
+188,Pevec z Balkana,"Ljudje – glasba, film, TV","Srbija, Hrvaška, BiH …",Ne
+189,Hrvaški glasbenik,"Ljudje – glasba, film, TV",Kateri koli,Ne
+190,Model ali manekenka,"Ljudje – glasba, film, TV",Kateri koli,Ne
+191,Član glasbene skupine,"Ljudje – glasba, film, TV",Ime člana katere koli skupine,Ne
+192,Kitarist,"Ljudje – glasba, film, TV",Znan kitarist,Ne
+193,Bobnar,"Ljudje – glasba, film, TV",Znan bobnar,Ne
+194,Skladatelj klasične glasbe,"Ljudje – glasba, film, TV",Npr. Mozart,Ne
+195,Operni pevec,"Ljudje – glasba, film, TV",Kateri koli,Ne
+196,"Glasbenik, ki je umrl pri 27 letih","Ljudje – glasba, film, TV",Klub 27,Ne
+197,Član K-pop skupine ali K-pop skupina,"Ljudje – glasba, film, TV",Npr. BTS,Ne
+198,Latino glasbenik,"Ljudje – glasba, film, TV",Npr. Shakira,Ne
+199,Country pevec,"Ljudje – glasba, film, TV",Kateri koli,Ne
+200,Glasbenik z umetniškim imenom iz ene besede,"Ljudje – glasba, film, TV",Npr. Adele,Ne
+201,Lik iz serije Prijatelji,"Ljudje – glasba, film, TV",Friends,Ne
+202,Lik iz Harryja Potterja,"Ljudje – glasba, film, TV",Kateri koli,Ne
+203,Lik iz Simpsonovih,"Ljudje – glasba, film, TV",Kateri koli,Ne
+204,Marvelov ali DC superjunak,"Ljudje – glasba, film, TV",Kateri koli,Ne
+205,Lik iz Vojne zvezd,"Ljudje – glasba, film, TV",Star Wars,Ne
+206,Lik iz Gospodarja prstanov,"Ljudje – glasba, film, TV",Tolkien,Ne
+207,Disneyjev lik,"Ljudje – glasba, film, TV",Kateri koli,Ne
+208,Pixarjev film,"Ljudje – glasba, film, TV",Kateri koli,Ne
+209,Lik iz videoigre,"Ljudje – glasba, film, TV",Npr. Mario,Ne
+210,Lik iz anime ali mange,"Ljudje – glasba, film, TV",Kateri koli,Ne
+211,Slovenski pisatelj ali pesnik,"Ljudje – zgodovina, znanost, umetnost",Kateri koli,Da
+212,Slovenski slikar ali kipar,"Ljudje – zgodovina, znanost, umetnost",Kateri koli,Da
+213,Slovenski arhitekt,"Ljudje – zgodovina, znanost, umetnost",Npr. Plečnik,Da
+214,Slovenski znanstvenik ali izumitelj,"Ljudje – zgodovina, znanost, umetnost",Npr. Jožef Stefan,Da
+215,Slovenski politik (predsednik ali premier),"Ljudje – zgodovina, znanost, umetnost",Od leta 1990,Da
+216,Ameriški predsednik,"Ljudje – zgodovina, znanost, umetnost",Kateri koli,Ne
+217,Rimski cesar,"Ljudje – zgodovina, znanost, umetnost",Kateri koli,Ne
+218,Kralj ali kraljica,"Ljudje – zgodovina, znanost, umetnost",Kateri koli monarh,Ne
+219,Diktator,"Ljudje – zgodovina, znanost, umetnost",Iz zgodovine,Ne
+220,Raziskovalec ali pomorščak,"Ljudje – zgodovina, znanost, umetnost",Npr. Kolumb,Ne
+221,Astronavt ali kozmonavt,"Ljudje – zgodovina, znanost, umetnost",Kateri koli,Ne
+222,Izumitelj,"Ljudje – zgodovina, znanost, umetnost",Kateri koli,Ne
+223,Znanstvenik z Nobelovo nagrado,"Ljudje – zgodovina, znanost, umetnost",Kateri koli nobelovec,Ne
+224,Filozof,"Ljudje – zgodovina, znanost, umetnost",Kateri koli,Ne
+225,Slikar,"Ljudje – zgodovina, znanost, umetnost",Svetovno znan,Ne
+226,Kipar,"Ljudje – zgodovina, znanost, umetnost",Svetovno znan,Ne
+227,Pisatelj (svetovni),"Ljudje – zgodovina, znanost, umetnost",Kateri koli,Ne
+228,Pesnik (svetovni),"Ljudje – zgodovina, znanost, umetnost",Kateri koli,Ne
+229,Pisec otroških knjig,"Ljudje – zgodovina, znanost, umetnost",Kateri koli,Ne
+230,Grški filozof ali matematik,"Ljudje – zgodovina, znanost, umetnost",Antična Grčija,Ne
+231,Ustanovitelj tehnološkega podjetja,"Ljudje – zgodovina, znanost, umetnost",Npr. Steve Jobs,Ne
+232,Milijarder,"Ljudje – zgodovina, znanost, umetnost",Kateri koli,Ne
+233,Svetnik ali papež,"Ljudje – zgodovina, znanost, umetnost",Kateri koli,Ne
+234,Vojskovodja,"Ljudje – zgodovina, znanost, umetnost",Kateri koli iz zgodovine,Ne
+235,Revolucionar ali aktivist,"Ljudje – zgodovina, znanost, umetnost",Npr. Gandhi,Ne
+236,Znana ženska v zgodovini,"Ljudje – zgodovina, znanost, umetnost",Katera koli,Ne
+237,Matematik,"Ljudje – zgodovina, znanost, umetnost",Kateri koli,Ne
+238,Fizik,"Ljudje – zgodovina, znanost, umetnost",Kateri koli,Ne
+239,Kemik,"Ljudje – zgodovina, znanost, umetnost",Kateri koli,Ne
+240,Biolog ali zdravnik iz zgodovine,"Ljudje – zgodovina, znanost, umetnost",Npr. Pasteur,Ne
+241,Arhitekt (svet),"Ljudje – zgodovina, znanost, umetnost",Kateri koli,Ne
+242,Modni oblikovalec,"Ljudje – zgodovina, znanost, umetnost",Npr. Coco Chanel,Ne
+243,Fotograf,"Ljudje – zgodovina, znanost, umetnost",Kateri koli,Ne
+244,Junak iz grške mitologije,"Ljudje – zgodovina, znanost, umetnost",Npr. Herkul,Ne
+245,Grški ali rimski bog,"Ljudje – zgodovina, znanost, umetnost",Kateri koli,Ne
+246,Nordijski bog,"Ljudje – zgodovina, znanost, umetnost",Npr. Thor,Ne
+247,Egipčanski bog ali faraon,"Ljudje – zgodovina, znanost, umetnost",Kateri koli,Ne
+248,Junak slovenske pravljice ali pripovedke,"Ljudje – zgodovina, znanost, umetnost",Npr. Kekec,Da
+249,Lik iz Svetega pisma,"Ljudje – zgodovina, znanost, umetnost",Kateri koli,Ne
+250,Literarni lik,"Ljudje – zgodovina, znanost, umetnost",Iz katere koli knjige,Ne
+251,Sadje,Hrana in pijača,Katero koli,Ne
+252,Zelenjava,Hrana in pijača,Katera koli,Ne
+253,Jagodičje,Hrana in pijača,Npr. malina,Ne
+254,Eksotično sadje,Hrana in pijača,Npr. mango,Ne
+255,Začimba ali zelišče,Hrana in pijača,Npr. timijan,Ne
+256,Vrsta sira,Hrana in pijača,Katera koli,Ne
+257,Vrsta kruha ali peciva,Hrana in pijača,Npr. bageta,Ne
+258,Sladica,Hrana in pijača,Katera koli,Ne
+259,Torta,Hrana in pijača,Vrsta torte,Ne
+260,Bonbon ali čokoladica,Hrana in pijača,Znamka ali vrsta,Ne
+261,Vrsta testenin,Hrana in pijača,Npr. špageti,Ne
+262,Jed z rižem,Hrana in pijača,Npr. rižota,Ne
+263,Juha ali enolončnica,Hrana in pijača,Katera koli,Ne
+264,Slovenska jed,Hrana in pijača,Tradicionalna,Da
+265,Italijanska jed,Hrana in pijača,Katera koli,Ne
+266,Azijska jed,Hrana in pijača,Katera koli,Ne
+267,Mehiška jed,Hrana in pijača,Npr. tako,Ne
+268,Balkanska jed,Hrana in pijača,Npr. čevapčiči,Ne
+269,Jed za zajtrk,Hrana in pijača,Katera koli,Ne
+270,Hitra hrana,Hrana in pijača,Npr. burger,Ne
+271,Vrsta pice,Hrana in pijača,Npr. margerita,Ne
+272,Omaka ali preliv,Hrana in pijača,Npr. kečap,Ne
+273,Vrsta mesa ali mesnega izdelka,Hrana in pijača,Npr. pršut,Ne
+274,Riba ali morski sadež,Hrana in pijača,Užitna,Ne
+275,Oreščki ali semena,Hrana in pijača,Npr. orehi,Ne
+276,Žitarica,Hrana in pijača,Npr. ajda,Ne
+277,Stročnica,Hrana in pijača,Npr. fižol,Ne
+278,Gobe (užitne),Hrana in pijača,Npr. jurček,Ne
+279,Pijača brez alkohola,Hrana in pijača,Katera koli,Ne
+280,Gazirana pijača,Hrana in pijača,Znamka ali vrsta,Ne
+281,Vrsta kave,Hrana in pijača,Npr. kapučino,Ne
+282,Vrsta čaja,Hrana in pijača,Npr. kamilični,Ne
+283,Koktajl,Hrana in pijača,Npr. mojito,Ne
+284,Vrsta piva ali pivovarna,Hrana in pijača,Katera koli,Ne
+285,Vino ali sorta grozdja,Hrana in pijača,Npr. merlot,Ne
+286,Žganje ali liker,Hrana in pijača,Npr. viljamovka,Ne
+287,Sok ali smuti,Hrana in pijača,Okus ali znamka,Ne
+288,Okus sladoleda,Hrana in pijača,Kateri koli,Ne
+289,Mlečni izdelek,Hrana in pijača,Npr. jogurt,Ne
+290,Kuhinjski pripomoček,Hrana in pijača,Npr. kuhalnica,Ne
+291,Gospodinjski aparat v kuhinji,Hrana in pijača,Npr. mikrovalovka,Ne
+292,Način priprave hrane,Hrana in pijača,Npr. dušenje,Ne
+293,Restavracija s hitro hrano (veriga),Hrana in pijača,Npr. McDonald's,Ne
+294,Slovenska gostilna ali restavracija,Hrana in pijača,Katera koli,Da
+295,Kar kupiš v pekarni,Hrana in pijača,Npr. burek,Ne
+296,Kar kupiš na bencinski,Hrana in pijača,Hrana ali pijača,Ne
+297,Prigrizek,Hrana in pijača,Npr. čips,Ne
+298,Žitarice za zajtrk,Hrana in pijača,Znamka ali vrsta,Ne
+299,Kar je v sendviču,Hrana in pijača,Sestavina,Ne
+300,Sestavina za pico,Hrana in pijača,Npr. šunka,Ne
+301,Hrana na žaru,Hrana in pijača,Npr. čevapčiči,Ne
+302,Hrana na veselici,Hrana in pijača,Npr. klobasa,Ne
+303,Božična ali velikonočna jed,Hrana in pijača,Praznična jed,Ne
+304,Jed iz krompirja,Hrana in pijača,Npr. pomfri,Ne
+305,Jed iz jajc,Hrana in pijača,Npr. omleta,Ne
+306,Solata ali vrsta solate,Hrana in pijača,Npr. rukola,Ne
+307,Vrsta moke ali kaše,Hrana in pijača,Npr. ajdova,Ne
+308,Sladilo,Hrana in pijača,Npr. med,Ne
+309,Olje ali maščoba,Hrana in pijača,Npr. bučno olje,Ne
+310,Vegansko ali vegetarijansko živilo,Hrana in pijača,Npr. tofu,Ne
+311,Japonska hrana,Hrana in pijača,Npr. suši,Ne
+312,Indijska hrana,Hrana in pijača,Npr. curry,Ne
+313,Francoska jed ali pecivo,Hrana in pijača,Npr. kroasan,Ne
+314,Ameriška hrana,Hrana in pijača,Npr. hot dog,Ne
+315,Grška ali turška jed,Hrana in pijača,Npr. baklava,Ne
+316,Kar se da v smuti,Hrana in pijača,Sestavina,Ne
+317,Sestavina za palačinke,Hrana in pijača,Npr. nutella,Ne
+318,Energijska pijača,Hrana in pijača,Znamka,Ne
+319,Slovenski prehranski izdelek ali znamka,Hrana in pijača,Npr. Argeta,Da
+320,"Hrana, ki je rdeča",Hrana in pijača,Katera koli,Ne
+321,Domača žival,Živali in narava,Npr. krava,Ne
+322,Hišni ljubljenček,Živali in narava,Npr. hrček,Ne
+323,Pasma psa,Živali in narava,Katera koli,Ne
+324,Pasma mačke,Živali in narava,Katera koli,Ne
+325,Ptica,Živali in narava,Katera koli,Ne
+326,Ptica ujeda,Živali in narava,Npr. sokol,Ne
+327,"Ptica, ki ne leti",Živali in narava,Npr. noj,Ne
+328,Morska žival,Živali in narava,Katera koli,Ne
+329,Riba,Živali in narava,Katera koli,Ne
+330,Morski pes ali kit,Živali in narava,Vrsta,Ne
+331,Sesalec,Živali in narava,Kateri koli,Ne
+332,Žival v Afriki,Živali in narava,Divja,Ne
+333,Žival v Avstraliji,Živali in narava,Npr. kenguru,Ne
+334,Žival v džungli,Živali in narava,Npr. jaguar,Ne
+335,Žival na severnem ali južnem polu,Živali in narava,Npr. pingvin,Ne
+336,Žival v slovenskem gozdu,Živali in narava,Npr. srna,Da
+337,Žuželka,Živali in narava,Katera koli,Ne
+338,Metulj ali hrošč,Živali in narava,Vrsta,Ne
+339,Plazilec,Živali in narava,Npr. kuščar,Ne
+340,Kača,Živali in narava,Vrsta,Ne
+341,Dvoživka,Živali in narava,Npr. žaba,Ne
+342,Glodalec,Živali in narava,Npr. veverica,Ne
+343,Opica,Živali in narava,Vrsta,Ne
+344,Mačka zver,Živali in narava,Npr. ris,Ne
+345,Žival s kopiti,Živali in narava,Npr. konj,Ne
+346,Žival z rogovi,Živali in narava,Npr. gams,Ne
+347,Izumrla žival,Živali in narava,Npr. dodo,Ne
+348,Dinozaver,Živali in narava,Vrsta,Ne
+349,Mitološko bitje,Živali in narava,Npr. zmaj,Ne
+350,Žival na kmetiji,Živali in narava,Npr. koza,Ne
+351,Mladič živali (ime),Živali in narava,Npr. tele,Ne
+352,"Žival, ki živi v vodi in na kopnem",Živali in narava,Npr. vidra,Ne
+353,"Žival, ki spi pozimi",Živali in narava,Zimsko spanje,Ne
+354,Nočna žival,Živali in narava,Npr. sova,Ne
+355,Žival s črtami ali pikami,Živali in narava,Npr. zebra,Ne
+356,"Žival, ki je črno-bela",Živali in narava,Npr. panda,Ne
+357,Strupena žival,Živali in narava,Npr. škorpijon,Ne
+358,Žival iz Slovenije (endemit ali simbol),Živali in narava,Npr. človeška ribica,Da
+359,Drevo,Živali in narava,Vrsta,Ne
+360,Iglavec,Živali in narava,Npr. smreka,Ne
+361,Listavec,Živali in narava,Npr. bukev,Ne
+362,Sadno drevo,Živali in narava,Npr. jablana,Ne
+363,Cvetlica,Živali in narava,Katera koli,Ne
+364,Sobna rastlina,Živali in narava,Npr. fikus,Ne
+365,Alpska cvetlica,Živali in narava,Npr. planika,Ne
+366,Zdravilna rastlina,Živali in narava,Npr. kamilica,Ne
+367,Strupena rastlina ali goba,Živali in narava,Npr. mušnica,Ne
+368,Plevel,Živali in narava,Npr. regrat,Ne
+369,Grm,Živali in narava,Npr. leska,Ne
+370,Rastlina v puščavi,Živali in narava,Npr. kaktus,Ne
+371,Kamnina ali mineral,Živali in narava,Npr. apnenec,Ne
+372,Dragi kamen,Živali in narava,Npr. rubin,Ne
+373,Kovina,Živali in narava,Npr. baker,Ne
+374,Kemijski element,Živali in narava,Kateri koli,Ne
+375,Vremenski pojav,Živali in narava,Npr. toča,Ne
+376,Vrsta oblaka,Živali in narava,Npr. kumulus,Ne
+377,Naravna nesreča,Živali in narava,Npr. potres,Ne
+378,Planet ali luna,Živali in narava,V Osončju,Ne
+379,Ozvezdje ali zvezda,Živali in narava,Npr. Orion,Ne
+380,Vrsta tal ali pokrajine,Živali in narava,Npr. močvirje,Ne
+381,Barva,Živali in narava,Katera koli,Ne
+382,Odtenek modre,Živali in narava,Npr. turkizna,Ne
+383,Odtenek rdeče,Živali in narava,Npr. bordo,Ne
+384,Žival z več kot štirimi nogami,Živali in narava,Npr. pajek,Ne
+385,"Žival, ki leže jajca",Živali in narava,Npr. kokoš,Ne
+386,"Žival, ki je hitrejša od človeka",Živali in narava,Npr. gepard,Ne
+387,Žival z dolgim vratom ali repom,Živali in narava,Npr. žirafa,Ne
+388,Žival v živalskem vrtu,Živali in narava,Katera koli,Ne
+389,"Žival, ki se pojavi v slovenskem pregovoru",Živali in narava,Npr. kokoš,Da
+390,Žival na grbu ali zastavi,Živali in narava,Npr. orel,Ne
+391,Šport,Šport in igre,Kateri koli,Ne
+392,Olimpijski šport,Šport in igre,Poletni,Ne
+393,Zimski šport,Šport in igre,Kateri koli,Ne
+394,Šport z žogo,Šport in igre,Kateri koli,Ne
+395,Vodni šport,Šport in igre,Npr. veslanje,Ne
+396,Borilni šport,Šport in igre,Npr. karate,Ne
+397,Ekstremni šport,Šport in igre,Npr. padalstvo,Ne
+398,Atletska disciplina,Šport in igre,Npr. skok v daljino,Ne
+399,Plavalna tehnika ali disciplina,Šport in igre,Npr. kravl,Ne
+400,Gimnastično orodje ali prvina,Šport in igre,Npr. bradlja,Ne
+401,Smučarska disciplina,Šport in igre,Npr. veleslalom,Ne
+402,Športna oprema,Šport in igre,Npr. lopar,Ne
+403,Del nogometnega igrišča ali pravila,Šport in igre,Npr. enajstmetrovka,Ne
+404,Košarkarski izraz,Šport in igre,Npr. trojka,Ne
+405,Teniški turnir,Šport in igre,Npr. Wimbledon,Ne
+406,Pozicija v nogometu,Šport in igre,Npr. vratar,Ne
+407,Pozicija v košarki,Šport in igre,Npr. center,Ne
+408,Športni stadion ali dvorana,Šport in igre,Kateri koli,Ne
+409,Velik športni dogodek,Šport in igre,Npr. Tour de France,Ne
+410,Namizna igra,Šport in igre,Npr. Monopoly,Ne
+411,Igra s kartami,Šport in igre,Npr. tarok,Ne
+412,Igra iz otroštva (na prostem),Šport in igre,Npr. ristanc,Ne
+413,Šahovska figura ali izraz,Šport in igre,Npr. trdnjava,Ne
+414,Igra na srečo,Šport in igre,Npr. loto,Ne
+415,Igrača,Šport in igre,Katera koli,Ne
+416,Lego set ali tema,Šport in igre,Npr. Lego City,Ne
+417,Videoigra,Šport in igre,Katera koli,Ne
+418,Igralna konzola,Šport in igre,Npr. PlayStation,Ne
+419,Mobilna igra,Šport in igre,Npr. Clash Royale,Ne
+420,Videoigra s streljanjem,Šport in igre,Npr. Fortnite,Ne
+421,Pokemon,Šport in igre,Kateri koli,Ne
+422,Minecraft blok ali predmet,Šport in igre,Kateri koli,Ne
+423,Fortnite izraz ali lokacija,Šport in igre,Kateri koli,Ne
+424,Proizvajalec iger,Šport in igre,Npr. Nintendo,Ne
+425,Igra na telefonu iz 2010-ih,Šport in igre,Npr. Angry Birds,Ne
+426,Fitnes vaja,Šport in igre,Npr. počep,Ne
+427,Joga položaj,Šport in igre,Npr. pes,Ne
+428,Ples,Šport in igre,Npr. valček,Ne
+429,Vrsta kolesa ali kolesarjenja,Šport in igre,Npr. gorsko,Ne
+430,Športni pojem v slovenščini,Šport in igre,Npr. ofsajd,Da
+431,Film,"Film, serije, knjige",Kateri koli,Ne
+432,Animirani film,"Film, serije, knjige",Kateri koli,Ne
+433,Grozljivka,"Film, serije, knjige",Film,Ne
+434,Film o superjunakih,"Film, serije, knjige",Kateri koli,Ne
+435,"Film, ki je dobil oskarja","Film, serije, knjige",Najboljši film,Ne
+436,Film iz 90-ih,"Film, serije, knjige",Kateri koli,Ne
+437,Božični film,"Film, serije, knjige",Kateri koli,Ne
+438,Filmska saga ali franšiza,"Film, serije, knjige",Npr. Hitri in drzni,Ne
+439,Film z Leonardom DiCapriem,"Film, serije, knjige",Kateri koli,Ne
+440,Film s Tomom Cruiseom,"Film, serije, knjige",Kateri koli,Ne
+441,Film o vojni,"Film, serije, knjige",Kateri koli,Ne
+442,Film o vesolju,"Film, serije, knjige",Kateri koli,Ne
+443,Serija na Netflixu,"Film, serije, knjige",Kateri koli,Ne
+444,Ameriška TV serija,"Film, serije, knjige",Katera koli,Ne
+445,Risanka,"Film, serije, knjige",Katera koli,Ne
+446,Risanka iz otroštva,"Film, serije, knjige",Npr. Tom in Jerry,Ne
+447,Anime serija,"Film, serije, knjige",Katera koli,Ne
+448,Turška ali latinoameriška nadaljevanka,"Film, serije, knjige",Katera koli,Ne
+449,Resničnostni šov,"Film, serije, knjige",Npr. Big Brother,Ne
+450,Kvizna oddaja,"Film, serije, knjige",Npr. Milijonar,Ne
+451,Slovenska TV oddaja ali serija,"Film, serije, knjige",Katera koli,Da
+452,Slovenski film,"Film, serije, knjige",Kateri koli,Da
+453,TV kanal,"Film, serije, knjige",Kateri koli,Ne
+454,Pretočna platforma,"Film, serije, knjige",Npr. Netflix,Ne
+455,Knjiga (svetovna klasika),"Film, serije, knjige",Katera koli,Ne
+456,Knjiga iz domačega branja,"Film, serije, knjige",Slovenska šola,Ne
+457,Mladinska knjiga ali serija,"Film, serije, knjige",Npr. Harry Potter,Ne
+458,Pravljica,"Film, serije, knjige",Npr. Rdeča kapica,Ne
+459,Strip ali stripovski junak,"Film, serije, knjige",Npr. Asterix,Ne
+460,Pisatelj kriminalk,"Film, serije, knjige",Npr. Agatha Christie,Ne
+461,Lik iz pravljice,"Film, serije, knjige",Npr. Pepelka,Ne
+462,Zlobnež iz filma,"Film, serije, knjige",Npr. Joker,Ne
+463,Filmska replika ali citat,"Film, serije, knjige",Znan stavek,Ne
+464,"Film, posnet v Sloveniji","Film, serije, knjige",Npr. Letopisi Narnije,Da
+465,Filmski žanr,"Film, serije, knjige",Npr. komedija,Ne
+466,Princesa iz Disneyja,"Film, serije, knjige",Katera koli,Ne
+467,Lik iz Shreka,"Film, serije, knjige",Kateri koli,Ne
+468,Lik iz Igre prestolov,"Film, serije, knjige",Kateri koli,Ne
+469,Lik iz serije Breaking Bad ali Stranger Things,"Film, serije, knjige",Kateri koli,Ne
+470,Lik iz Zvezdnih stez ali Vojne zvezd,"Film, serije, knjige",Kateri koli,Ne
+471,Robot ali umetna inteligenca iz filma,"Film, serije, knjige",Npr. R2-D2,Ne
+472,Pes iz filma ali risanke,"Film, serije, knjige",Npr. Scooby-Doo,Ne
+473,Film Jamesa Bonda ali Bond igralec,"Film, serije, knjige",Kateri koli,Ne
+474,Gledališka predstava ali muzikal,"Film, serije, knjige",Npr. Mamma Mia,Ne
+475,Opera ali balet,"Film, serije, knjige",Npr. Labodje jezero,Ne
+476,Slovenska otroška oddaja,"Film, serije, knjige",Npr. Radovedni Taček,Da
+477,Podkast,"Film, serije, knjige",Kateri koli,Ne
+478,Revija ali časopis,"Film, serije, knjige",Kateri koli,Ne
+479,Slovenski časopis ali portal,"Film, serije, knjige",Npr. 24ur,Da
+480,Literarni žanr,"Film, serije, knjige",Npr. fantazija,Ne
+481,Pesem (naslov),Glasba,Katera koli pesem,Ne
+482,Slovenska pesem (naslov),Glasba,Katera koli,Da
+483,Pesem z Evrovizije,Glasba,Katera koli,Ne
+484,Božična pesem,Glasba,Katera koli,Ne
+485,Pesem iz Disneyjevega filma,Glasba,Katera koli,Ne
+486,Pesem Beatlov ali Queenov,Glasba,Katera koli,Ne
+487,Pesem Michaela Jacksona,Glasba,Katera koli,Ne
+488,Pesem Taylor Swift,Glasba,Katera koli,Ne
+489,Glasbeni žanr,Glasba,Npr. jazz,Ne
+490,Glasbeni instrument,Glasba,Kateri koli,Ne
+491,Godalo,Glasba,Npr. violina,Ne
+492,Pihalo ali trobilo,Glasba,Npr. trobenta,Ne
+493,Tolkalo,Glasba,Npr. bobni,Ne
+494,Glasbeni festival,Glasba,Npr. Exit,Ne
+495,Album,Glasba,Kateri koli znan album,Ne
+496,Ljudska pesem,Glasba,Npr. Lepa Vida,Ne
+497,Himna ali koračnica,Glasba,Npr. Zdravljica,Ne
+498,Glasbeni izraz,Glasba,Npr. refren,Ne
+499,Nota ali lestvica,Glasba,Npr. do-re-mi,Ne
+500,"Pevec, ki je zmagal na Evroviziji",Glasba,Kateri koli,Ne
+501,Glasbena nagrada ali lestvica,Glasba,Npr. Grammy,Ne
+502,Glasbena aplikacija ali platforma,Glasba,Npr. Spotify,Ne
+503,Plesna glasba ali DJ hit,Glasba,Katera koli,Ne
+504,"Pesem, ki jo poješ na rojstnem dnevu ali zabavi",Glasba,Katera koli,Ne
+505,Pesem z veselice,Glasba,Katera koli,Ne
+506,Pesem iz 80-ih,Glasba,Katera koli,Ne
+507,Rap pesem,Glasba,Katera koli,Ne
+508,Pesem iz TikToka,Glasba,Viralna,Ne
+509,Skupina z živaljo v imenu,Glasba,Npr. Arctic Monkeys,Ne
+510,Skupina s številko v imenu,Glasba,Npr. Maroon 5,Ne
+511,Spletna stran,Tehnologija in splet,Katera koli,Ne
+512,Družbeno omrežje,Tehnologija in splet,Npr. Instagram,Ne
+513,Aplikacija na telefonu,Tehnologija in splet,Katera koli,Ne
+514,Aplikacija za sporočanje,Tehnologija in splet,Npr. WhatsApp,Ne
+515,Brskalnik,Tehnologija in splet,Npr. Chrome,Ne
+516,Operacijski sistem,Tehnologija in splet,Npr. Linux,Ne
+517,Programski jezik,Tehnologija in splet,Npr. Python,Ne
+518,Računalniški program,Tehnologija in splet,Npr. Excel,Ne
+519,Tehnološko podjetje,Tehnologija in splet,Npr. Apple,Ne
+520,Proizvajalec telefonov,Tehnologija in splet,Npr. Samsung,Ne
+521,Model telefona,Tehnologija in splet,Npr. iPhone 15,Ne
+522,Del računalnika,Tehnologija in splet,Npr. procesor,Ne
+523,Računalniški izraz,Tehnologija in splet,Npr. strežnik,Ne
+524,Tipka na tipkovnici,Tehnologija in splet,Npr. Enter,Ne
+525,Kratica iz računalništva,Tehnologija in splet,Npr. USB,Ne
+526,Datotečni format,Tehnologija in splet,Npr. PDF,Ne
+527,Emoji,Tehnologija in splet,Opis emojija,Ne
+528,Spletni sleng ali kratica,Tehnologija in splet,Npr. LOL,Ne
+529,Elektronska naprava v domu,Tehnologija in splet,Npr. televizor,Ne
+530,Pametna naprava,Tehnologija in splet,Npr. pametna ura,Ne
+531,Umetna inteligenca ali chatbot,Tehnologija in splet,Npr. Claude,Ne
+532,Spletna trgovina,Tehnologija in splet,Npr. Amazon,Ne
+533,Slovenska spletna stran ali aplikacija,Tehnologija in splet,Npr. Bolha,Da
+534,Vrsta kabla ali priključka,Tehnologija in splet,Npr. HDMI,Ne
+535,Enota za podatke ali hitrost,Tehnologija in splet,Npr. gigabajt,Ne
+536,Kriptovaluta,Tehnologija in splet,Npr. bitcoin,Ne
+537,Videoplatforma,Tehnologija in splet,Npr. YouTube,Ne
+538,Iskalnik,Tehnologija in splet,Npr. Google,Ne
+539,Storitev v oblaku,Tehnologija in splet,Npr. Google Drive,Ne
+540,Igra ali stran za učenje,Tehnologija in splet,Npr. Duolingo,Ne
+541,Spletni pojav ali meme,Tehnologija in splet,Npr. Rickroll,Ne
+542,Funkcija na Instagramu ali TikToku,Tehnologija in splet,Npr. zgodba,Ne
+543,Kar je v vsaki pisarni,Tehnologija in splet,Npr. tiskalnik,Ne
+544,"Naprava, ki je danes zastarela",Tehnologija in splet,Npr. diskmen,Ne
+545,Robot ali dron,Tehnologija in splet,Vrsta ali znan model,Ne
+546,Izum 20. stoletja,Tehnologija in splet,Npr. televizija,Ne
+547,Izum iz antike ali srednjega veka,Tehnologija in splet,Npr. kolo,Ne
+548,Vrsta energije,Tehnologija in splet,Npr. sončna,Ne
+549,Vrsta baterije ali vira energije,Tehnologija in splet,Npr. litijeva,Ne
+550,Del avtomobila,Tehnologija in splet,Npr. menjalnik,Ne
+551,Avtomobilska znamka,Znamke in podjetja,Katera koli,Ne
+552,Model avtomobila,Znamke in podjetja,Npr. Golf,Ne
+553,Znamka motorja ali skuterja,Znamke in podjetja,Npr. Yamaha,Ne
+554,Modna znamka,Znamke in podjetja,Npr. Zara,Ne
+555,Športna znamka,Znamke in podjetja,Npr. Nike,Ne
+556,Luksuzna znamka,Znamke in podjetja,Npr. Gucci,Ne
+557,Znamka kozmetike,Znamke in podjetja,Npr. Nivea,Ne
+558,Znamka parfuma,Znamke in podjetja,Katera koli,Ne
+559,Znamka ure,Znamke in podjetja,Npr. Rolex,Ne
+560,Znamka čokolade ali sladkarij,Znamke in podjetja,Npr. Milka,Ne
+561,Znamka pijače,Znamke in podjetja,Npr. Coca-Cola,Ne
+562,Znamka piva,Znamke in podjetja,Katera koli,Ne
+563,Znamka hitre hrane,Znamke in podjetja,Npr. KFC,Ne
+564,Kavarniška veriga,Znamke in podjetja,Npr. Starbucks,Ne
+565,Trgovska veriga v Sloveniji,Znamke in podjetja,Npr. Hofer,Da
+566,Slovensko podjetje,Znamke in podjetja,Katero koli,Da
+567,Slovenska znamka,Znamke in podjetja,Npr. Cockta,Da
+568,Letalska družba,Znamke in podjetja,Npr. Lufthansa,Ne
+569,Hotelska veriga,Znamke in podjetja,Npr. Hilton,Ne
+570,Banka,Znamke in podjetja,Katera koli,Ne
+571,Zavarovalnica,Znamke in podjetja,Katera koli,Ne
+572,Telekomunikacijski operater,Znamke in podjetja,Npr. A1,Ne
+573,Igralna konzola ali proizvajalec,Znamke in podjetja,Npr. Xbox,Ne
+574,Znamka gospodinjskih aparatov,Znamke in podjetja,Npr. Gorenje,Ne
+575,Znamka orodja,Znamke in podjetja,Npr. Bosch,Ne
+576,Pohištvena trgovina,Znamke in podjetja,Npr. Ikea,Ne
+577,Znamka igrač,Znamke in podjetja,Npr. Lego,Ne
+578,Znamka čevljev,Znamke in podjetja,Npr. Converse,Ne
+579,Znamka očal ali optike,Znamke in podjetja,Npr. Ray-Ban,Ne
+580,Znamka kolesa,Znamke in podjetja,Npr. Pinarello,Ne
+581,Naftna družba ali bencinska črpalka,Znamke in podjetja,Npr. Petrol,Ne
+582,Logotip z živaljo,Znamke in podjetja,Npr. Puma,Ne
+583,Logotip z barvo rdeča,Znamke in podjetja,Npr. Coca-Cola,Ne
+584,Znamka z eno črko ali kratico,Znamke in podjetja,Npr. BMW,Ne
+585,Podjetje iz Japonske,Znamke in podjetja,Npr. Sony,Ne
+586,Podjetje iz Nemčije,Znamke in podjetja,Npr. Siemens,Ne
+587,Podjetje iz ZDA,Znamke in podjetja,Katero koli,Ne
+588,Podjetje iz Južne Koreje,Znamke in podjetja,Npr. LG,Ne
+589,Znamka sladoleda,Znamke in podjetja,Npr. Ben & Jerry's,Ne
+590,Znamka žvečilnih gumijev ali bonbonov,Znamke in podjetja,Npr. Orbit,Ne
+591,Kar najdeš v kuhinji,Vsakdan in dom,Predmet,Ne
+592,Kar najdeš v kopalnici,Vsakdan in dom,Predmet,Ne
+593,Kar najdeš v spalnici,Vsakdan in dom,Predmet,Ne
+594,Kar najdeš v dnevni sobi,Vsakdan in dom,Predmet,Ne
+595,Kar najdeš v garaži,Vsakdan in dom,Predmet,Ne
+596,Kar najdeš na vrtu,Vsakdan in dom,Predmet ali rastlina,Ne
+597,Kar najdeš v šolski torbi,Vsakdan in dom,Predmet,Ne
+598,Kar najdeš v peresnici,Vsakdan in dom,Npr. radirka,Ne
+599,Kar vzameš na morje,Vsakdan in dom,Predmet,Ne
+600,Kar vzameš v hribe,Vsakdan in dom,Predmet,Ne
+601,Kar vzameš na kampiranje,Vsakdan in dom,Predmet,Ne
+602,Kar je v avtu,Vsakdan in dom,Predmet,Ne
+603,Kar je v hladilniku,Vsakdan in dom,Živilo,Ne
+604,Kar je v predalu z navlako,Vsakdan in dom,Predmet,Ne
+605,Kar kupiš v drogeriji,Vsakdan in dom,Npr. šampon,Ne
+606,Kar kupiš v trgovini z oblačili,Vsakdan in dom,Kos oblačila,Ne
+607,Kos pohištva,Vsakdan in dom,Npr. omara,Ne
+608,Orodje,Vsakdan in dom,Npr. kladivo,Ne
+609,Gospodinjsko opravilo,Vsakdan in dom,Npr. sesanje,Ne
+610,Prostor v hiši,Vsakdan in dom,Npr. klet,Ne
+611,Vrsta stavbe,Vsakdan in dom,Npr. stolpnica,Ne
+612,Del hiše,Vsakdan in dom,Npr. streha,Ne
+613,Kar vidiš na ulici,Vsakdan in dom,Npr. semafor,Ne
+614,Prometni znak,Vsakdan in dom,Npr. stop,Ne
+615,Kar je na igrišču,Vsakdan in dom,Npr. gugalnica,Ne
+616,Kar je v bolnišnici,Vsakdan in dom,Npr. infuzija,Ne
+617,Kar je na letališču,Vsakdan in dom,Npr. kontrola,Ne
+618,Trgovina ali storitev v mestu,Vsakdan in dom,Npr. frizer,Ne
+619,Kar je v trgovskem centru,Vsakdan in dom,Trgovina ali stvar,Ne
+620,Predmet iz lesa,Vsakdan in dom,Npr. stol,Ne
+621,Predmet iz kovine,Vsakdan in dom,Npr. žlica,Ne
+622,Predmet iz stekla,Vsakdan in dom,Npr. kozarec,Ne
+623,Predmet iz plastike,Vsakdan in dom,Npr. plastenka,Ne
+624,Kar je okroglo,Vsakdan in dom,Npr. žoga,Ne
+625,Kar je rdeče,Vsakdan in dom,Predmet,Ne
+626,Kar je zeleno,Vsakdan in dom,Predmet ali stvar,Ne
+627,Kar je mehko,Vsakdan in dom,Npr. blazina,Ne
+628,Kar je težko,Vsakdan in dom,Npr. sef,Ne
+629,Kar se prižge,Vsakdan in dom,Npr. luč,Ne
+630,Kar ima kolesa,Vsakdan in dom,Npr. voziček,Ne
+631,Kar ima ključavnico,Vsakdan in dom,Npr. vrata,Ne
+632,Kar ima zaslon,Vsakdan in dom,Npr. telefon,Ne
+633,Kar se zlomi,Vsakdan in dom,Npr. jajce,Ne
+634,Kar diši,Vsakdan in dom,Npr. vrtnica,Ne
+635,Kar smrdi,Vsakdan in dom,Npr. smeti,Ne
+636,Kar je hladno,Vsakdan in dom,Npr. led,Ne
+637,Kar je vroče,Vsakdan in dom,Npr. pečica,Ne
+638,Kar se dela pozimi,Vsakdan in dom,Dejavnost,Ne
+639,Kar se dela poleti,Vsakdan in dom,Dejavnost,Ne
+640,Kar se dela za vikend,Vsakdan in dom,Dejavnost,Ne
+641,Hobi,Vsakdan in dom,Npr. ribolov,Ne
+642,Darilo za rojstni dan,Vsakdan in dom,Npr. knjiga,Ne
+643,Kar je na rojstnodnevni zabavi,Vsakdan in dom,Npr. torta,Ne
+644,Kar je na poroki,Vsakdan in dom,Npr. prstan,Ne
+645,Kar delaš zjutraj,Vsakdan in dom,Dejavnost,Ne
+646,Razlog za zamudo v šolo,Vsakdan in dom,Izgovor,Ne
+647,"Stvar, ki jo pogosto izgubiš",Vsakdan in dom,Npr. ključi,Ne
+648,"Stvar, ki jo imajo babice",Vsakdan in dom,Npr. pletilke,Ne
+649,Kar se prodaja na bolšjem trgu,Vsakdan in dom,Npr. plošče,Ne
+650,Kar se reciklira,Vsakdan in dom,Npr. papir,Ne
+651,Kar imaš v denarnici,Vsakdan in dom,Npr. kartica,Ne
+652,Oblačilo,Vsakdan in dom,Kos oblačila,Ne
+653,Obutev,Vsakdan in dom,Npr. škornji,Ne
+654,Modni dodatek,Vsakdan in dom,Npr. šal,Ne
+655,Vrsta pričeske,Vsakdan in dom,Npr. čop,Ne
+656,Kozmetični izdelek,Vsakdan in dom,Npr. maskara,Ne
+657,Nakit,Vsakdan in dom,Npr. uhani,Ne
+658,Del telesa,Vsakdan in dom,Kateri koli,Ne
+659,Organ v telesu,Vsakdan in dom,Npr. jetra,Ne
+660,Kost v telesu,Vsakdan in dom,Npr. stegnenica,Ne
+661,Šolski predmet,Šola in znanost,Npr. matematika,Ne
+662,Šolska potrebščina,Šola in znanost,Npr. ravnilo,Ne
+663,Kar je v razredu,Šola in znanost,Npr. tabla,Ne
+664,Geometrijski lik ali telo,Šola in znanost,Npr. kocka,Ne
+665,Matematični izraz,Šola in znanost,Npr. integral,Ne
+666,Enota za merjenje,Šola in znanost,Npr. meter,Ne
+667,Fizikalna količina,Šola in znanost,Npr. hitrost,Ne
+668,Fizikalni zakon ali pojav,Šola in znanost,Npr. trenje,Ne
+669,Kemijska spojina,Šola in znanost,Npr. voda,Ne
+670,Kislina ali baza,Šola in znanost,Npr. solna kislina,Ne
+671,Bolezen,Šola in znanost,Katera koli,Ne
+672,Zdravilo,Šola in znanost,Npr. aspirin,Ne
+673,Vitamin ali mineral v hrani,Šola in znanost,Npr. vitamin C,Ne
+674,Celica ali del celice,Šola in znanost,Npr. mitohondrij,Ne
+675,Kri ali krvna skupina,Šola in znanost,Npr. A+,Ne
+676,Čutilo ali del očesa/ušesa,Šola in znanost,Npr. zenica,Ne
+677,Mišica,Šola in znanost,Npr. biceps,Ne
+678,Zgodovinsko obdobje,Šola in znanost,Npr. renesansa,Ne
+679,Vojna v zgodovini,Šola in znanost,Npr. stoletna vojna,Ne
+680,Bitka,Šola in znanost,Kateri koli,Ne
+681,Starodavna civilizacija,Šola in znanost,Npr. Maji,Ne
+682,Imperij,Šola in znanost,Npr. Otomanski,Ne
+683,Zgodovinski dogodek 20. stoletja,Šola in znanost,Npr. padec Berlinskega zidu,Ne
+684,Slovenski zgodovinski dogodek,Šola in znanost,Npr. osamosvojitev,Da
+685,Slovenski praznik,Šola in znanost,Npr. dan državnosti,Da
+686,Jezik na svetu,Šola in znanost,Kateri koli,Ne
+687,Črka grške abecede,Šola in znanost,Npr. alfa,Ne
+688,Rimska številka,Šola in znanost,Npr. XIV,Ne
+689,Ločilo,Šola in znanost,Npr. podpičje,Ne
+690,Besedna vrsta,Šola in znanost,Npr. pridevnik,Ne
+691,Slovnični izraz,Šola in znanost,Npr. sklon,Ne
+692,Literarni izraz,Šola in znanost,Npr. metafora,Ne
+693,Pesniška oblika,Šola in znanost,Npr. sonet,Ne
+694,Umetnostni slog,Šola in znanost,Npr. barok,Ne
+695,Slikarska tehnika,Šola in znanost,Npr. akvarel,Ne
+696,Arhitekturni slog,Šola in znanost,Npr. gotika,Ne
+697,Filozofska smer,Šola in znanost,Npr. stoicizem,Ne
+698,Religija ali verstvo,Šola in znanost,Npr. budizem,Ne
+699,Univerza na svetu,Šola in znanost,Npr. Harvard,Ne
+700,Poklic,Šola in znanost,Kateri koli,Ne
+701,Poklic v bolnišnici,Šola in znanost,Npr. anesteziolog,Ne
+702,"Poklic, ki se ga ne da opravljati od doma",Šola in znanost,Npr. gasilec,Ne
+703,Poklic z uniformo,Šola in znanost,Npr. policist,Ne
+704,Obrtni poklic,Šola in znanost,Npr. mizar,Ne
+705,Poklic v IT,Šola in znanost,Npr. programer,Ne
+706,Delovno mesto v šoli,Šola in znanost,Npr. hišnik,Ne
+707,Del vesoljskega plovila ali raziskovanja,Šola in znanost,Npr. raketa,Ne
+708,Vesoljska misija ali agencija,Šola in znanost,Npr. Apollo,Ne
+709,Tip mikroorganizma,Šola in znanost,Npr. bakterija,Ne
+710,Vrsta energije v naravi,Šola in znanost,Npr. veter,Ne
+711,Toplogredni plin ali onesnaževalo,Šola in znanost,Npr. CO2,Ne
+712,Matematični simbol,Šola in znanost,Npr. pi,Ne
+713,Število z imenom,Šola in znanost,Npr. ducat,Ne
+714,Kemijska formula,Šola in znanost,Npr. H2O,Ne
+715,"Zelenjava, ki raste pod zemljo",Šola in znanost,Npr. korenje,Ne
+716,Del rastline,Šola in znanost,Npr. steblo,Ne
+717,Krvna žila ali del srca,Šola in znanost,Npr. aorta,Ne
+718,Dinozaver ali prazgodovinska žival,Šola in znanost,Npr. mamut,Ne
+719,Kamenina iz šolske geografije,Šola in znanost,Npr. granit,Ne
+720,Planinski izraz,Šola in znanost,Npr. markacija,Da
+721,"Beseda, ki se začne na A",Jezik in besede,Katera koli slovenska beseda,Ne
+722,"Beseda, ki se začne na B",Jezik in besede,Katera koli slovenska beseda,Ne
+723,"Beseda, ki se začne na Č",Jezik in besede,Katera koli slovenska beseda,Ne
+724,"Beseda, ki se začne na D",Jezik in besede,Katera koli slovenska beseda,Ne
+725,"Beseda, ki se začne na K",Jezik in besede,Katera koli slovenska beseda,Ne
+726,"Beseda, ki se začne na M",Jezik in besede,Katera koli slovenska beseda,Ne
+727,"Beseda, ki se začne na P",Jezik in besede,Katera koli slovenska beseda,Ne
+728,"Beseda, ki se začne na Š",Jezik in besede,Katera koli slovenska beseda,Ne
+729,"Beseda, ki se začne na Ž",Jezik in besede,Katera koli slovenska beseda,Ne
+730,"Beseda, ki se konča na -ost",Jezik in besede,Npr. radost,Ne
+731,"Beseda, ki se konča na -ica",Jezik in besede,Npr. žlica,Ne
+732,"Beseda, ki se konča na -nik",Jezik in besede,Npr. ribnik,Ne
+733,Beseda z dvema Č,Jezik in besede,Npr. čarovniček,Ne
+734,Beseda s petimi črkami,Jezik in besede,Katera koli,Ne
+735,Beseda brez samoglasnika A,Jezik in besede,Katera koli,Ne
+736,Pridevnik za lepoto,Jezik in besede,Npr. čudovit,Ne
+737,Pridevnik za človekov značaj,Jezik in besede,Npr. prijazen,Ne
+738,Glagol gibanja,Jezik in besede,Npr. tekati,Ne
+739,Glagol v kuhinji,Jezik in besede,Npr. mešati,Ne
+740,"Zvok, ki ga dela žival",Jezik in besede,Npr. mijavk,Ne
+741,Medmet,Jezik in besede,Npr. joj,Ne
+742,Kletvica brez kletvice (eufemizem),Jezik in besede,Npr. ojoj,Ne
+743,Slovenski pregovor (ključna beseda),Jezik in besede,Npr. Kdor ne dela …,Da
+744,Slovenski frazem,Jezik in besede,Npr. iti po gobe,Da
+745,Pogovorna ali slengovska beseda,Jezik in besede,Npr. fajn,Ne
+746,Germanizem v slovenščini,Jezik in besede,Npr. šraufenciger,Da
+747,Anglizem v slovenščini,Jezik in besede,Npr. šoping,Da
+748,Žensko ime,Jezik in besede,Katero koli,Ne
+749,Moško ime,Jezik in besede,Katero koli,Ne
+750,"Žensko ime, ki se začne na M",Jezik in besede,Npr. Maja,Ne
+751,"Moško ime, ki se začne na J",Jezik in besede,Npr. Jan,Ne
+752,Pogost slovenski priimek,Jezik in besede,Npr. Novak,Da
+753,"Priimek, ki je tudi žival ali poklic",Jezik in besede,Npr. Kovač,Ne
+754,Vzdevek ali ljubkovalno ime,Jezik in besede,Npr. srček,Ne
+755,Ime za psa,Jezik in besede,Npr. Rex,Ne
+756,Ime za mačko,Jezik in besede,Npr. Muca,Ne
+757,Beseda za denar,Jezik in besede,Npr. keš,Ne
+758,Beseda za prijatelja,Jezik in besede,Npr. frend,Ne
+759,Beseda za hiter,Jezik in besede,Npr. bliskovit,Ne
+760,Beseda za majhen,Jezik in besede,Npr. drobcen,Ne
+761,Beseda za vesel,Jezik in besede,Npr. razigran,Ne
+762,Beseda za zabavo,Jezik in besede,Npr. žur,Ne
+763,Kratica,Jezik in besede,Npr. EU,Ne
+764,Kratica v Sloveniji,Jezik in besede,Npr. RTV,Da
+765,Beseda iz dveh besed (zloženka),Jezik in besede,Npr. vodovod,Ne
+766,"Beseda, ki je enaka nazaj (palindrom)",Jezik in besede,Npr. kajak,Ne
+767,"Beseda, ki ima več pomenov",Jezik in besede,Npr. klop,Ne
+768,"Angleška beseda, ki jo uporabljamo vsak dan",Jezik in besede,Npr. okej,Ne
+769,Pozdrav v tujem jeziku,Jezik in besede,Npr. bonjour,Ne
+770,Hvala v tujem jeziku,Jezik in besede,Npr. danke,Ne
+771,"Beseda v hrvaščini ali srbščini, ki jo poznaš",Jezik in besede,Npr. brate,Ne
+772,Beseda iz narečja,Jezik in besede,Npr. prekmursko,Ne
+773,Barva v angleščini,Jezik in besede,Npr. red,Ne
+774,Število v tujem jeziku,Jezik in besede,Npr. uno,Ne
+775,Mesec ali dan v tednu v tujem jeziku,Jezik in besede,Npr. Monday,Ne
+776,Žival v angleščini,Jezik in besede,Npr. horse,Ne
+777,"Beseda s črko X, Y ali W",Jezik in besede,Npr. ksilofon,Ne
+778,Beseda z isto črko trikrat,Jezik in besede,Npr. papagaj,Ne
+779,Rima na besedo 'mesto',Jezik in besede,Npr. testo,Ne
+780,Rima na besedo 'hiša',Jezik in besede,Npr. miša,Ne
+781,Prevozno sredstvo,Promet in potovanja,Katero koli,Ne
+782,Vrsta ladje ali čolna,Promet in potovanja,Npr. jadrnica,Ne
+783,Letalo ali helikopter (vrsta/model),Promet in potovanja,Npr. Boeing 747,Ne
+784,Vlak ali vrsta vlaka,Promet in potovanja,Npr. TGV,Ne
+785,Del kolesa,Promet in potovanja,Npr. veriga,Ne
+786,Avtomobilski izraz,Promet in potovanja,Npr. ABS,Ne
+787,Vozniški izraz ali cestni pojem,Promet in potovanja,Npr. krožišče,Ne
+788,Avtocesta ali znana cesta,Promet in potovanja,Npr. Route 66,Ne
+789,Prelaz,Promet in potovanja,Npr. Vršič,Ne
+790,Most na svetu,Promet in potovanja,Npr. Golden Gate,Ne
+791,Predor,Promet in potovanja,Npr. Karavanke,Ne
+792,Železniška postaja na svetu,Promet in potovanja,Kateri koli,Ne
+793,Letovišče ali obmorski kraj,Promet in potovanja,Npr. Poreč,Ne
+794,Kraj za izlet iz Slovenije,Promet in potovanja,Npr. Gardaland,Da
+795,Zabaviščni park,Promet in potovanja,Npr. Disneyland,Ne
+796,Kar potrebuješ na letališču,Promet in potovanja,Npr. potni list,Ne
+797,Kar spakiraš v kovček,Promet in potovanja,Predmet,Ne
+798,Vrsta nastanitve,Promet in potovanja,Npr. hostel,Ne
+799,"Atrakcija v Parizu, Rimu ali Londonu",Promet in potovanja,Npr. Eifflov stolp,Ne
+800,Atrakcija v New Yorku,Promet in potovanja,Npr. Kip svobode,Ne
+801,"Mesto, ki ga obiščeš z vlakom iz Ljubljane",Promet in potovanja,Npr. Zagreb,Da
+802,Vrsta turizma,Promet in potovanja,Npr. agroturizem,Ne
+803,Križarjenje ali ladijska linija,Promet in potovanja,Npr. Jadrolinija,Ne
+804,Avtobusni prevoznik,Promet in potovanja,Npr. Arriva,Ne
+805,Taksi ali deljeni prevoz,Promet in potovanja,Npr. Uber,Ne
+806,Prometni prekršek,Promet in potovanja,Npr. prehitra vožnja,Ne
+807,Del vozniškega izpita,Promet in potovanja,Npr. parkiranje,Ne
+808,Vrsta goriva,Promet in potovanja,Npr. dizel,Ne
+809,Električni avto ali model,Promet in potovanja,Npr. Tesla Model 3,Ne
+810,Motor ali skuter (model),Promet in potovanja,Npr. Vespa,Ne
+811,Praznik na svetu,"Prazniki, običaji in kultura",Npr. noč čarovnic,Ne
+812,Običaj za božič ali novo leto,"Prazniki, običaji in kultura",Npr. ognjemet,Ne
+813,Običaj za veliko noč,"Prazniki, običaji in kultura",Npr. pirhi,Ne
+814,Pustna maska ali kostum,"Prazniki, običaji in kultura",Npr. kurent,Ne
+815,Slovenski običaj,"Prazniki, običaji in kultura",Npr. martinovanje,Da
+816,Slovenski državni simbol,"Prazniki, običaji in kultura",Npr. lipov list,Da
+817,Slovenski kovanec ali bankovec (motiv),"Prazniki, običaji in kultura",Npr. Prešeren,Da
+818,Slovenska tradicionalna obrt,"Prazniki, običaji in kultura",Npr. čipkarstvo,Da
+819,Slovenski spominek,"Prazniki, običaji in kultura",Npr. panjska končnica,Da
+820,Slovenska ljudska noša ali del noše,"Prazniki, običaji in kultura",Npr. avba,Da
+821,Kar je na slovenski zastavi ali grbu,"Prazniki, običaji in kultura",Npr. Triglav,Da
+822,Glasbilo v slovenski ljudski glasbi,"Prazniki, običaji in kultura",Npr. harmonika,Da
+823,Slovenski ljudski ples,"Prazniki, običaji in kultura",Npr. polka,Da
+824,Slovenski festival ali prireditev,"Prazniki, običaji in kultura",Npr. Lent,Da
+825,"Znamenitost, ki je na slovenskem kovancu","Prazniki, običaji in kultura",Npr. lipicanci,Da
+826,Simbol sreče,"Prazniki, običaji in kultura",Npr. detelja,Ne
+827,Horoskopsko znamenje,"Prazniki, običaji in kultura",Npr. lev,Ne
+828,Kitajsko znamenje,"Prazniki, običaji in kultura",Npr. zmaj,Ne
+829,Tarot ali vraževerje,"Prazniki, običaji in kultura",Npr. črna mačka,Ne
+830,Svetovni dan (mednarodni),"Prazniki, običaji in kultura",Npr. dan Zemlje,Ne
+831,Mesec v letu,"Prazniki, običaji in kultura",Kateri koli,Ne
+832,Kar se zgodi na silvestrovo,"Prazniki, običaji in kultura",Npr. odštevanje,Ne
+833,Darilo za valentinovo,"Prazniki, običaji in kultura",Npr. vrtnica,Ne
+834,Kar je na veselici,"Prazniki, običaji in kultura",Npr. srečelov,Ne
+835,Kar imaš na maturantskem plesu,"Prazniki, običaji in kultura",Npr. obleka,Ne
+836,Slovenska znamka hrane ali pijače,Slovenija – pop kultura in mešano,Npr. Argeta,Da
+837,Slovenska trgovina ali veriga,Slovenija – pop kultura in mešano,Npr. Mercator,Da
+838,Slovenska TV postaja ali radio,Slovenija – pop kultura in mešano,Npr. POP TV,Da
+839,Slovenska oddaja na POP TV,Slovenija – pop kultura in mešano,Npr. Kmetija,Da
+840,Slovenski resničnostni šov,Slovenija – pop kultura in mešano,Npr. Big Brother Slovenija,Da
+841,Slovenska pesem z Eme,Slovenija – pop kultura in mešano,Katera koli,Da
+842,Slovenski hit iz 2000-ih,Slovenija – pop kultura in mešano,Pesem,Da
+843,Slovenski film ali serija,Slovenija – pop kultura in mešano,Npr. Gremo mi po svoje,Da
+844,Slovenski risani junak,Slovenija – pop kultura in mešano,Npr. Kekec,Da
+845,Slovenski sleng,Slovenija – pop kultura in mešano,Npr. ful,Da
+846,Slovenski kletvica brez kletvice,Slovenija – pop kultura in mešano,Npr. presneto,Da
+847,Slovenska registrska oznaka,Slovenija – pop kultura in mešano,Npr. LJ,Da
+848,Slovenski nogometni klub,Slovenija – pop kultura in mešano,Npr. Olimpija,Da
+849,Slovenski košarkarski klub,Slovenija – pop kultura in mešano,Npr. Krka,Da
+850,Slovenska športna dvorana ali stadion,Slovenija – pop kultura in mešano,Npr. Stožice,Da
+851,Slovenski festival,Slovenija – pop kultura in mešano,Npr. Rock Otočec,Da
+852,Slovenska univerza ali šola,Slovenija – pop kultura in mešano,Npr. FRI,Da
+853,"Slovensko podjetje, ki izdeluje avtomobilske dele",Slovenija – pop kultura in mešano,Npr. Akrapovič,Da
+854,Slovenski izum,Slovenija – pop kultura in mešano,Npr. Pipistrel,Da
+855,Slovenska letalska družba ali letališče,Slovenija – pop kultura in mešano,Npr. Brnik,Da
+856,Slovenski muzej ali galerija,Slovenija – pop kultura in mešano,Npr. Moderna galerija,Da
+857,"Slovenski časopis, revija ali portal",Slovenija – pop kultura in mešano,Npr. Delo,Da
+858,Slovenski politik ali župan,Slovenija – pop kultura in mešano,Kateri koli,Da
+859,Slovenski državni praznik,Slovenija – pop kultura in mešano,Npr. 25. junij,Da
+860,Slovenski pregovor,Slovenija – pop kultura in mešano,Npr. Rana ura …,Da
+861,Slovenska ljudska pesem,Slovenija – pop kultura in mešano,Npr. Lepa Vida,Da
+862,Slovenska otroška pesem,Slovenija – pop kultura in mešano,Npr. Ringaraja,Da
+863,Slovenska pravljica,Slovenija – pop kultura in mešano,Npr. Mojca Pokrajculja,Da
+864,Slovenski literarni lik,Slovenija – pop kultura in mešano,Npr. Martin Krpan,Da
+865,Slovenski strip ali karikaturist,Slovenija – pop kultura in mešano,Npr. Miki Muster,Da
+866,Slovenska jed iz Prekmurja,Slovenija – pop kultura in mešano,Npr. bograč,Da
+867,Slovenska jed z Gorenjske ali Primorske,Slovenija – pop kultura in mešano,Npr. jota,Da
+868,Slovensko vino,Slovenija – pop kultura in mešano,Npr. teran,Da
+869,Slovensko žganje ali liker,Slovenija – pop kultura in mešano,Npr. borovničke,Da
+870,Slovenski sir,Slovenija – pop kultura in mešano,Npr. tolminc,Da
+871,Slovenska sladica,Slovenija – pop kultura in mešano,Npr. potica,Da
+872,Kar dobiš v slovenski planinski koči,Slovenija – pop kultura in mešano,Npr. ričet,Da
+873,Kar je na slovenski veselici,Slovenija – pop kultura in mešano,Npr. srečelov,Da
+874,Kar ima vsak slovenski dom,Slovenija – pop kultura in mešano,Npr. copati,Da
+875,Kar reče slovenska mama,Slovenija – pop kultura in mešano,Npr. obleci jopico,Da
+876,Kar reče slovenski oče,Slovenija – pop kultura in mešano,Npr. ugasni luč,Da
+877,Slovenski avtomobilski izvoz,Slovenija – pop kultura in mešano,Npr. Renault Clio,Da
+878,Slovenski mobilni operater,Slovenija – pop kultura in mešano,Npr. Telekom,Da
+879,Slovenska banka,Slovenija – pop kultura in mešano,Npr. NLB,Da
+880,Slovenska spletna trgovina,Slovenija – pop kultura in mešano,Npr. Mimovrste,Da
+881,Slovenska aplikacija,Slovenija – pop kultura in mešano,Npr. Bolha,Da
+882,Slovenski youtuber ali podkast,Slovenija – pop kultura in mešano,Npr. Nepridiprav,Da
+883,Slovenski influencer,Slovenija – pop kultura in mešano,Npr. Kaja Furek,Da
+884,Slovenski šef ali chef,Slovenija – pop kultura in mešano,Npr. Ana Roš,Da
+885,Slovenski kuhar iz MasterChefa,Slovenija – pop kultura in mešano,Npr. Bine Volčič,Da
+886,Slovenski TV obraz,Slovenija – pop kultura in mešano,Npr. Jonas,Da
+887,Slovenski komik,Slovenija – pop kultura in mešano,Npr. Lado Bizovičar,Da
+888,Slovenski igralec,Slovenija – pop kultura in mešano,Npr. Branko Đurić,Da
+889,Slovenski pevec iz ansambla,Slovenija – pop kultura in mešano,Npr. Avsenik,Da
+890,Slovenska skupina iz 80-ih ali 90-ih,Slovenija – pop kultura in mešano,Npr. Pankrti,Da
+891,Slovenski DJ ali producent,Slovenija – pop kultura in mešano,Npr. Umek,Da
+892,Slovenska pevka,Slovenija – pop kultura in mešano,Npr. Nina Pušlar,Da
+893,Slovenski olimpijec,Slovenija – pop kultura in mešano,Npr. Tina Maze,Da
+894,Slovenski NBA igralec,Slovenija – pop kultura in mešano,Npr. Dončić,Da
+895,Kar ne smeš početi v knjižnici,Mešano in zabavno,Npr. kričati,Ne
+896,"Kar narediš, ko ti je dolgčas",Mešano in zabavno,Dejavnost,Ne
+897,"Izgovor, zakaj nisi naredil domače naloge",Mešano in zabavno,Izgovor,Ne
+898,Kar te razjezi,Mešano in zabavno,Npr. zamuda,Ne
+899,Kar te osreči,Mešano in zabavno,Npr. sonce,Ne
+900,Superjunaška moč,Mešano in zabavno,Npr. letenje,Ne
+901,Kar bi vzel na samotni otok,Mešano in zabavno,Predmet,Ne
+902,Kar bi kupil z milijonom evrov,Mešano in zabavno,Npr. hiša,Ne
+903,Strah ali fobija,Mešano in zabavno,Npr. pajki,Ne
+904,Sanjski poklic iz otroštva,Mešano in zabavno,Npr. astronavt,Ne
+905,Kar počne mačka,Mešano in zabavno,Dejavnost,Ne
+906,Kar počne pes,Mešano in zabavno,Dejavnost,Ne
+907,"Zvok, ki ga slišiš v mestu",Mešano in zabavno,Npr. hupa,Ne
+908,"Zvok, ki ga slišiš v naravi",Mešano in zabavno,Npr. ptičje petje,Ne
+909,Kar se hitro pokvari,Mešano in zabavno,Npr. mleko,Ne
+910,Kar je drago,Mešano in zabavno,Npr. diamant,Ne
+911,Kar je zastonj,Mešano in zabavno,Npr. zrak,Ne
+912,Kar ima luknje,Mešano in zabavno,Npr. sir,Ne
+913,Kar ima gumbe,Mešano in zabavno,Npr. srajca,Ne
+914,Kar ima zobe,Mešano in zabavno,Npr. glavnik,Ne
+915,"Kar ima noge, a ne hodi",Mešano in zabavno,Npr. miza,Ne
+916,Kar ima rep,Mešano in zabavno,Žival ali stvar,Ne
+917,Kar ima krila,Mešano in zabavno,Npr. letalo,Ne
+918,Kar leti,Mešano in zabavno,Npr. zmaj,Ne
+919,Kar plava,Mešano in zabavno,Npr. raca,Ne
+920,Kar se vrti,Mešano in zabavno,Npr. vetrnica,Ne
+921,Kar je lepljivo,Mešano in zabavno,Npr. med,Ne
+922,Kar je prozorno,Mešano in zabavno,Npr. steklo,Ne
+923,Kar je kvadratno,Mešano in zabavno,Npr. kocka,Ne
+924,Kar je dolgo in tanko,Mešano in zabavno,Npr. špageti,Ne
+925,Kar je majhno kot riž,Mešano in zabavno,Npr. mravlja,Ne
+926,Kar je večje od avtobusa,Mešano in zabavno,Npr. kit,Ne
+927,Kar se meri v litrih,Mešano in zabavno,Npr. mleko,Ne
+928,Kar se meri v kilogramih,Mešano in zabavno,Npr. krompir,Ne
+929,Kar se šteje v parih,Mešano in zabavno,Npr. nogavice,Ne
+930,Kar ima številke,Mešano in zabavno,Npr. ura,Ne
+931,Kar je v cirkusu,Mešano in zabavno,Npr. klovn,Ne
+932,Kar je na kmetiji,Mešano in zabavno,Npr. traktor,Ne
+933,Kar je v gozdu,Mešano in zabavno,Npr. štor,Ne
+934,Kar je na plaži,Mešano in zabavno,Npr. ležalnik,Ne
+935,Kar je v morju,Mešano in zabavno,Npr. alge,Ne
+936,Kar je v vesolju,Mešano in zabavno,Npr. meteor,Ne
+937,Kar je pod zemljo,Mešano in zabavno,Npr. korenine,Ne
+938,Kar je v gradu,Mešano in zabavno,Npr. vitez,Ne
+939,Kar je v pravljici,Mešano in zabavno,Npr. čarovnica,Ne
+940,Kar je v skrinji z zakladom,Mešano in zabavno,Npr. zlatnik,Ne
+941,Kar je na novoletni jelki,Mešano in zabavno,Npr. lučke,Ne
+942,Kar je na torti,Mešano in zabavno,Npr. svečke,Ne
+943,"Kar je na pici, a ne bi smelo biti",Mešano in zabavno,Npr. ananas,Ne
+944,Kar je v Mercatorju ob blagajni,Mešano in zabavno,Npr. žvečilni,Ne
+945,Kar dobiš za rojstni dan od babice,Mešano in zabavno,Npr. nogavice,Ne
+946,Kar se pokvari v šoli,Mešano in zabavno,Npr. projektor,Ne
+947,Kar delaš na telefonu,Mešano in zabavno,Dejavnost,Ne
+948,Kar se zgodi na avtobusu,Mešano in zabavno,Npr. gneča,Ne
+949,Kar slišiš od profesorja,Mešano in zabavno,Npr. tišina,Ne
+950,Kar je na maturi,Mešano in zabavno,Npr. esej,Ne
+951,Kar nosiš v hribe,Mešano in zabavno,Npr. palice,Ne
+952,Kar vidiš na Triglavu,Mešano in zabavno,Npr. Aljažev stolp,Da
+953,Kar kupiš na smučišču,Mešano in zabavno,Npr. vozovnica,Ne
+954,Kar počneš na morju,Mešano in zabavno,Dejavnost,Ne
+955,Kar je v kampu,Mešano in zabavno,Npr. šotor,Ne
+956,Kar se dela na veselici,Mešano in zabavno,Npr. ples,Ne
+957,Kar je na slovenski poroki,Mešano in zabavno,Npr. šranga,Da
+958,Igra na zabavi,Mešano in zabavno,Npr. resnica ali izziv,Ne
+959,Kar se zbira (zbirateljstvo),Mešano in zabavno,Npr. znamke,Ne
+960,Kar se vozi po vodi,Mešano in zabavno,Npr. kanu,Ne
+961,Kar se uporablja v dežju,Mešano in zabavno,Npr. dežnik,Ne
+962,Kar se uporablja pozimi,Mešano in zabavno,Npr. sani,Ne
+963,Kar se uporablja na plaži,Mešano in zabavno,Npr. brisača,Ne
+964,Kar se uporablja v fitnesu,Mešano in zabavno,Npr. utež,Ne
+965,Kar je v prvi pomoči,Mešano in zabavno,Npr. obliž,Ne
+966,Kar je v orodjarni,Mešano in zabavno,Npr. izvijač,Ne
+967,Kar je v pisarni,Mešano in zabavno,Npr. spenjač,Ne
+968,Kar je v kinu,Mešano in zabavno,Npr. kokice,Ne
+969,Kar je v zabaviščnem parku,Mešano in zabavno,Npr. vlakec smrti,Ne
+970,Kar je na sejmu,Mešano in zabavno,Npr. lect,Ne
+971,Kar je na tržnici,Mešano in zabavno,Npr. jabolka,Ne
+972,Kar je v lekarni,Mešano in zabavno,Npr. sirup,Ne
+973,Kar je v zobozdravniški ordinaciji,Mešano in zabavno,Npr. vrtalnik,Ne
+974,Kar je v čakalnici,Mešano in zabavno,Npr. revija,Ne
+975,Kar ima v torbici mama,Mešano in zabavno,Npr. robčki,Ne
+976,Kar ima v žepu otrok,Mešano in zabavno,Npr. kamenček,Ne
+977,Kar je na mizi pri kosilu,Mešano in zabavno,Npr. juha,Ne
+978,Kar se je na kinu ali tekmi,Mešano in zabavno,Npr. nachos,Ne
+979,Kar ješ z žlico,Mešano in zabavno,Npr. juha,Ne
+980,Kar ješ z rokami,Mešano in zabavno,Npr. pica,Ne
+981,Kar je kislo,Mešano in zabavno,Npr. limona,Ne
+982,Kar je pekoče,Mešano in zabavno,Npr. čili,Ne
+983,Kar je hrustljavo,Mešano in zabavno,Npr. čips,Ne
+984,"Kar je sladko, a ni sladica",Mešano in zabavno,Npr. med,Ne
+985,Kar se peče v pečici,Mešano in zabavno,Npr. piškoti,Ne
+986,Kar se cvre,Mešano in zabavno,Npr. krompirček,Ne
+987,Kar se kuha v loncu,Mešano in zabavno,Npr. golaž,Ne
+988,Kar je v kozarcu za vlaganje,Mešano in zabavno,Npr. kumarice,Ne
+989,Kar je v pločevinki,Mešano in zabavno,Npr. tuna,Ne
+990,Kar je v vrečki,Mešano in zabavno,Npr. čips,Ne
+991,Kar je v škatli,Mešano in zabavno,Npr. kosmiči,Ne
+992,Kar je v steklenici,Mešano in zabavno,Npr. olje,Ne
+993,Kar je zamrznjeno,Mešano in zabavno,Npr. grah,Ne
+994,Kar je narejeno iz mleka,Mešano in zabavno,Npr. sir,Ne
+995,Kar je narejeno iz jabolk,Mešano in zabavno,Npr. jabolčnik,Ne
+996,Kar je narejeno iz koruze,Mešano in zabavno,Npr. kokice,Ne
+997,Kar je narejeno iz moke,Mešano in zabavno,Npr. kruh,Ne
+998,Kar je narejeno iz krompirja,Mešano in zabavno,Npr. čips,Ne
+999,Kar je narejeno iz kakava,Mešano in zabavno,Npr. čokolada,Ne
+1000,Kar je narejeno iz grozdja,Mešano in zabavno,Npr. vino,Ne
