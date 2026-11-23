@@ -341,14 +341,14 @@
       "slovenija": true,
       "odgovori": [
         "Lado Bizovičar|bizovicar",
-        "Tadej Toš",
+        "Tadej Toš|toš",
         "Perica Jerković|perica",
         "Klemen Slakonja|slakonja",
         "Vid Valič|valic",
         "Uroš Kuzman|kuzman",
         "Jure Godler|godler",
         "Denis Avdić|avdic",
-        "Boštjan Gorenc - Pižama",
+        "Boštjan Gorenc - Pižama|pižama",
         "Gašper Bergant|bergant",
         "Matjaž Javšnik|javšnik",
         "Janez Hočevar - Rifle|rifle",
@@ -360,9 +360,7 @@
         "Primož Forte|forte",
         "Ježek|frane milčinski ježek",
         "Polde Bibič|bibic",
-        "Vinko Šimek|jaka šraufciger|šraufciger",
-        "Pižama",
-        "Toš"
+        "Vinko Šimek|jaka šraufciger|šraufciger"
       ]
     },
     {
@@ -428,8 +426,7 @@
         "Spet doma",
         "As ti tud not padu",
         "Hri-bar",
-        "Male sive celice",
-        "Nedeljski"
+        "Male sive celice"
       ]
     },
     {
@@ -444,7 +441,7 @@
         "MasterChef",
         "Big Brother Slovenija|big brother",
         "Preverjeno",
-        "Svet na Kanalu A|svet",
+        "Svet na Kanalu A|svet|kanal a svet",
         "Ena žlahtna štorija|štorija",
         "24ur zvečer",
         "Znan obraz ima svoj glas",
@@ -456,10 +453,7 @@
         "Reka ljubezni",
         "Ja, chef!",
         "Sanjski moški",
-        "Trenja",
-        "Hribar|hri-bar",
-        "Kanal A Svet",
-        "Ugriznimo znanost"
+        "Trenja"
       ]
     },
     {
@@ -632,8 +626,7 @@
         "Haložan",
         "Goričan|brica",
         "Bric|brici",
-        "Bohinjec",
-        "Ljubljanček"
+        "Bohinjec"
       ]
     },
     {
@@ -756,7 +749,6 @@
         "Šteje do tri|ena, dve, tri",
         "Bomo videli",
         "Ker tako je|ker je tako",
-        "Nisem hotel",
         "Povej po pravici|povej resnico",
         "Kdo je to naredil",
         "Ne bodi len|lenuh",
@@ -932,8 +924,6 @@
         "Janez Drnovšek|drnovšek",
         "Nataša Pirc Musar|pirc musar",
         "Danilo Türk|türk",
-        "Pipistrel|ivo boscarol|boscarol",
-        "Akrapovič|igor akrapovič",
         "Mike Muster"
       ]
     },
@@ -1103,7 +1093,6 @@
         "Fran|fran.si",
         "Amebis Besana|besana",
         "Arnes",
-        "Moodle|spletna učilnica",
         "Cobiss|cobiss.si",
         "Biblos",
         "Žurnal24",
@@ -1118,8 +1107,7 @@
         "Promet.si|promet info",
         "DARS|dars.si",
         "e-Vinjeta|evinjeta",
-        "Petrol Klub",
-        "OLX"
+        "Petrol Klub"
       ]
     },
     {

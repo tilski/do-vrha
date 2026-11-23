@@ -84,8 +84,7 @@
         "Rok Petrovič|petrovic",
         "Janez Brajkovič|brajkovic",
         "Rok Bagoroš|bagoros",
-        "Andraž Vehovar|vehovar",
-        "Toni Vilander"
+        "Andraž Vehovar|vehovar"
       ]
     },
     {
@@ -296,8 +295,7 @@
         "Tomaž Čižman|čižman",
         "Grega Benedik|benedik",
         "Mateja Robnik|robnik",
-        "Mitja Dragšič|dragšič",
-        "Tina Šutej|sutej"
+        "Mitja Dragšič|dragšič"
       ]
     },
     {
@@ -489,8 +487,8 @@
         "Lucija Polavder|polavder",
         "Teja Gregorin|gregorin",
         "Jakov Fak|fak",
-        "Mitja Petkovšek|petkovšek",
-        "Saša Farič"
+        "Tim Mastnak",
+        "Jolanda Čeplak"
       ]
     },
     {
@@ -661,10 +659,8 @@
         "Branko Elsner|elsner",
         "Ante Šimundža|šimundža",
         "Zoran Zeljković|zeljković",
-        "Albert Riera|riera",
         "Simon Rožman|rožman",
-        "Luka Elsner",
-        "Dani Gil"
+        "Luka Elsner"
       ]
     },
     {
@@ -738,8 +734,8 @@
         "Parklji|kk parklji",
         "Geoplin Slovan|geoplin",
         "Šenčur|kk šenčur",
-        "Calcit Kamnik|calcit",
-        "ACH Volley|ach"
+        "Union Olimpija|smelt olimpija",
+        "Grosuplje|kk grosuplje"
       ]
     },
     {
@@ -748,12 +744,11 @@
       "namig": "Npr. Stožice, Planica",
       "slovenija": true,
       "odgovori": [
-        "Stožice|stadion stožice",
-        "Hala Tivoli|tivoli",
+        "Stožice|stadion stožice|arena stožice|dvorana stožice|stožice arena",
+        "Hala Tivoli|tivoli|tivolska dvorana",
         "Ljudski vrt",
         "Planica|letalnica bratov gorišek|letalnica",
-        "Bonifika",
-        "Arena Stožice|dvorana stožice",
+        "Bonifika|dvorana bonifika",
         "Pokljuka",
         "Kranjska Gora",
         "Arena Petrol|celje stadion|stadion z'dežele",
@@ -766,7 +761,7 @@
         "Krvavec",
         "Golte",
         "Kanin",
-        "Zlatorog",
+        "Zlatorog|dvorana zlatorog",
         "Dvorana Tabor|tabor",
         "Lukna",
         "Podmežakla|dvorana podmežakla",
@@ -779,8 +774,6 @@
         "Dvorana Golovec|golovec",
         "Dvorana Leona Štuklja|leon štukelj dvorana",
         "Rdeča dvorana Velenje|rdeča dvorana",
-        "Dvorana Zlatorog",
-        "Dvorana Bonifika",
         "Športna dvorana Šentjur|hruševec",
         "Bled|veslaška proga bled|blejsko jezero",
         "Tacen|tacen proga|kajak proga tacen",
@@ -789,9 +782,7 @@
         "Hipodrom Ljutomer|ljutomer kasači",
         "Raceland Krško|raceland",
         "Speedway Krško|matija gubec stadion|krško speedway",
-        "Pohorje bike park",
-        "Stožice Arena",
-        "Tivolska dvorana"
+        "Pohorje bike park"
       ]
     },
     {

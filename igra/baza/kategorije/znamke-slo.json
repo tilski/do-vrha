@@ -111,7 +111,7 @@
         "Lidl",
         "Tuš",
         "Eurospin",
-        "Big Bang|bigbang.si",
+        "Big Bang|bigbang.si|bigbang",
         "dm",
         "Jager|jägermeister",
         "Merkur",
@@ -164,11 +164,8 @@
         "A1|si.mobil|simobil",
         "Telemach|tušmobil|tus mobil",
         "Mimovrste|mimovrste.com",
-        "Bigbang",
         "Lekarna|lekarne",
         "Sanolabor",
-        "Wolt",
-        "Glovo",
         "Pošta"
       ]
     },
@@ -223,7 +220,11 @@
         "Triglav skladi",
         "Bankart",
         "Activa|activa kartica",
-        "Karanta"
+        "Karanta",
+        "N Banka|nbanka",
+        "Sberbank",
+        "BKS Bank",
+        "Hypo Alpe Adria|hypo"
       ]
     },
     {
@@ -320,8 +321,7 @@
         "Cosylab",
         "Instrumentation Technologies|i-tech",
         "Hyla|hyla sesalnik",
-        "Dewesoft",
-        "Elektro"
+        "Dewesoft"
       ]
     },
     {
@@ -389,8 +389,7 @@
         "Kemis",
         "Tosama|tosama vata",
         "Albaugh TKI|tki hrastnik",
-        "Mikro+Polo",
-        "Elektroni"
+        "Mikro+Polo"
       ]
     },
     {
@@ -455,11 +454,8 @@
         "Kopitarna Sevnica|kopitarna",
         "Seaway",
         "Rog|rog kolesa",
-        "Unior",
         "Iglu sport|iglu",
         "Sportina",
-        "Kovinoplastika Lož|kovinoplastika",
-        "Elan Yachts",
         "Tosama|tosama vata",
         "Pletenina",
         "Annapurna",
@@ -467,10 +463,8 @@
         "Planika Kranj",
         "Svila Maribor",
         "Tekstilana Kranj",
-        "Toko",
         "Dekorativna Ljubljana",
-        "Elan Smuči",
-        "Akrapovič"
+        "Elan Smuči"
       ]
     },
     {
@@ -599,8 +593,7 @@
         "Better|better.care",
         "Plastika Skaza",
         "Trimo",
-        "Sensum",
-        "Tovarna Rog"
+        "Sensum"
       ]
     },
     {
@@ -616,7 +609,6 @@
         "Hit Nova Gorica|hit",
         "Terme Krka",
         "Hotel Slon|slon",
-        "Bled|turizem bled",
         "Hotel Lev",
         "Hoteli Bernardin|bernardin",
         "LifeClass Portorož|lifeclass",
@@ -826,8 +818,7 @@
         "Vina Kras|kraški teran",
         "KZ Krško",
         "Čotar",
-        "Renčel",
-        "Rebula"
+        "Renčel"
       ]
     },
     {
@@ -923,8 +914,7 @@
         "Kopitarna Sevnica|kopitarna",
         "Radgonske gorice|gornja radgona",
         "Rudnik Mežica|mežica rudnik",
-        "Triglav|zavarovalnica triglav",
-        "Petrol"
+        "Triglav|zavarovalnica triglav"
       ]
     },
     {
@@ -967,14 +957,8 @@
         "Pipistrel|boscarol",
         "Akrapovič",
         "Elaphe",
-        "Talum",
-        "Impol",
-        "Steklarna Rogaška|rogaska",
-        "Steklarna Hrastnik|hrastnik",
-        "Trimo",
         "Emo Celje|emo",
-        "Titus Dekani|titus",
-        "Kolpa|kolpa kopalnice"
+        "Titus Dekani|titus"
       ]
     }
   ]
