@@ -154,6 +154,7 @@ button{font-family:inherit;cursor:pointer;border:0}
 .topl{display:flex;gap:8px;align-items:center;pointer-events:auto}
 .pbtn{width:44px;height:44px;border-radius:50%;background:var(--glass);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--stroke);box-shadow:var(--shadow);font-size:19px;display:grid;place-items:center;transition:.2s}
 .pbtn:hover{background:var(--night)}
+#brandBtn{cursor:pointer}
 .ptitle{font-size:30px;margin:0 0 4px;font-weight:800}
 .prow{display:flex;gap:8px;margin:6px 0}
 .prow input{flex:1;min-width:0;border:0;background:#fff;border-radius:12px;padding:12px 14px;font:inherit;font-weight:600;color:var(--ink);outline:none;box-shadow:inset 0 0 0 1px rgba(15,26,36,.1)}
@@ -257,7 +258,7 @@ button{font-family:inherit;cursor:pointer;border:0}
 
 <div class="top">
   <div class="topl">
-  <div class="brand">
+  <div class="brand" id="brandBtn" role="button" tabindex="0" title="Na začetek">
     <svg class="mark" viewBox="0 0 40 40"><circle cx="20" cy="20" r="19" fill="#fff"/><circle cx="20" cy="20" r="13" fill="#fff" stroke="#e0312d" stroke-width="8"/></svg>
     <div><b class="disp">Do vrha</b><br><span id="bMeta">#1 · 13. 11. 2026</span></div>
   </div>
@@ -350,7 +351,7 @@ button{font-family:inherit;cursor:pointer;border:0}
   <div class="altcap" id="eCap"></div>
   <div class="stats" id="eStats"></div>
   <div class="sum" id="sum"></div>
-  <div class="btnrow"><button class="btn2" id="copyBtn">Deli rezultat</button></div>
+  <div class="btnrow"><button class="btn2" id="copyBtn">Deli rezultat</button><button class="btn2" id="endProf">👤 Profil in skupine</button></div>
   <button class="btn2 hidden" id="krstAgain" style="width:100%;margin-top:-4px">🪵 Ponovi krst</button>
   <div class="sec">DANAŠNJA LESTVICA</div>
   <div class="lb" id="lb"><div class="small">Nalagam …</div></div>
@@ -1093,7 +1094,7 @@ async function loadStreak(){ if(!sb||!myId) return 0;
 function dniTxt(n){const m=n%100;return m===1?'dan':m===2?'dneva':(m===3||m===4)?'dnevi':'dni';}
 async function renderStats(done){
   const vm=Math.round(st.vm); const drugi=done.filter(p=>p.uid!==myId); const out=[];
-  if(drugi.length){ const pod=drugi.filter(p=>p.vm<vm).length; out.push(`🏆 Višje od ${Math.round(pod/drugi.length*100)} % današnjih planincev`); }
+  if(drugi.length){ const pod=drugi.filter(p=>p.vm<vm).length, pr=Math.round(pod/drugi.length*100); if(pr>0) out.push(`🏆 Višje od ${pr} % današnjih planincev`); }
   streak=await loadStreak(); if(streak>=2) out.push(`🔥 ${streak} ${dniTxt(streak)} zapored`);
   $('eStats').innerHTML=out.map(t=>`<span>${t}</span>`).join('');
 }
@@ -1143,7 +1144,14 @@ async function openProfil(){
   renderAcct(); renderGrpList(); renderZgodovina();
 }
 $('profBtn').addEventListener('click',openProfil);
-$('profX').addEventListener('click',()=>{ hide('profp'); if(st.done) show('endp'); });
+$('endProf').addEventListener('click',openProfil);
+// klik na logotip: nazaj na začetni zaslon (med reševanjem vprašanja ne, ker teče čas)
+function domov(){ if(!$('qp').classList.contains('out')&&!st.done) return;
+  hide('endp'); hide('profp'); $('reopen').classList.add('hidden'); const b=$('backBtn'); if(b) b.remove();
+  if(ok) viewMode='intro'; setStartLabel(); show('intro'); }
+$('brandBtn').addEventListener('click',domov);
+$('brandBtn').addEventListener('keydown',e=>{ if(e.key==='Enter') domov(); });
+$('profX').addEventListener('click',()=>{ hide('profp'); if(st.done&&$('intro').classList.contains('out')) show('endp'); });
 async function shraniProfil(p){ const {error}=await sb.from('profili').upsert({uid:myId,vzdevek:p.vzdevek,anonimen:p.anonimen});
   if(error){ if(error.code==='23505') throw new Error('Ta vzdevek je že zaseden – izberi drugega.'); if(error.code==='23514') throw new Error('Vzdevek mora imeti 2–20 znakov (brez < > " / \\).'); throw new Error(error.message); }
   profil={...profil,...p}; imenaCache.delete(myId); }
