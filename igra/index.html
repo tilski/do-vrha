@@ -840,6 +840,8 @@ async function naloziDan(date){
   try{ localStorage.setItem(KEY,JSON.stringify(day)); }catch(e){}
   day.forEach(prep); return day;
 }
+// povratek s prijave Google: zapomni si naslov, preden ga Supabase počisti
+const OAUTH_URL=location.hash.replace(/^#/,'')+'&'+location.search.replace(/^\?/,'');
 let DAY;
 try{ DAY=await naloziDan(TODAY); }
 catch(e){
@@ -857,7 +859,7 @@ async function initDb(){
     if(!session){ const r=await sb.auth.signInAnonymously(); if(r.error) console.log('prijava',r.error.message); session=r.data&&r.data.session; }
     myId=session&&session.user?session.user.id:null; me=session&&session.user||null;
     await Promise.all([loadToday(),loadProfil(),loadSkupine()]);
-    vcerajZmagal(); povabilo();
+    vcerajZmagal(); povabilo(); povratekGoogle();
     $('status').textContent=plays.length?`Danes se je vzpenjalo že ${plays.length} ${plural(plays.length)}.`:'Bodi danes prvi na poti!';
     const mine=plays.find(p=>p.uid===myId); if(mine&&mine.done&&mine.vm!=null&&!st.done){ st={i:8,vm:mine.vm,done:true,res:DAY.map(c=>({cat:c.id,ans:mine.answers?.[c.id]||null,vm:0,mode:null}))}; persist(); setStartLabel(); }
   }catch(e){ console.log('db',e); }
@@ -1216,6 +1218,12 @@ function renderAcct(){ const ids=(me&&me.identities)||[]; const g=ids.find(i=>i.
   $('gIn').onclick=async()=>{ if(!confirm('Na tej napravi boš namesto trenutnega profila uporabljal/a profil svojega Google računa. Današnji napredek na tej napravi se ne prenese. Nadaljujem?')) return;
     const {error}=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:NAZAJ()}}); if(error) sporocilo('acctMsg',/not enabled|disabled/i.test(error.message)?'Prijava z Googlom še ni vklopljena.':error.message); };
 }
+
+function povratekGoogle(){ const q=new URLSearchParams(OAUTH_URL); const err=q.get('error_description')||q.get('error');
+  if(err){ history.replaceState(null,'',location.pathname); alert('Prijava z Googlom ni uspela:\n'+err.replace(/\+/g,' ')); return; }
+  if(!q.get('access_token')&&!q.get('code')) return; history.replaceState(null,'',location.pathname);
+  const g=me&&(me.identities||[]).find(i=>i.provider==='google'); const mail=me&&(me.email||(g&&g.identity_data&&g.identity_data.email))||'';
+  const el=$('zmag'); el.textContent=g?`✓ Prijavljen/a z Googlom${mail?' ('+mail+')':''}`:'Prijava z Googlom ni uspela – poskusi znova.'; el.classList.remove('hidden'); }
 
 /* view toggle */
 
