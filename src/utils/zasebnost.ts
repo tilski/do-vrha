@@ -1,7 +1,7 @@
 // Politika zasebnosti – isto besedilo je v docs/zasebnost.html (javni URL za Google Play in App Store).
 // Pred objavo izpolni KONTAKT in preveri regijo strežnika v Supabase (Project Settings › General).
 
-export const KONTAKT = '[tvoj e-naslov]';
+export const KONTAKT = 'tilen.jaklin@gmail.com';
 export const VELJA_OD = '23. 11. 2026';
 
 export const ZASEBNOST: { naslov: string; besedilo: string }[] = [

@@ -2,8 +2,8 @@
 
 ## 1. Pred prvim buildom (enkrat)
 
-- [ ] V Supabase › SQL Editor zaženi celoten `supabase/shema.sql` (doda tabelo `zgreseni` in zaščito pred goljufanjem).
-- [ ] V `src/utils/zasebnost.ts` in `docs/zasebnost.html` zamenjaj `[tvoj e-naslov]` s pravim kontaktom.
+- [x] V Supabase › SQL Editor zaženi celoten `supabase/shema.sql` (doda tabelo `zgreseni` in zaščito pred goljufanjem).
+- [x] Kontakt v politiki zasebnosti: tilen.jaklin@gmail.com
 - [ ] Objavi `docs/zasebnost.html` na javnem naslovu (npr. GitHub Pages: Settings › Pages › Branch `main`, mapa `/docs`
       → `https://<uporabnik>.github.io/do-vrha/zasebnost.html`). Ta naslov vpišeš v obe trgovini.
 - [ ] Preveri ime paketa v `app.json`: `com.tilski.dovrha` (po prvi objavi ga ni več mogoče spremeniti).
