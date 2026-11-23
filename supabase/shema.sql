@@ -82,3 +82,46 @@ create index if not exists zgreseni_vprasanje on zgreseni (vprasanje_id);
 alter table zgreseni enable row level security;
 drop policy if exists "zgreseni - vpis" on zgreseni;
 create policy "zgreseni - vpis" on zgreseni for insert to authenticated with check (uid = auth.uid());
+
+-- ============ ZAŠČITA PRED GOLJUFANJEM ============
+-- Pred vsakim vpisom igre baza preveri, da je igra mogoča:
+--   datum je danes (±1 dan zaradi časovnih pasov), končane igre ni več mogoče spreminjati,
+--   največ 8 odgovorov, vsak odgovor obstaja na seznamu svojega vprašanja,
+--   metri niso več, kot jih lahko da igra (največ 340 m × 1,2 za hitrost = 408 m na odgovor).
+
+create or replace function preveri_igro() returns trigger
+language plpgsql security definer set search_path = public as $$
+declare
+  danes date := (now() at time zone 'Europe/Ljubljana')::date;
+  k text;
+  v text;
+  n integer := 0;
+begin
+  if new.datum < danes - 1 or new.datum > danes + 1 then
+    raise exception 'Napačen datum igre';
+  end if;
+  if tg_op = 'UPDATE' and old.koncano then
+    raise exception 'Igra je že končana';
+  end if;
+  if jsonb_typeof(new.odgovori) <> 'object' then
+    raise exception 'Napačna oblika odgovorov';
+  end if;
+  for k, v in select key, value #>> '{}' from jsonb_each(new.odgovori) loop
+    n := n + 1;
+    if not exists (select 1 from odgovori o where o.vprasanje_id = k and o.odgovor = v) then
+      raise exception 'Neznan odgovor pri vprašanju %', k;
+    end if;
+  end loop;
+  if n > 8 then
+    raise exception 'Preveč odgovorov';
+  end if;
+  if new.vm < 0 or new.vm > n * 408 then
+    raise exception 'Nemogoče število metrov';
+  end if;
+  new.posodobljeno := now();
+  return new;
+end $$;
+
+drop trigger if exists preveri_igro on igre;
+create trigger preveri_igro before insert or update on igre
+  for each row execute function preveri_igro();

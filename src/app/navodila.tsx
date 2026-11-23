@@ -86,6 +86,7 @@ export default function NavodilaZaslon() {
       )}
 
       <Gumb naslov="Na pot" onPress={() => router.replace("/igra")} />
+      <Gumb naslov="Zasebnost" varianta="obroba" onPress={() => router.push("/zasebnost")} />
     </ScrollView>
   );
 }

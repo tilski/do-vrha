@@ -68,6 +68,12 @@ export default function ZacetniZaslon() {
           varianta="obroba"
           onPress={() => router.push("/navodila")}
         />
+        <Text
+          style={[skupniSlogi.besedilo, { textAlign: "center", textDecorationLine: "underline" }]}
+          onPress={() => router.push("/zasebnost")}
+        >
+          Zasebnost
+        </Text>
 
         <Gumb
           naslov={

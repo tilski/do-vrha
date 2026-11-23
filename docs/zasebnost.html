@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="sl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Do vrha? – Politika zasebnosti</title>
+<style>
+  :root { --ink:#0f1a24; --mute:#5b6b78; --bg:#e9f1f6; --card:#fff; --red:#e0312d; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif; }
+  main { max-width:720px; margin:0 auto; padding:32px 16px 64px; }
+  h1 { font-size:28px; margin:0 0 4px; } h1 span { color:var(--red); }
+  .meta { color:var(--mute); margin:0 0 24px; }
+  section { background:var(--card); border-radius:16px; padding:16px 20px; margin:0 0 12px; }
+  h2 { font-size:13px; letter-spacing:1.2px; text-transform:uppercase; color:var(--mute); margin:0 0 6px; }
+  p, ul { margin:0; } ul { padding-left:20px; }
+  hr { border:0; border-top:1px solid #cfdbe5; margin:32px 0; }
+</style>
+</head>
+<body>
+<main>
+  <!-- Pred objavo: zamenjaj [tvoj e-naslov] in preveri, da besedilo ustreza src/utils/zasebnost.ts -->
+  <h1>Do vrha<span>?</span> – Politika zasebnosti</h1>
+  <p class="meta">Velja od 23. 11. 2026</p>
+
+  <section><h2>Na kratko</h2>
+    <p>Do vrha? ne zahteva registracije in ne zbira tvojega imena, e-pošte, telefonske številke, lokacije ali stikov. Ni oglasov, ni sledenja za oglaševanje in podatkov ne prodajamo.</p></section>
+
+  <section><h2>Katere podatke shranimo</h2><ul>
+    <li>Naključni anonimni identifikator, ki ga ob prvem zagonu ustvari naš ponudnik baze (Supabase). Z njim ločimo igre različnih igralcev; ne vsebuje podatkov o tebi.</li>
+    <li>Tvoje odgovore na dnevna vprašanja, doseženo višino in datum igre.</li>
+    <li>Odgovore, ki jih igra ni našla na seznamu – z njimi izboljšujemo vprašanja.</li>
+    <li>V tvoji napravi: napredek današnje igre in današnja vprašanja (da igra deluje tudi ob slabi povezavi).</li>
+  </ul></section>
+
+  <section><h2>Zakaj</h2>
+    <p>Samo za delovanje igre: iz odgovorov vseh igralcev izračunamo, kako redek je posamezen odgovor (od tega je odvisno, koliko metrov dobiš), prikažemo dnevno lestvico in najpogostejše odgovore ter dopolnjujemo sezname odgovorov.</p></section>
+
+  <section><h2>Kdo vidi podatke</h2>
+    <p>Drugi igralci na lestvici vidijo doseženo višino in najpogostejše odgovore dneva, vendar brez imen – vsak igralec je prikazan kot »Planinec«. Podatki so shranjeni pri ponudniku Supabase (Supabase Inc.), ki jih obdeluje v našem imenu. Knjižnice za igro se naložijo s storitve jsDelivr, pisave pa z Google Fonts; ti ponudniki pri tem vidijo tvoj naslov IP, kot pri obisku katere koli spletne strani.</p></section>
+
+  <section><h2>Hramba in izbris</h2>
+    <p>Podatke iger hranimo, dokler je igra na voljo. Ker so anonimni, jih ne moremo povezati s tabo; ko odstraniš aplikacijo, se izgubi tudi povezava med tvojo napravo in tvojimi igrami. Če želiš, da izbrišemo podatke, nam piši na [tvoj e-naslov].</p></section>
+
+  <section><h2>Tvoje pravice</h2>
+    <p>Po Splošni uredbi o varstvu podatkov (GDPR) imaš pravico do dostopa, popravka in izbrisa podatkov ter do ugovora. Za vprašanja nam piši na [tvoj e-naslov]. Pritožbo lahko vložiš pri Informacijskem pooblaščencu Republike Slovenije (<a href="https://www.ip-rs.si">www.ip-rs.si</a>).</p></section>
+
+  <section><h2>Spremembe</h2>
+    <p>Če politiko spremenimo, bo nova različica objavljena v aplikaciji in na tej strani.</p></section>
+
+  <hr>
+  <h1 lang="en" style="font-size:22px">Privacy policy (English summary)</h1>
+  <section lang="en"><p>Do vrha? requires no sign-up and collects no name, e-mail, phone number, location or contacts. We store a random anonymous identifier created by our database provider (Supabase), your answers to the daily questions, your reached altitude, and answers the game did not recognise (to improve the question lists). Other players see altitudes and the most common answers without names. There are no ads, no advertising tracking, and data is never sold. Game libraries load from jsDelivr and fonts from Google Fonts, which see your IP address. To request deletion or ask questions, contact [tvoj e-naslov]. You may lodge a complaint with the Slovenian Information Commissioner (www.ip-rs.si).</p></section>
+</main>
+</body>
+</html>
