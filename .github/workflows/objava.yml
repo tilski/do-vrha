@@ -1,6 +1,7 @@
 # Objavi igro na GitHub Pages ob vsakem pushu na main.
 # Enkratna nastavitev: Settings › Pages › Build and deployment › Source: GitHub Actions.
 # Igra je že zgrajena (npm run igra) – sem gre igra/index.html z višinskimi podatki in politika zasebnosti.
+# Dva koraka (sestavi → objavi) kot v GitHubovi predlogi: objava tako zanesljivo najde naloženo stran.
 name: Objava igre
 
 on:
@@ -16,14 +17,11 @@ permissions:
 
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
-  objava:
+  sestavi:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deploy.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
       - name: Sestavi stran
@@ -36,5 +34,13 @@ jobs:
       - uses: actions/upload-pages-artifact@v4
         with:
           path: _site
+
+  objava:
+    needs: sestavi
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
       - id: deploy
         uses: actions/deploy-pages@v4
