@@ -1,0 +1,30 @@
+# Brezplačen Supabase projekt se po 7 dneh brez uporabe zaustavi.
+# Ta workflow ga vsake 3 dni »zbudi« z eno majhno poizvedbo (javni ključ – isti je vgrajen v igro).
+# Ker GitHub v javnih repozitorijih po 60 dneh brez aktivnosti izklopi časovne workflowe,
+# se ta workflow ob vsakem zagonu tudi znova vklopi.
+name: Supabase budnica
+
+on:
+  schedule:
+    - cron: '17 6 */3 * *'
+  workflow_dispatch:
+
+permissions:
+  actions: write
+
+jobs:
+  budnica:
+    runs-on: ubuntu-latest
+    env:
+      SUPABASE_URL: https://bwcipetdvzkiqxaomwmb.supabase.co
+      SUPABASE_KEY: sb_publishable_HLX7bHacgJmNtNd7VbSc7w_eE9vAi8D
+    steps:
+      - name: Poizvedba v bazo
+        run: |
+          koda=$(curl -s -o odgovor.json -w '%{http_code}' "$SUPABASE_URL/rest/v1/kategorije?select=id&limit=1" -H "apikey: $SUPABASE_KEY")
+          echo "Supabase: HTTP $koda"; cat odgovor.json; echo
+          test "$koda" = 200
+      - name: Ohrani workflow vklopljen
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api -X PUT "repos/${{ github.repository }}/actions/workflows/supabase-budnica.yml/enable"

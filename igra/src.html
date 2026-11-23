@@ -248,6 +248,7 @@ button{font-family:inherit;cursor:pointer;border:0}
     </ul>
   </details>
   <div class="status" id="status"></div>
+  <a class="status hidden" id="zasebnost" href="zasebnost.html" target="_blank" rel="noopener" style="display:block;text-align:center;color:inherit;opacity:.7">Zasebnost</a>
 </section>
 
 <!-- QUESTION -->
@@ -997,6 +998,8 @@ function showBackBtn(){ let b=$('backBtn'); if(!b){ b=document.createElement('bu
 $('startBtn').addEventListener('click',startGame);
 
 /* ================= BOOT ================= */
+// povezava do politike zasebnosti samo na spletni strani (aplikacija ima svoj zaslon)
+if(/^https?:$/.test(location.protocol)&&location.hostname!=='do-vrha.local') $('zasebnost').classList.remove('hidden');
 if(ok){ drawProfile(); curU=animFrom=tgtU=0; viewMode='intro'; }
 else { drawProfile(); $('status').textContent='Tvoja naprava ne podpira 3D prikaza – igra deluje tudi brez njega.'; }
 $('loading').classList.add('done'); setTimeout(()=>$('loading').remove(),900);
