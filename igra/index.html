@@ -669,6 +669,11 @@ addEventListener('resize',()=>{ if(!ok) return; renderer.setSize(innerWidth,inne
 
 /* ================= ANSWERS ================= */
 function norm(s){return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/đ/g,'d').replace(/[^a-z0-9 ]+/g,' ').replace(/\s+/g,' ').trim();}
+// Fonetični ključ: različni zapisi istega imena dobijo enak ključ (Fidži = fiji, Šakira = shakira, Jimi = Džimi)
+function fon(s){ let t=String(s).toLowerCase().replace(/dž/g,'j').replace(/đ/g,'dj'); t=norm(t);
+  return t.replace(/sch/g,'s').replace(/tch/g,'c').replace(/ch/g,'c').replace(/sh/g,'s').replace(/zh/g,'z').replace(/ph/g,'f').replace(/th/g,'t')
+    .replace(/ck/g,'k').replace(/qu/g,'kv').replace(/q/g,'k').replace(/x/g,'ks').replace(/w/g,'v').replace(/\by(?=[aeiou])/g,'j').replace(/y/g,'i')
+    .replace(/dz/g,'j').replace(/([a-z])\1+/g,'$1'); }
 function lev(a,b){if(Math.abs(a.length-b.length)>3)return 9;let prev=Array.from({length:b.length+1},(_,i)=>i);for(let i=1;i<=a.length;i++){const cur=[i];for(let j=1;j<=b.length;j++)cur[j]=Math.min(prev[j]+1,cur[j-1]+1,prev[j-1]+(a[i-1]===b[j-1]?0:1));prev=cur;}return prev[b.length];}
 // c.ans = [{o:'Novo mesto', s:['NM']}, …] razvrščeno po rangu (najpogostejši prvi)
 function prep(c){
@@ -676,6 +681,7 @@ function prep(c){
   for(const a of c.ans){ const parts=[a.o,...(a.s||[])].map(s=>String(s).trim()).filter(Boolean); if(!parts.length) continue; const k=norm(parts[0]); if(!k||seen.has(k)) continue; seen.add(k); c.items.push({canon:parts[0],keys:[...new Set(parts.map(norm).filter(Boolean))]}); }
   let sum=0; const w=c.items.map((_,r)=>{const v=1/Math.pow(r+1,1.05); sum+=v; return v;}); c.items.forEach((it,r)=>it.base=w[r]/sum);
   c.map=new Map(); c.items.forEach(it=>it.keys.forEach(k=>{ if(!c.map.has(k)) c.map.set(k,it); }));
+  c.fmap=new Map(); c.items.forEach(it=>it.keys.forEach(k=>{ const fk=fon(k); if(fk&&!c.fmap.has(fk)) c.fmap.set(fk,it); }));
   if(c.g==='ljudje'){ const cnt={}; c.items.forEach(it=>{const w=norm(it.canon).split(' '); if(w.length>1){const l=w[w.length-1]; cnt[l]=(cnt[l]||0)+1;}});
     c.items.forEach(it=>{const w=norm(it.canon).split(' '); const l=w[w.length-1]; if(w.length>1&&cnt[l]===1&&l.length>3&&!c.map.has(l)) c.map.set(l,it);}); }
 }
@@ -683,6 +689,7 @@ function match(cat,input){
   const k=norm(input); if(!k) return null; const tries=[k];
   (cat.strip||[]).forEach(p=>{const pp=norm(p); if(k.startsWith(pp+' ')) tries.push(k.slice(pp.length+1)); if(k.endsWith(' '+pp)) tries.push(k.slice(0,-pp.length-1));});
   for(const t of tries) if(cat.map.has(t)) return cat.map.get(t);
+  for(const t of tries){ const ft=fon(t); if(cat.fmap&&cat.fmap.has(ft)) return cat.fmap.get(ft); }
   return null;
 }
 // Ne sprejme samodejno – vrne najbolj podoben odgovor, ki ga igralec potrdi
@@ -690,8 +697,15 @@ function stripTries(cat,k){ const tries=[k]; (cat.strip||[]).forEach(p=>{const p
 function suggest(cat,input){
   const k=norm(input); if(k.length<4) return null; let best=null,bd=9;
   for(const t of stripTries(cat,k)){ if(t.length<4) continue; const lim=t.length>=11?3:t.length>=7?2:1;
-    for(const [key,it] of cat.map){ if(key.length<3) continue; const d=lev(t,key); if(d<=lim&&d<bd){bd=d;best=it;} } }
-  return best;
+    for(const [key,it] of cat.map){ if(key.length<3) continue; const d=lev(t,key); if(d<=lim&&d<bd){bd=d;best=it;} }
+    // tipkarska napaka v drugem zapisu (npr. »tchaikovski« ≈ Čajkovski)
+    if(cat.fmap){ const ft=fon(t); for(const [key,it] of cat.fmap){ if(key.length<3) continue; const d=lev(ft,key); if(d<=lim&&d<bd){bd=d;best=it;} } } }
+  if(best) return best;
+  // del odgovora: vnos je cela beseda (ali začetek, vsaj 5 črk) daljšega odgovora – predlagaj najpogostejšega takega
+  for(const t of stripTries(cat,k)){ if(t.length<4) continue; const ft=fon(t);
+    for(const it of cat.items) for(const key of it.keys){ const besede=key.split(' '); if(besede.length<2) continue;
+      if(besede.some(w=>w===t||fon(w)===ft||(t.length>=5&&w.length>t.length&&w.startsWith(t)))) return it; } }
+  return null;
 }
 function todayStr(){return new Date().toLocaleDateString('sv-SE',{timeZone:'Europe/Ljubljana'});}
 function fmtDate(d){const [y,m,dd]=d.split('-');return `${+dd}. ${+m}. ${y}`;}
@@ -719,7 +733,7 @@ async function sbClient(){
 async function vse(q){ const out=[]; for(let od=0;;od+=1000){ const {data,error}=await q().range(od,od+999); if(error) throw new Error(error.message); out.push(...data); if(data.length<1000) return out; } }
 async function naloziDan(date){
   // današnja vprašanja si zapomnimo – ob ponovnem odprtju so enaka, tudi brez povezave
-  const KEY='dovrha-vpr3-'+date;
+  const KEY='dovrha-vpr4-'+date;
   try{ const c=JSON.parse(localStorage.getItem(KEY)||'null'); if(Array.isArray(c)&&c.length===8){ c.forEach(prep); return c; } }catch(e){}
   await sbClient();
   const vpr=await vse(()=>sb.from('vprasanja').select('id,kategorija_id,vprasanje,namig,slovenija,odstrani').eq('aktivno',true).order('vrstni_red').order('id'));

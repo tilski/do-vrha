@@ -821,7 +821,7 @@
         "Korzika",
         "Ciper",
         "Malta",
-        "Mallorca|majorka",
+        "Mallorca|majorka|palma|palma de mallorca|palma de malorca|malorka",
         "Ibiza|seat ibiza",
         "Menorca",
         "Tenerife",
@@ -864,7 +864,7 @@
         "Galapagos",
         "Tahiti",
         "Bora Bora",
-        "Fidži",
+        "Fidži|fiji",
         "Samoa",
         "Nova Kaledonija",
         "Severni otok",
@@ -933,7 +933,10 @@
         "Balearski otoki",
         "Alcatraz",
         "Robben Island",
-        "Sv. Štefan"
+        "Sv. Štefan",
+        "Nova Zelandija",
+        "Japonska",
+        "Karibi|karibski otoki"
       ]
     },
     {
@@ -1759,7 +1762,9 @@
         "Potres",
         "Epicenter",
         "Magma",
-        "Lava"
+        "Lava",
+        "Uvala",
+        "Vas|naselje"
       ]
     },
     {

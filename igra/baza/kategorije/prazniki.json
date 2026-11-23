@@ -158,9 +158,9 @@
       "odgovori": [
         "Okrašena jelka|jelka|božično drevesce",
         "Darila|darila za poroko",
-        "Lučke|okraševanje z lučkami",
+        "Lučke|okraševanje z lučkami|prižig lučk|prižiganje lučk|lučkice",
         "Jaslice|m44|praesepe",
-        "Ognjemet",
+        "Ognjemet|rakete|raketa",
         "Božiček",
         "Dedek Mraz",
         "Polnočnica|polnočna maša",
@@ -180,7 +180,7 @@
         "Potica",
         "Piškoti|peka piškotov",
         "Medenjaki",
-        "Božično kosilo|božična večerja",
+        "Božična večerja|božično kosilo|večerja|vecerija|večerija|pojedina|kosilo|novoletna večerja|praznična večerja",
         "Purica|puran",
         "Miklavž",
         "Parkelj|parklji",
@@ -207,7 +207,9 @@
         "Sneg|bel božič",
         "Pravljični december|december v ljubljani",
         "Druženje z družino|družina",
-        "Žive jaslice"
+        "Žive jaslice",
+        "Sveče|svečke|prižiganje sveč",
+        "Narezek"
       ]
     },
     {

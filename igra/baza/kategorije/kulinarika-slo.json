@@ -548,7 +548,7 @@
       "namig": "Npr. pečene klobase, pivo",
       "slovenija": true,
       "odgovori": [
-        "Pivo",
+        "Pivo|pir|pivce|pjenca",
         "Pečene klobase|klobase",
         "Čevapčiči|cevapi",
         "Pomfri|pomfrit",
@@ -561,7 +561,7 @@
         "Union|pivovarna union",
         "Radler",
         "Špricer|šprica",
-        "Jägermeister|jager",
+        "Jägermeister|jager|jager cola|jeger cola|jegerkola|jegrcola|jegrcolo|jegermeister|jeger",
         "Žganje|šnops",
         "Borovničke|borovnicevec",
         "Viljamovka|williams",
@@ -604,7 +604,10 @@
         "Kava|kavica",
         "Pečena koruza|koruza",
         "Pečen kostanj|kostanj",
-        "Pečenice|pečenica"
+        "Pečenice|pečenica",
+        "Šoti|shots|shot|šot|šnopc",
+        "Lepinja|pljeskavica v lepinji",
+        "Palačinke"
       ]
     },
     {
