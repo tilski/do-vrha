@@ -35,8 +35,8 @@ const shot = async (ime) => { const r = await cmd('Page.captureScreenshot', { fo
 let n = 0;
 for (const a of akcije) {
   const r = await cmd('Runtime.evaluate', { expression: a, awaitPromise: true, returnByValue: true });
-  if (r.result?.value !== undefined) log.push('= ' + JSON.stringify(r.result.value));
-  if (r.exceptionDetails) log.push('[NAPAKA eval] ' + (r.exceptionDetails.exception?.description || ''));
+  if (r?.result?.value !== undefined) log.push('= ' + JSON.stringify(r.result.value));
+  if (r?.exceptionDetails) log.push('[NAPAKA eval] ' + (r.exceptionDetails.exception?.description || ''));
   await sleep(1500); await shot(String(n++));
 }
 console.log(log.join('\n')); ws.close(); ch.kill();
