@@ -36,7 +36,8 @@ button{font-family:inherit;cursor:pointer;border:0}
 .disp{font-family:"Bricolage Grotesque",Manrope,sans-serif;letter-spacing:-.02em}
 .num{font-variant-numeric:tabular-nums}
 #sky{position:fixed;inset:0;background:linear-gradient(180deg,#5d8fc4 0%,#9fc0de 38%,#e3ebf1 62%,#eef1f2 100%)}
-#sun{position:fixed;width:520px;height:520px;right:-120px;top:-160px;border-radius:50%;background:radial-gradient(circle,rgba(255,241,214,.9) 0%,rgba(255,232,190,.35) 30%,rgba(255,255,255,0) 65%);pointer-events:none}
+@keyframes sonce{0%,100%{opacity:.85;transform:scale(1)}50%{opacity:1;transform:scale(1.06)}}
+#sun{animation:sonce 7s ease-in-out infinite;position:fixed;width:520px;height:520px;right:-120px;top:-160px;border-radius:50%;background:radial-gradient(circle,rgba(255,241,214,.9) 0%,rgba(255,232,190,.35) 30%,rgba(255,255,255,0) 65%);pointer-events:none}
 #gl{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}
 #labels{position:fixed;inset:0;pointer-events:none;overflow:hidden}
 .lbl{position:absolute;transform:translate(-50%,-100%);white-space:nowrap;font-size:11px;font-weight:700;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.55);padding-bottom:6px;transition:opacity .4s}
@@ -829,13 +830,13 @@ function followGoal(u){
   cam.gTgt.copy(tgt); cam.gPos.copy(clearSight(pos,tgt));
 }
 function overviewGoal(t){ // pogled iz Vrat proti severni steni Triglava, rahlo nihanje
-  const sw=0.35; // mirna kamera (brez zibanja)
+  const sw=viewMode==='intro'?0.35+0.12*Math.sin(t*0.00013):0.35; // na začetku počasno »dihanje«, sicer mirno
   cam.gTgt.set(0.15+0.15*sw,Y(2150),-0.75);
   cam.gPos.set(1.05+0.9*sw, Y(MOB?3500:3150), MOB?-6.6:-5.6);
 }
 function summitGoal(t){ const se=climberPos(1,new THREE.Vector3()); const az=2.2; /* mirna kamera, brez kroženja */ cam.gTgt.copy(se); cam.gPos.set(se.x+Math.cos(az)*0.55,se.y+0.22,se.z+Math.sin(az)*0.55); clearSight(cam.gPos,cam.gTgt); }
 const easeIO=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
-let last=performance.now(), camInit=false, vOff=0; const zadnjaPoz=new THREE.Vector3(1e9,0,0), zadnjiCilj=new THREE.Vector3();
+let last=performance.now(), camInit=false, vOff=0; const zadnjaPoz=new THREE.Vector3(1e9,0,0), zadnjiCilj=new THREE.Vector3(); let zadnjiRender=0;
 function loop(now){
   const dt=Math.min(0.05,(now-last)/1000); last=now;
   if(ok){
@@ -855,10 +856,13 @@ function loop(now){
     if(naslov){ const cilj=(viewMode==='intro'&&!$('home').classList.contains('out'))?1:0; naslov.material.opacity+=(cilj-naslov.material.opacity)*Math.min(1,dt*4); naslov.visible=naslov.material.opacity>0.01; document.body.classList.toggle('zacetek',cilj===1); }
 
     if(window._flag){ window._flag.rotation.y=Math.sin(now/300)*0.35; const fp=window._flag.geometry.attributes.position; for(let i=0;i<fp.count;i++){ const x=fp.getX(i); fp.setZ(i,Math.sin(x*7-now/180)*0.05*x); } fp.needsUpdate=true; }
+    const doma=viewMode==='intro'&&!$('home').classList.contains('out')&&!document.hidden;
+    if(doma) clouds.forEach(c=>{ c.position.x+=c.userData.v*dt*0.6; if(c.position.x>9) c.position.x=-9; });
     // riši samo, ko se kaj premika (sicer grafična kartica počiva – manj zatikanja, manj baterije)
     const premik=camera.position.distanceToSquared(zadnjaPoz)+cam.tgt.distanceToSquared(zadnjiCilj);
-    const ziv=f<1||premik>1e-10||viewMode==='krst'||viewMode==='follow'||narisiSe>0||(naslov&&Math.abs(naslov.material.opacity-((viewMode==='intro'&&!$('home').classList.contains('out'))?1:0))>0.01);
-    if(ziv){ renderer.render(scene,camera); projectLabels(); zadnjaPoz.copy(camera.position); zadnjiCilj.copy(cam.tgt); if(narisiSe>0) narisiSe--; }
+    const ziv=doma||f<1||premik>1e-10||viewMode==='krst'||viewMode==='follow'||narisiSe>0||(naslov&&Math.abs(naslov.material.opacity-((viewMode==='intro'&&!$('home').classList.contains('out'))?1:0))>0.01);
+    const zdaj=performance.now();
+    if(ziv&&(!doma||narisiSe>0||zdaj-zadnjiRender>=40)){ zadnjiRender=zdaj; renderer.render(scene,camera); projectLabels(); zadnjaPoz.copy(camera.position); zadnjiCilj.copy(cam.tgt); if(narisiSe>0) narisiSe--; }
     if(!climberEl.classList.contains('hidden')){ tmpV.copy(climberMesh.position); tmpV.y+=0.008; tmpV.project(camera); climberEl.style.left=((tmpV.x+1)/2*innerWidth)+'px'; climberEl.style.top=((1-tmpV.y)/2*innerHeight)+'px'; climberEl.style.opacity=tmpV.z<1?1:0; }
   }
   requestAnimationFrame(loop);
