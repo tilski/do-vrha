@@ -266,6 +266,7 @@ body.zacetek .alti,body.okno .alti{opacity:0;pointer-events:none}
   #profp.out{transform:translateX(-50%) translateY(40px)}
   #lbp,#grpp{top:auto;bottom:10px;transform:translateX(-50%);max-height:80vh}
   #lbp.out,#grpp.out{transform:translateX(-50%) translateY(40px)}
+  .panel{backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(246,248,250,.96)}
   /* telefon: kompaktna glava rezultata, da je vidnih več odgovorov */
   #endp .phead{padding:14px 16px 2px;text-align:left}
   #endp .phead .endhero{padding:0 46px 0 0;text-align:left}
@@ -553,7 +554,7 @@ function placeName(vm){ let p=WP[0]; for(const w of WP){ if(w.vmAt<=vm+0.5) p=w;
 const canvas=document.getElementById('gl');
 let renderer,scene,camera,ok=true;
 const EX=1.08, Y=e=>e/1000*EX;
-try{ renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false,powerPreference:'high-performance',logarithmicDepthBuffer:true,preserveDrawingBuffer:true}); /* ohrani zadnjo sliko, ko se nič ne riše (iOS sicer pokaže smeti na nebu) */ }catch(e){ok=false;}
+try{ renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false,powerPreference:'high-performance',logarithmicDepthBuffer:true}); /* riše se vsako sliko – iOS ob izpuščenih slikah pokaže smeti */ }catch(e){ok=false;}
 const MOB=innerWidth<760;
 let naslov=null, narisiSe=5; /* narisiSe: koliko slik še narisati, tudi če se nič ne premika */ const N_D=1.6, N_Y=innerWidth<760?0.04:0.02;
 // naslov postavi za vrh, gledano iz začetnega pogleda kamere; velikost glede na širino zaslona
@@ -577,7 +578,7 @@ function terrainColor(h,slope,x,z,o){
   const k=0.95+v*0.14; o[0]*=k;o[1]*=k;o[2]*=k; return o;
 }
 if(ok){
-  renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+  renderer.setPixelRatio(Math.min(devicePixelRatio,innerWidth<760?1.5:2)); /* telefon: nižja ločljivost = manj zatikanja */
   renderer.setSize(innerWidth,innerHeight);
   renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap;
   renderer.toneMapping=THREE.ACESFilmicToneMapping; renderer.toneMappingExposure=1.05;
@@ -866,7 +867,7 @@ function loop(now){
     const premik=camera.position.distanceToSquared(zadnjaPoz)+cam.tgt.distanceToSquared(zadnjiCilj);
     const ziv=doma||f<1||premik>1e-10||viewMode==='krst'||viewMode==='follow'||narisiSe>0||(naslov&&Math.abs(naslov.material.opacity-((viewMode==='intro'&&!$('home').classList.contains('out'))?1:0))>0.01);
     const zdaj=performance.now();
-    if(ziv&&(!doma||narisiSe>0||zdaj-zadnjiRender>=40)){ zadnjiRender=zdaj; renderer.render(scene,camera); projectLabels(); zadnjaPoz.copy(camera.position); zadnjiCilj.copy(cam.tgt); if(narisiSe>0) narisiSe--; }
+    if(true){ zadnjiRender=zdaj; renderer.render(scene,camera); projectLabels(); zadnjaPoz.copy(camera.position); zadnjiCilj.copy(cam.tgt); if(narisiSe>0) narisiSe--; }
     if(!climberEl.classList.contains('hidden')){ tmpV.copy(climberMesh.position); tmpV.y+=0.008; tmpV.project(camera); climberEl.style.left=((tmpV.x+1)/2*innerWidth)+'px'; climberEl.style.top=((1-tmpV.y)/2*innerHeight)+'px'; climberEl.style.opacity=tmpV.z<1?1:0; }
   }
   requestAnimationFrame(loop);
