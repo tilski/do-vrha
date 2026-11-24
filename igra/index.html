@@ -263,11 +263,33 @@ body.zacetek .alti{opacity:0;pointer-events:none}
   #endp.out{transform:translateX(-50%) translateY(40px)}
   #profp{top:auto;bottom:10px;transform:translateX(-50%);max-height:80vh}
   #profp.out{transform:translateX(-50%) translateY(40px)}
+  #lbp,#grpp{top:auto;bottom:10px;transform:translateX(-50%);max-height:80vh}
+  #lbp.out,#grpp.out{transform:translateX(-50%) translateY(40px)}
+  .phead{padding:16px 16px 4px}
+  .phead .endhero .e{display:none}
+  .phead .endhero h2{font-size:20px;padding-top:4px}
+  .phead .endhero p{font-size:12px}
+  .phead .altcap{margin-bottom:8px}
+  .phead .bigalt{font-size:40px;margin:4px 0 0}
+  .pfoot{padding:8px 14px 14px}
+  .pfoot .btn2{padding:11px 6px;font-size:13px}
   .pbtn{width:38px;height:38px;font-size:17px}
   .lbl.peak{display:none}
 }
 
-#profp,#endp,#intro{display:flex;flex-direction:column;overflow:hidden;padding:0}
+#profp,#endp,#intro,#lbp,#grpp{display:flex;flex-direction:column;overflow:hidden;padding:0}
+#lbp,#grpp{left:50%;top:50%;width:min(520px,calc(100% - 28px));max-height:calc(100vh - 110px);transform:translate(-50%,-50%);z-index:8}
+#lbp.out,#grpp.out{transform:translate(-50%,-44%) scale(.97)}
+.phead{flex:none;padding:22px 24px 6px}
+.phead .endhero{padding:0 40px 6px}
+.phead .endhero .e{font-size:40px}
+.phead .endhero h2{font-size:28px}
+.phead .bigalt{font-size:50px;margin:8px 0 2px}
+.phead .stats{margin:0 0 4px}
+#endp .pin{padding-top:12px}
+.pfoot{flex:none;padding:10px 24px 18px;border-top:1px solid rgba(15,26,36,.07)}
+.pfoot .btnrow{margin:0}
+.pfoot #krstAgain{margin-top:8px}
 .pin{flex:1;min-height:0;overflow:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:24px;-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 14px,#000 calc(100% - 14px),transparent 100%);mask-image:linear-gradient(to bottom,transparent 0,#000 14px,#000 calc(100% - 14px),transparent 100%)}
 .pin>h2:first-child,.pin>.endhero:first-child,.pin>.kicker:first-child{padding-right:44px}
 .xbtn{position:absolute;top:12px;right:12px;width:38px;height:38px;border-radius:50%;background:rgba(15,26,36,.08);color:var(--ink);font-size:16px;font-weight:800;display:grid;place-items:center;z-index:2;transition:.2s}
@@ -397,21 +419,40 @@ body.zacetek .alti{opacity:0;pointer-events:none}
 <!-- END -->
 <section class="panel out" id="endp">
   <button class="xbtn" id="endX" aria-label="Zapri">✕</button>
+  <div class="phead">
+    <div class="endhero"><div class="e" id="eEmoji">🏔️</div><h2 class="disp" id="eTitle"></h2><p id="eSub"></p></div>
+    <div class="bigalt disp num" id="eAlt"></div>
+    <div class="altcap" id="eCap"></div>
+    <div class="stats" id="eStats"></div>
+  </div>
   <div class="pin">
-  <div class="endhero"><div class="e" id="eEmoji">🏔️</div><h2 class="disp" id="eTitle"></h2><p id="eSub"></p></div>
-  <div class="bigalt disp num" id="eAlt"></div>
-  <div class="altcap" id="eCap"></div>
-  <div class="stats" id="eStats"></div>
-  <div class="sum" id="sum"></div>
-  <div class="btnrow"><button class="btn2" id="copyBtn">Deli rezultat</button><button class="btn2" id="endProf">👤 Profil in skupine</button></div>
-  <button class="btn2 hidden" id="krstAgain" style="width:100%;margin-top:-4px">🪵 Ponovi krst</button>
-  <div class="sec">DANAŠNJA LESTVICA</div>
-  <div class="lb" id="lb"><div class="small">Nalagam …</div></div>
-  <div id="lbNick"></div>
-  <div id="grpEnd"></div>
-  <div class="sec">NAJPOGOSTEJŠI ODGOVORI DANES</div>
-  <div id="pops" class="small">Nalagam …</div>
-  <p class="small" style="margin-top:16px;text-align:center">Nova pot jutri ob polnoči.</p>
+    <div class="sum" id="sum"></div>
+    <p class="small" style="margin:14px 0 0;text-align:center">Nova pot jutri ob polnoči.</p>
+  </div>
+  <div class="pfoot">
+    <div class="btnrow"><button class="btn2" id="lbBtn">🏆 Lestvica</button><button class="btn2" id="copyBtn">Deli rezultat</button><button class="btn2 hidden" id="grpBtn">👥 Skupine</button></div>
+    <button class="btn2 hidden" id="krstAgain" style="width:100%">🪵 Ponovi krst</button>
+  </div>
+</section>
+
+<!-- LESTVICA -->
+<section class="panel out" id="lbp">
+  <button class="xbtn" id="lbX" aria-label="Zapri">✕</button>
+  <div class="pin">
+    <h2 class="disp ptitle">Današnja lestvica</h2>
+    <div class="small" style="margin-bottom:12px">Kdo je danes prišel najvišje.</div>
+    <div class="lb" id="lb"><div class="small">Nalagam …</div></div>
+    <div id="lbNick"></div>
+  </div>
+</section>
+
+<!-- SKUPINE -->
+<section class="panel out" id="grpp">
+  <button class="xbtn" id="grpX" aria-label="Zapri">✕</button>
+  <div class="pin">
+    <h2 class="disp ptitle">Tvoje skupine</h2>
+    <div class="small" style="margin-bottom:4px">Današnji vzponi tvojih prijateljev.</div>
+    <div id="grpEnd"></div>
   </div>
 </section>
 
@@ -505,7 +546,7 @@ let renderer,scene,camera,ok=true;
 const EX=1.08, Y=e=>e/1000*EX;
 try{ renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true,powerPreference:'high-performance',logarithmicDepthBuffer:true}); }catch(e){ok=false;}
 const MOB=innerWidth<760;
-let naslov=null; const N_D=1.6, N_Y=innerWidth<760?0.04:0.02;
+let naslov=null, narisiSe=5; /* narisiSe: koliko slik še narisati, tudi če se nič ne premika */ const N_D=1.6, N_Y=innerWidth<760?0.04:0.02;
 // naslov postavi za vrh, gledano iz začetnega pogleda kamere; velikost glede na širino zaslona
 function postaviNaslov(){ if(!naslov) return; const S=RT[RT.length-1]; const sum=new THREE.Vector3(S.x,Y(S.h),S.z);
   const camP=new THREE.Vector3(1.05,Y(MOB?3500:3150),MOB?-6.6:-5.6); const dir=sum.clone().sub(camP); dir.y=0; dir.normalize();
@@ -737,7 +778,7 @@ float bumpH(){ float r=rockMask(); return fb(vW*vec3(30.0,45.0,30.0))*aa(80.0)*(
     const risi=()=>{ tc.clearRect(0,0,TW,TH); tc.font='640px "Bebas Neue", "Bricolage Grotesque", sans-serif'; tc.textAlign='center';
       if('letterSpacing' in tc) tc.letterSpacing='18px';
       tc.save(); tc.shadowColor='rgba(12,30,48,.55)'; tc.shadowBlur=70; tc.shadowOffsetX=10; tc.shadowOffsetY=26; tc.fillStyle='#ffffff'; tc.fillText('DO VRHA',TW/2,610); tc.restore();
-      tc.fillStyle='#ffffff'; tc.fillText('DO VRHA',TW/2,610); tex.needsUpdate=true; };
+      tc.fillStyle='#ffffff'; tc.fillText('DO VRHA',TW/2,610); tex.needsUpdate=true; narisiSe=3; };
     risi(); if(document.fonts) document.fonts.load('640px "Bebas Neue"').then(risi).catch(()=>{});
     naslov=new THREE.Mesh(new THREE.PlaneGeometry(1,TH/TW),new THREE.MeshBasicMaterial({map:tex,transparent:true,depthWrite:false,fog:false,opacity:1,toneMapped:false}));
     naslov.renderOrder=-1; scene.add(naslov); postaviNaslov(); }
@@ -780,13 +821,13 @@ function followGoal(u){
   cam.gTgt.copy(tgt); cam.gPos.copy(clearSight(pos,tgt));
 }
 function overviewGoal(t){ // pogled iz Vrat proti severni steni Triglava, rahlo nihanje
-  const sw=Math.sin(t*0.00008);
+  const sw=0.35; // mirna kamera (brez zibanja)
   cam.gTgt.set(0.15+0.15*sw,Y(2150),-0.75);
   cam.gPos.set(1.05+0.9*sw, Y(MOB?3500:3150), MOB?-6.6:-5.6);
 }
-function summitGoal(t){ const se=climberPos(1,new THREE.Vector3()); const az=t*0.00012; cam.gTgt.copy(se); cam.gPos.set(se.x+Math.cos(az)*0.55,se.y+0.22,se.z+Math.sin(az)*0.55); clearSight(cam.gPos,cam.gTgt); }
+function summitGoal(t){ const se=climberPos(1,new THREE.Vector3()); const az=2.2; /* mirna kamera, brez kroženja */ cam.gTgt.copy(se); cam.gPos.set(se.x+Math.cos(az)*0.55,se.y+0.22,se.z+Math.sin(az)*0.55); clearSight(cam.gPos,cam.gTgt); }
 const easeIO=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
-let last=performance.now(), camInit=false, vOff=0;
+let last=performance.now(), camInit=false, vOff=0; const zadnjaPoz=new THREE.Vector3(1e9,0,0), zadnjiCilj=new THREE.Vector3();
 function loop(now){
   const dt=Math.min(0.05,(now-last)/1000); last=now;
   if(ok){
@@ -804,15 +845,17 @@ function loop(now){
     camera.position.copy(cam.pos); camera.lookAt(cam.tgt);
     { const want=0; vOff+= (want-vOff)*Math.min(1,dt*3); if(Math.abs(vOff)>0.5) camera.setViewOffset(innerWidth+vOff,innerHeight,vOff,0,innerWidth,innerHeight); else camera.clearViewOffset(); }
     if(naslov){ const cilj=(viewMode==='intro'&&!$('home').classList.contains('out'))?1:0; naslov.material.opacity+=(cilj-naslov.material.opacity)*Math.min(1,dt*4); naslov.visible=naslov.material.opacity>0.01; document.body.classList.toggle('zacetek',cilj===1); }
-    clouds.forEach(c=>{c.position.x+=c.userData.v*dt; if(c.position.x>9) c.position.x=-9;});
+
     if(window._flag){ window._flag.rotation.y=Math.sin(now/300)*0.35; const fp=window._flag.geometry.attributes.position; for(let i=0;i<fp.count;i++){ const x=fp.getX(i); fp.setZ(i,Math.sin(x*7-now/180)*0.05*x); } fp.needsUpdate=true; }
-    renderer.render(scene,camera);
-    projectLabels();
+    // riši samo, ko se kaj premika (sicer grafična kartica počiva – manj zatikanja, manj baterije)
+    const premik=camera.position.distanceToSquared(zadnjaPoz)+cam.tgt.distanceToSquared(zadnjiCilj);
+    const ziv=f<1||premik>1e-10||viewMode==='krst'||viewMode==='follow'||narisiSe>0||(naslov&&Math.abs(naslov.material.opacity-((viewMode==='intro'&&!$('home').classList.contains('out'))?1:0))>0.01);
+    if(ziv){ renderer.render(scene,camera); projectLabels(); zadnjaPoz.copy(camera.position); zadnjiCilj.copy(cam.tgt); if(narisiSe>0) narisiSe--; }
     if(!climberEl.classList.contains('hidden')){ tmpV.copy(climberMesh.position); tmpV.y+=0.008; tmpV.project(camera); climberEl.style.left=((tmpV.x+1)/2*innerWidth)+'px'; climberEl.style.top=((1-tmpV.y)/2*innerHeight)+'px'; climberEl.style.opacity=tmpV.z<1?1:0; }
   }
   requestAnimationFrame(loop);
 }
-addEventListener('resize',()=>{ if(!ok) return; renderer.setSize(innerWidth,innerHeight); camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix(); postaviNaslov(); });
+addEventListener('resize',()=>{ if(!ok) return; narisiSe=3; renderer.setSize(innerWidth,innerHeight); camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix(); postaviNaslov(); });
 
 /* ================= ANSWERS ================= */
 /* ===ISKANJE=== (scripts/test-iskanje.js izloči ta del in ga preizkusi na celotni bazi) */
@@ -1217,7 +1260,7 @@ async function renderStats(done){
   $('eStats').innerHTML=out.map(t=>`<span>${t}</span>`).join('');
 }
 async function renderBoard(){
-  if(!sb||!myId){ $('lb').innerHTML='<div class="small">Lestvica ni na voljo – ni povezave z bazo.</div>'; $('pops').textContent='—'; return; }
+  if(!sb||!myId){ $('lb').innerHTML='<div class="small">Lestvica ni na voljo – ni povezave z bazo.</div>'; return; }
   try{ await loadToday(); }catch(e){}
   const done=plays.filter(p=>p.done).sort((a,b)=>b.vm-a.vm);
   renderStats(done);
@@ -1225,11 +1268,8 @@ async function renderBoard(){
   const ime=await imena(vrh.map(p=>p.uid));
   $('lb').innerHTML=vrh.length?vrh.map(p=>{ const i=done.indexOf(p); const nm=p.uid===myId?(profil.vzdevek?`Ti · ${profil.vzdevek}`:'Ti'):(ime(p.uid)||'Planinec'); const alt=visina(p.vm);
     return `<div class="lbr ${p.uid===myId?'me':''}"><span class="num">${i+1}.</span><span>${i===0?'👑 ':''}${esc(nm)}${p.vm>=GAIN?' 🏔️':''}</span><span class="num">${alt.toLocaleString('sl-SI')} m</span></div>`; }).join(''):'<div class="small">Še nihče ni končal.</div>';
-  $('lbNick').innerHTML=profil.vzdevek?'':'<button class="btn2" id="nickCta" style="width:100%;margin-top:8px">✏️ Dodaj vzdevek, da te vidijo na lestvici</button>'; if($('nickCta')) $('nickCta').onclick=openProfil;
+  $('lbNick').innerHTML=profil.vzdevek?'':'<button class="btn2" id="nickCta" style="width:100%;margin-top:8px">✏️ Dodaj vzdevek, da te vidijo na lestvici</button>'; if($('nickCta')) $('nickCta').onclick=()=>{ hide('lbp'); openProfil(); };
   renderGrpEnd();
-  let h=''; for(const c of DAY){ const cnt={}; let t=0; plays.forEach(p=>{const a=p.answers&&p.answers[c.id]; if(a){cnt[a]=(cnt[a]||0)+1;t++;}}); const top=Object.entries(cnt).sort((a,b)=>b[1]-a[1]).slice(0,4); if(!top.length) continue;
-    h+=`<div style="margin-top:6px"><b style="color:var(--ink)">${esc(c.t)}</b><div class="pops">${top.map(([a,n])=>`<span>${esc(a)} · ${Math.round(n/t*100)} %</span>`).join('')}</div></div>`; }
-  $('pops').innerHTML=h||'—';
 }
 $('krstAgain').addEventListener('click',()=>{ hide('endp'); krst().then(()=>show('endp')); });
 $('copyBtn').addEventListener('click',async()=>{ const line=DAY.map((c,i)=>{const r=st.res[i];const m=r&&r.mode&&MODES.find(x=>x.id===r.mode);return m?m.e:'🌫️';}).join(''); const vm=Math.round(st.vm);
@@ -1262,10 +1302,13 @@ async function openProfil(){
   renderAcct(); renderGrpList(); renderZgodovina();
 }
 $('profBtn').addEventListener('click',openProfil);
-$('endProf').addEventListener('click',openProfil);
+$('lbBtn').addEventListener('click',()=>{ hide('endp'); show('lbp'); });
+$('lbX').addEventListener('click',()=>{ hide('lbp'); show('endp'); });
+$('grpBtn').addEventListener('click',()=>{ hide('endp'); show('grpp'); });
+$('grpX').addEventListener('click',()=>{ hide('grpp'); show('endp'); });
 // klik na logotip: nazaj na začetni zaslon (med reševanjem vprašanja ne, ker teče čas)
 function domov(){ if(!$('qp').classList.contains('out')&&!st.done) return;
-  hide('endp'); hide('profp'); $('reopen').classList.add('hidden'); const b=$('backBtn'); if(b) b.remove();
+  hide('endp'); hide('profp'); hide('lbp'); hide('grpp'); $('reopen').classList.add('hidden'); const b=$('backBtn'); if(b) b.remove();
   if(ok) viewMode='intro'; setStartLabel(); show('home'); }
 $('brandBtn').addEventListener('click',domov);
 $('brandBtn').addEventListener('keydown',e=>{ if(e.key==='Enter') domov(); });
@@ -1314,7 +1357,7 @@ async function povabilo(){ const k=new URLSearchParams(location.search).get('sku
   if(skupine.some(g=>g.koda===k.toUpperCase())) return;
   if(!confirm(`Povabljen/a si v skupino prijateljev (koda ${k.toUpperCase()}). Se pridružiš?`)) return;
   try{ const g=await pridruzi(k); alert(`Pridružil/a si se skupini »${g.ime}«. Njeno lestvico vidiš na koncu vsakega vzpona.`); }catch(e){ alert(e.message); } }
-async function renderGrpEnd(){ if(!skupine.length){ $('grpEnd').innerHTML=''; return; } let h='';
+async function renderGrpEnd(){ $('grpBtn').classList.toggle('hidden',!skupine.length); if(!skupine.length){ $('grpEnd').innerHTML=''; return; } let h='';
   for(const g of skupine){ const {data}=await sb.rpc('clani_skupine',{p_skupina:g.id}); const cl=new Map((data||[]).map(r=>[r.uid,r.vzdevek]));
     const t=plays.filter(p=>p.done&&cl.has(p.uid)).sort((a,b)=>b.vm-a.vm);
     h+=`<div class="sec">SKUPINA · ${esc(g.ime.toUpperCase())} <span style="font-weight:700">(${t.length}/${cl.size})</span></div><div class="lb">`+(t.length?t.map((p,i)=>{ const nm=p.uid===myId?'Ti':(cl.get(p.uid)||'Planinec');
