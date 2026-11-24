@@ -2,11 +2,13 @@
 <html lang="sl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Do vrha? – dnevni izziv</title>
 <meta name="description" content="8 vprašanj na dan. Redkejši odgovor te pripelje višje na Triglav. Slovenska dnevna besedna igra.">
 <meta name="theme-color" content="#3f78b5">
 <link rel="canonical" href="https://dovrha.top/">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="ikona-180.png">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Do vrha?">
 <meta property="og:title" content="Do vrha? – dnevni izziv">
@@ -442,6 +444,8 @@ WP.forEach(w=>{ w.vmAt=Math.round(CG[w.i]/GPLUS*GAIN); w.x=RT[w.i].x; w.z=RT[w.i
 const PEAKS=(META.peaks||[]).filter(p=>['Stenar','Cmir','Begunjski vrh','Rjavina','Kanjavec','Bovški Gamsovec','Rž','Vernar','Dolkova špica','Visoka Vrbanova špica','Glava v Zaplanji'].includes(p[0]));
 function idxForVm(vm){ const g=clamp01(vm/GAIN)*GPLUS; let lo=0,hi=CG.length-1; while(hi-lo>1){const m=(lo+hi)>>1; if(CG[m]<=g) lo=m; else hi=m;} const f=CG[hi]>CG[lo]?(g-CG[lo])/(CG[hi]-CG[lo]):0; return [lo,hi,f]; }
 function vmToU(vm){ if(vm>=GAIN) return 1; const [a,b,f]=idxForVm(vm); return lerp(ARC[a],ARC[b],f)/ARCT; }
+// prikazana višina: Aljažev dom + pridobljeni metri (da se številke ujemajo)
+function visina(vm){ return Math.min(TOP,BASE+Math.max(0,Math.round(vm))); }
 function altAt(vm){ if(vm>=GAIN) return TOP; const [a,b,f]=idxForVm(vm); const h=lerp(RT[a].h,RT[b].h,f); const t=clamp01(vm/GAIN); return Math.min(TOP-1,Math.round(h+(BASE-RT[0].h)*(1-t)+(TOP-RT[RT.length-1].h)*t)); }
 function placeName(vm){ let p=WP[0]; for(const w of WP){ if(w.vmAt<=vm+0.5) p=w; } const nx=WP.find(w=>w.vmAt>vm+0.5); if(!nx||vm-p.vmAt<40) return p.n; return 'pod: '+nx.n.split(' · ')[0]; }
 
@@ -813,6 +817,30 @@ function pickCats(date,cats){
   const out=[],cnt={},obs=[0,0]; for(const c of a){ if(out.length>=8) break; const k=c.g; if(obs[c.s]>=4||(cnt[k]||0)>=2) continue; cnt[k]=(cnt[k]||0)+1; obs[c.s]++; out.push(c); }
   return out;
 }
+// Od NOVO naprej: vprašanje se ne ponovi prej kot v 100 dneh (ko zmanjka svežih, vzame najdlje neuporabljena),
+// največ 1 vprašanje iz iste kategorije na dan, 4 o Sloveniji + 4 o svetu. Dnevi pred NOVO ostanejo, kot so bili.
+const NOVO='2026-11-25';
+function pickDay(date,cats){
+  if(date<NOVO) return pickCats(date,cats);
+  const d0=Date.parse(NOVO), dn=Math.round((Date.parse(date)-d0)/864e5);
+  const zadnjic=new Map(); let out=[];
+  for(let i=0;i<=dn;i++){
+    const d=new Date(d0+i*864e5).toISOString().slice(0,10);
+    const r=rng(hash('dovrha-'+d)); const a=cats.slice();
+    for(let x=a.length-1;x>0;x--){const j=Math.floor(r()*(x+1));[a[x],a[j]]=[a[j],a[x]];}
+    const svezi=[],rezerva=[];
+    for(const c of a){ const z=zadnjic.get(c.id); (z===undefined||i-z>100?svezi:rezerva).push(c); }
+    if(rezerva.length) rezerva.sort((p,q)=>zadnjic.get(p.id)-zadnjic.get(q.id));
+    out=[]; const cnt={},obs=[0,0];
+    for(const c of svezi.concat(rezerva)){
+      if(out.length>=8) break;
+      if(obs[c.s]>=4||cnt[c.g]) continue;
+      cnt[c.g]=1; obs[c.s]++; out.push(c);
+    }
+    for(const c of out) zadnjic.set(c.id,i);
+  }
+  return out;
+}
 const $=id=>document.getElementById(id);
 const TODAY=todayStr();
 const GAMENO=Math.max(1,Math.round((Date.parse(TODAY)-Date.parse('2026-11-13'))/864e5)+1);
@@ -833,7 +861,7 @@ async function naloziDan(date){
   try{ const c=JSON.parse(localStorage.getItem(KEY)||'null'); if(Array.isArray(c)&&c.length===8){ c.forEach(prep); return c; } }catch(e){}
   await sbClient();
   const vpr=await vse(()=>sb.from('vprasanja').select('id,kategorija_id,vprasanje,namig,slovenija,odstrani').eq('aktivno',true).order('vrstni_red').order('id'));
-  const day=pickCats(date,vpr.map(v=>({id:v.id,g:v.kategorija_id,s:v.slovenija?0:1,t:v.vprasanje,h:v.namig,strip:v.odstrani||[]})));
+  const day=pickDay(date,vpr.map(v=>({id:v.id,g:v.kategorija_id,s:v.slovenija?0:1,t:v.vprasanje,h:v.namig,strip:v.odstrani||[]})));
   if(day.length<8) throw new Error('V bazi je premalo vprašanj za današnji vzpon.');
   const odg=await vse(()=>sb.from('odgovori').select('vprasanje_id,odgovor,sopomenke').in('vprasanje_id',day.map(c=>c.id)).order('vprasanje_id').order('rang'));
   day.forEach(c=>{ c.ans=odg.filter(o=>o.vprasanje_id===c.id).map(o=>({o:o.odgovor,s:o.sopomenke})); });
@@ -860,11 +888,15 @@ async function initDb(){
     myId=session&&session.user?session.user.id:null; me=session&&session.user||null;
     await Promise.all([loadToday(),loadProfil(),loadSkupine()]);
     vcerajZmagal(); povabilo(); povratekGoogle();
-    $('status').textContent=plays.length?`Danes se je vzpenjalo že ${plays.length} ${plural(plays.length)}.`:'Bodi danes prvi na poti!';
+    $('status').textContent=plays.length?`Danes ${stevec(plays.length)}.`:'Bodi danes prvi na poti!';
     const mine=plays.find(p=>p.uid===myId); if(mine&&mine.done&&mine.vm!=null&&!st.done){ st={i:8,vm:mine.vm,done:true,res:DAY.map(c=>({cat:c.id,ans:mine.answers?.[c.id]||null,vm:0,mode:null}))}; persist(); setStartLabel(); }
   }catch(e){ console.log('db',e); }
 }
-function plural(n){const m=n%100;return m===1?'planinec':m===2?'planinca':(m===3||m===4)?'planinci':'planincev';}
+function stevec(n){const m=n%100;
+  if(m===1) return `se je vzpenjal že ${n} planinec`;
+  if(m===2) return `sta se vzpenjala že ${n} planinca`;
+  if(m===3||m===4) return `so se vzpenjali že ${n} planinci`;
+  return `se je vzpenjalo že ${n} planincev`;}
 async function loadToday(){ if(!sb) return; const rows=await vse(()=>sb.from('igre').select('uid,vm,odgovori,koncano').eq('datum',TODAY)); plays=rows.map(p=>({uid:p.uid,vm:p.vm,answers:p.odgovori||{},done:p.koncano})); }
 // Delež igralcev z istim odgovorom. Dokler ni dovolj igralcev, je ocena iz vrstnega reda na seznamu,
 // a nikoli pod PRIOR_MIN – brez podatkov ne vemo, ali je odgovor res redek. Z več igralci odločajo pravi odgovori.
@@ -898,7 +930,7 @@ setStartLabel();
 /* altitude counter */
 let altShown=BASE; let altAnim=null;
 function setAlt(vm,label){
-  const target=altAt(vm); const from=altShown; const t0=performance.now();
+  const target=visina(vm); const from=altShown; const t0=performance.now();
   cancelAnimationFrame(altAnim);
   const step=t=>{ const f=Math.min(1,(t-t0)/1500); const v=Math.round(lerp(from,target,easeIO(f))); $('aVal').textContent=v.toLocaleString('sl-SI'); altShown=v; if(f<1) altAnim=requestAnimationFrame(step); };
   altAnim=requestAnimationFrame(step);
@@ -920,7 +952,7 @@ function startGame(){
 }
 function showQ(){
   const c=DAY[st.i];
-  $('qChip').textContent=((c.s?'SVET · ':'SLO · ')+c.g).toUpperCase(); [...$('dots').children].forEach((d,i)=>{ d.className=i===st.i?'cur':''; const r=st.res[i]; d.style.background=r? (r.mode?MODES.find(m=>m.id===r.mode).c:'#9aa7b1'):''; });
+  $('qChip').textContent=c.s?'SVET':'SLOVENIJA'; [...$('dots').children].forEach((d,i)=>{ d.className=i===st.i?'cur':''; const r=st.res[i]; d.style.background=r? (r.mode?MODES.find(m=>m.id===r.mode).c:'#9aa7b1'):''; });
   $('ask').classList.remove('hidden'); $('done').classList.add('hidden');
   const b=$('qBody'); b.classList.remove('slide'); void b.offsetWidth; b.classList.add('slide');
   $('qTitle').textContent=c.t; $('qHint').textContent=c.h;
@@ -1077,7 +1109,7 @@ async function showEnd(){
   $('eEmoji').textContent=top?'🏔️':'⛺';
   { const pn=placeName(vm); $('eTitle').textContent=top?'Na vrhu Triglava!':(pn.startsWith('pod: ')?`Obstal si ${pn.replace(': ',' ')}`:`Prišel si do: ${pn}`); }
   $('eSub').textContent=top?'Zdaj si pravi Slovenec. Krst z vrvjo te čaka ob Aljaževem stolpu.':`Do vrha ti je zmanjkalo ${GAIN-vm} m. Jutri nov poskus.`;
-  $('eAlt').innerHTML=`${altAt(vm).toLocaleString('sl-SI')}<small> m</small>`;
+  $('eAlt').innerHTML=`${visina(vm).toLocaleString('sl-SI')}<small> m</small>`;
   $('eCap').textContent=`+${vm} višinskih metrov od Aljaževega doma`;
   $('sum').innerHTML=DAY.map((c,i)=>{ const r=st.res[i]||{}; const m=r.mode&&MODES.find(x=>x.id===r.mode);
     return `<div class="srow" style="animation-delay:${i*60}ms"><div class="e">${m?m.e:'🌫️'}</div><div><div class="c">${esc(c.t)}</div><div class="a">${r.ans?esc(r.ans):'—'}</div></div><div class="g num" style="color:${m?m.c:'#9aa7b1'}">+${r.vm||0}</div></div>`; }).join('');
@@ -1108,7 +1140,7 @@ async function renderBoard(){
   renderStats(done);
   const vrh=done.slice(0,20); const mi=done.findIndex(p=>p.uid===myId); if(mi>=20) vrh.push(done[mi]);
   const ime=await imena(vrh.map(p=>p.uid));
-  $('lb').innerHTML=vrh.length?vrh.map(p=>{ const i=done.indexOf(p); const nm=p.uid===myId?(profil.vzdevek?`Ti · ${profil.vzdevek}`:'Ti'):(ime(p.uid)||'Planinec'); const alt=altAt(p.vm);
+  $('lb').innerHTML=vrh.length?vrh.map(p=>{ const i=done.indexOf(p); const nm=p.uid===myId?(profil.vzdevek?`Ti · ${profil.vzdevek}`:'Ti'):(ime(p.uid)||'Planinec'); const alt=visina(p.vm);
     return `<div class="lbr ${p.uid===myId?'me':''}"><span class="num">${i+1}.</span><span>${i===0?'👑 ':''}${esc(nm)}${p.vm>=GAIN?' 🏔️':''}</span><span class="num">${alt.toLocaleString('sl-SI')} m</span></div>`; }).join(''):'<div class="small">Še nihče ni končal.</div>';
   $('lbNick').innerHTML=profil.vzdevek?'':'<button class="btn2" id="nickCta" style="width:100%;margin-top:8px">✏️ Dodaj vzdevek, da te vidijo na lestvici</button>'; if($('nickCta')) $('nickCta').onclick=openProfil;
   renderGrpEnd();
@@ -1118,7 +1150,7 @@ async function renderBoard(){
 }
 $('krstAgain').addEventListener('click',()=>{ hide('endp'); krst().then(()=>show('endp')); });
 $('copyBtn').addEventListener('click',async()=>{ const line=DAY.map((c,i)=>{const r=st.res[i];const m=r&&r.mode&&MODES.find(x=>x.id===r.mode);return m?m.e:'🌫️';}).join(''); const vm=Math.round(st.vm);
-  const txt=`Do vrha? #${GAMENO} 🏔️\n${line}\n${altAt(vm).toLocaleString('sl-SI')} m · ${vm>=GAIN?'Triglav ✅':placeName(vm).replace(/^pod: /,'pod ')}${streak>=2?` · 🔥${streak}`:''}\n`;
+  const txt=`Do vrha? #${GAMENO} 🏔️\n${line}\n${visina(vm).toLocaleString('sl-SI')} m · ${vm>=GAIN?'Triglav ✅':placeName(vm).replace(/^pod: /,'pod ')}${streak>=2?` · 🔥${streak}`:''}\n`;
   const url='https://dovrha.top';
   const mobi=matchMedia('(pointer:coarse)').matches;
   if(navigator.share&&mobi){ try{ await navigator.share({text:txt,url}); return; }catch(e){ if(e&&e.name==='AbortError') return; } }
@@ -1138,7 +1170,7 @@ function sporocilo(id,t,ok){ const el=$(id); el.textContent=t||''; el.className=
 async function vcerajZmagal(){ try{ const d=new Date(TODAY+'T12:00:00Z'); d.setUTCDate(d.getUTCDate()-1); const y=d.toISOString().slice(0,10);
   const {data}=await sb.from('igre').select('uid,vm').eq('datum',y).eq('koncano',true).order('vm',{ascending:false}).limit(1); if(!data||!data.length) return;
   const w=data[0], ime=await imena([w.uid]); const n=w.uid===myId?'ti 🎉':(ime(w.uid)||'anonimni planinec');
-  $('zmag').textContent=`👑 Včeraj najvišje: ${n} · ${altAt(w.vm).toLocaleString('sl-SI')} m`; $('zmag').classList.remove('hidden'); }catch(e){} }
+  $('zmag').textContent=`👑 Včeraj najvišje: ${n} · ${visina(w.vm).toLocaleString('sl-SI')} m`; $('zmag').classList.remove('hidden'); }catch(e){} }
 
 async function openProfil(){
   if(!sb||!myId){ alert('Profil ni na voljo – ni povezave z bazo.'); return; }
@@ -1170,11 +1202,11 @@ async function renderZgodovina(){
   const dni=new Set(rows.map(r=>r.datum)); let naj=0,cur=0,prej=null;
   [...dni].sort().forEach(d=>{ const t=Date.parse(d); cur=(prej!==null&&t-prej===864e5)?cur+1:1; naj=Math.max(naj,cur); prej=t; });
   const niz=await loadStreak(); const vrh=rows.filter(r=>r.vm>=GAIN).length;
-  const best=n?Math.max(...rows.map(r=>altAt(r.vm))):0; const povp=n?Math.round(rows.reduce((a,r)=>a+altAt(r.vm),0)/n):0;
+  const best=n?Math.max(...rows.map(r=>visina(r.vm))):0; const povp=n?Math.round(rows.reduce((a,r)=>a+visina(r.vm),0)/n):0;
   const zmage=rows.filter(r=>r.mesto===1&&r.igralcev>1).length;
   const kos=[[n,'vzponov'],[vrh,'na vrhu'],[`🔥 ${niz}`,'niz dni'],[best?best.toLocaleString('sl-SI'):'–','najvišje (m)'],[povp?povp.toLocaleString('sl-SI'):'–','povprečje (m)'],[zmage?`👑 ${zmage}`:naj,zmage?'zmag dneva':'najdaljši niz']];
   $('stGrid').innerHTML=kos.map(([b,t])=>`<div><b class="num">${b}</b><span>${t}</span></div>`).join('');
-  $('hist').innerHTML=n?rows.slice(0,60).map(r=>`<div class="lbr"><span class="num">${r.vm>=GAIN?'🏔️':'⛺'}</span><span>${fmtDate(r.datum)}<small style="color:var(--mute);font-weight:700"> · ${r.mesto}. od ${r.igralcev}</small></span><span class="num">${altAt(r.vm).toLocaleString('sl-SI')} m</span></div>`).join(''):'<div class="small">Še nimaš končanega vzpona.</div>';
+  $('hist').innerHTML=n?rows.slice(0,60).map(r=>`<div class="lbr"><span class="num">${r.vm>=GAIN?'🏔️':'⛺'}</span><span>${fmtDate(r.datum)}<small style="color:var(--mute);font-weight:700"> · ${r.mesto}. od ${r.igralcev}</small></span><span class="num">${visina(r.vm).toLocaleString('sl-SI')} m</span></div>`).join(''):'<div class="small">Še nimaš končanega vzpona.</div>';
 }
 
 async function loadSkupine(){ if(!sb||!myId) return; const {data}=await sb.from('skupine').select('id,ime,koda').order('ustvarjeno'); skupine=data||[]; }
@@ -1203,7 +1235,7 @@ async function renderGrpEnd(){ if(!skupine.length){ $('grpEnd').innerHTML=''; re
   for(const g of skupine){ const {data}=await sb.rpc('clani_skupine',{p_skupina:g.id}); const cl=new Map((data||[]).map(r=>[r.uid,r.vzdevek]));
     const t=plays.filter(p=>p.done&&cl.has(p.uid)).sort((a,b)=>b.vm-a.vm);
     h+=`<div class="sec">SKUPINA · ${esc(g.ime.toUpperCase())} <span style="font-weight:700">(${t.length}/${cl.size})</span></div><div class="lb">`+(t.length?t.map((p,i)=>{ const nm=p.uid===myId?'Ti':(cl.get(p.uid)||'Planinec');
-      return `<div class="lbr ${p.uid===myId?'me':''}"><span class="num">${i+1}.</span><span>${i===0?'👑 ':''}${esc(nm)}${p.vm>=GAIN?' 🏔️':''}</span><span class="num">${altAt(p.vm).toLocaleString('sl-SI')} m</span></div>`; }).join(''):'<div class="small">Danes še nihče iz skupine ni končal.</div>')+'</div>'; }
+      return `<div class="lbr ${p.uid===myId?'me':''}"><span class="num">${i+1}.</span><span>${i===0?'👑 ':''}${esc(nm)}${p.vm>=GAIN?' 🏔️':''}</span><span class="num">${visina(p.vm).toLocaleString('sl-SI')} m</span></div>`; }).join(''):'<div class="small">Danes še nihče iz skupine ni končal.</div>')+'</div>'; }
   $('grpEnd').innerHTML=h; }
 
 // Google: anonimni profil se poveže z Google računom (ista zgodovina na vseh napravah)
