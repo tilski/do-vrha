@@ -21,7 +21,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://dovrha.top/og.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
   --ink:#0f1a24; --ink2:#3d4b58; --mute:#6f7d89;
@@ -79,11 +79,13 @@ button{font-family:inherit;cursor:pointer;border:0}
 #home.out{opacity:0;transform:translate(-50%,30px);pointer-events:none}
 #labels{transition:opacity .5s}
 body.zacetek #labels{opacity:0}
+body.zacetek .alti{opacity:0;pointer-events:none}
 #home .cta{font-size:20px;padding:18px;border-radius:18px;margin:2px 0 10px}
 #homeTitle{font-size:clamp(56px,14vw,120px);line-height:.9;margin:0 0 24px;font-weight:800;color:#fff;text-shadow:0 6px 30px rgba(10,30,50,.35)}
 #homeTitle em{font-style:normal;color:var(--red)}
 .hstat{display:inline-block;font-size:13px;font-weight:700;color:var(--ink);background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--stroke);border-radius:999px;padding:7px 14px;margin:0 4px 10px;box-shadow:0 6px 18px -10px rgba(12,28,44,.5)}
 .hstat:empty{display:none}
+#status{display:none!important}
 .hlinks{display:flex;justify-content:center;gap:18px}
 .hlnk{background:none;padding:4px;font:inherit;font-size:13px;font-weight:800;color:#fff;text-decoration:none;text-shadow:0 1px 6px rgba(0,0,0,.55);cursor:pointer}
 #intro h1{font-size:54px;line-height:.95;margin:4px 0 10px;font-weight:800}
@@ -499,12 +501,12 @@ let renderer,scene,camera,ok=true;
 const EX=1.08, Y=e=>e/1000*EX;
 try{ renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true,powerPreference:'high-performance',logarithmicDepthBuffer:true}); }catch(e){ok=false;}
 const MOB=innerWidth<760;
-let naslov=null; const N_D=1.6, N_Y=innerWidth<760?0.04:0.12;
+let naslov=null; const N_D=1.6, N_Y=innerWidth<760?0.04:0.02;
 // naslov postavi za vrh, gledano iz začetnega pogleda kamere; velikost glede na širino zaslona
 function postaviNaslov(){ if(!naslov) return; const S=RT[RT.length-1]; const sum=new THREE.Vector3(S.x,Y(S.h),S.z);
   const camP=new THREE.Vector3(1.05,Y(MOB?3500:3150),MOB?-6.6:-5.6); const dir=sum.clone().sub(camP); dir.y=0; dir.normalize();
   const p=sum.clone().addScaledVector(dir,N_D); p.y=sum.y+N_Y; naslov.position.copy(p); naslov.lookAt(camP.x,p.y,camP.z);
-  const dist=p.distanceTo(camP), visH=2*dist*Math.tan(THREE.MathUtils.degToRad(19)), visW=visH*innerWidth/innerHeight; const w=Math.min(visW*0.9,visH*1.55); naslov.scale.set(w,w,1); }
+  const dist=p.distanceTo(camP), visH=2*dist*Math.tan(THREE.MathUtils.degToRad(19)), visW=visH*innerWidth/innerHeight; const w=Math.min(visW*0.9,visH*1.15); naslov.scale.set(w,w,1); }
 let pathCurve, tubeMain, tubeDone, tubeSegs=1600, climberMesh, ringMesh, clouds=[], KS=null, KR=null, flag=null;
 // barvna lestvica (sRGB 0..1)
 const PAL={meadow:[.50,.60,.33],forest:[.20,.30,.18],pine:[.28,.35,.22],grass:[.55,.55,.38],scree:[.74,.71,.65],rock:[.66,.64,.60],dark:[.45,.43,.41],snow:[.95,.97,.98]};
@@ -726,12 +728,14 @@ float bumpH(){ float r=rockMask(); return fb(vW*vec3(30.0,45.0,30.0))*aa(80.0)*(
   for(let i=0;i<22;i++){const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:ctex,transparent:true,opacity:.25+Math.random()*.25,depthWrite:false,fog:true}));
     const s=1.5+Math.random()*3; sp.scale.set(s,s*0.4,1); sp.position.set(-9+Math.random()*18, Y(3150)+Math.random()*0.5, -10+Math.random()*16); sp.userData.v=0.02+Math.random()*0.05; clouds.push(sp); scene.add(sp);}
   // --- naslov »DO VRHA« za Triglavom (začetni zaslon): gore v ospredju ga delno prekrijejo
-  { const tcv=document.createElement('canvas'); tcv.width=2048; tcv.height=600; const tc=tcv.getContext('2d');
+  { const TW=2048, TH=760; const tcv=document.createElement('canvas'); tcv.width=TW; tcv.height=TH; const tc=tcv.getContext('2d');
     const tex=new THREE.CanvasTexture(tcv); tex.colorSpace=THREE.SRGBColorSpace; tex.anisotropy=4;
-    const risi=()=>{ tc.clearRect(0,0,2048,600); tc.font='800 430px "Bricolage Grotesque", Manrope, sans-serif'; tc.textAlign='center';
-      tc.fillStyle='rgba(20,40,60,.22)'; tc.fillText('DO VRHA',1024+14,505+16); tc.fillStyle='#ffffff'; tc.fillText('DO VRHA',1024,505); tex.needsUpdate=true; };
-    risi(); if(document.fonts) document.fonts.load('800 100px "Bricolage Grotesque"').then(risi).catch(()=>{});
-    naslov=new THREE.Mesh(new THREE.PlaneGeometry(1,600/2048),new THREE.MeshBasicMaterial({map:tex,transparent:true,depthWrite:false,fog:false,opacity:1,toneMapped:false}));
+    const risi=()=>{ tc.clearRect(0,0,TW,TH); tc.font='640px "Bebas Neue", "Bricolage Grotesque", sans-serif'; tc.textAlign='center';
+      if('letterSpacing' in tc) tc.letterSpacing='18px';
+      tc.save(); tc.shadowColor='rgba(12,30,48,.55)'; tc.shadowBlur=70; tc.shadowOffsetX=10; tc.shadowOffsetY=26; tc.fillStyle='#ffffff'; tc.fillText('DO VRHA',TW/2,610); tc.restore();
+      tc.fillStyle='#ffffff'; tc.fillText('DO VRHA',TW/2,610); tex.needsUpdate=true; };
+    risi(); if(document.fonts) document.fonts.load('640px "Bebas Neue"').then(risi).catch(()=>{});
+    naslov=new THREE.Mesh(new THREE.PlaneGeometry(1,TH/TW),new THREE.MeshBasicMaterial({map:tex,transparent:true,depthWrite:false,fog:false,opacity:1,toneMapped:false}));
     naslov.renderOrder=-1; scene.add(naslov); postaviNaslov(); }
 }
 
@@ -946,7 +950,7 @@ async function initDb(){
     if(!session){ const r=await sb.auth.signInAnonymously(); if(r.error) console.log('prijava',r.error.message); session=r.data&&r.data.session; }
     myId=session&&session.user?session.user.id:null; me=session&&session.user||null;
     await Promise.all([loadToday(),loadProfil(),loadSkupine()]);
-    vcerajZmagal(); povabilo(); povratekGoogle();
+    povabilo(); povratekGoogle();
     $('status').textContent=plays.length?`Danes ${stevec(plays.length)}.`:'Bodi danes prvi na poti!';
     const mine=plays.find(p=>p.uid===myId); if(mine&&mine.done&&mine.vm!=null&&!st.done){ st={i:8,vm:mine.vm,done:true,res:DAY.map(c=>({cat:c.id,ans:mine.answers?.[c.id]||null,vm:0,mode:null}))}; persist(); setStartLabel(); }
   }catch(e){ console.log('db',e); }
