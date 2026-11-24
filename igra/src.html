@@ -169,6 +169,8 @@ body.zacetek .alti{opacity:0;pointer-events:none}
 #profp{left:50%;top:50%;width:min(520px,calc(100% - 28px));max-height:calc(100vh - 110px);transform:translate(-50%,-50%);z-index:8}
 #profp.out{transform:translate(-50%,-44%) scale(.97)}
 .topl{display:flex;gap:8px;align-items:center;pointer-events:auto}
+.topr{display:flex;gap:8px;align-items:flex-start;pointer-events:none}
+.topr>*{pointer-events:auto}
 .pbtn{width:44px;height:44px;border-radius:50%;background:var(--glass);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--stroke);box-shadow:var(--shadow);font-size:19px;display:grid;place-items:center;transition:.2s}
 .pbtn:hover{background:var(--night)}
 #brandBtn{cursor:pointer}
@@ -299,13 +301,15 @@ body.zacetek .alti{opacity:0;pointer-events:none}
     <svg class="mark" viewBox="0 0 40 40"><circle cx="20" cy="20" r="19" fill="#fff"/><circle cx="20" cy="20" r="13" fill="#fff" stroke="#e0312d" stroke-width="8"/></svg>
     <div><b class="disp">Do vrha</b><br><span id="bMeta">#1 · 13. 11. 2026</span></div>
   </div>
-  <button class="pbtn" id="profBtn" aria-label="Profil" title="Profil, zgodovina, skupine">👤</button>
   </div>
+  <div class="topr">
   <div class="alti hide" id="alti">
     <div class="lab">NADMORSKA VIŠINA</div>
     <div class="val num disp"><span id="aVal">1015</span><small>m</small></div>
     <div class="sub" id="aSub">Aljažev dom v Vratih</div>
     <div class="bar"><i id="aBar"></i></div>
+  </div>
+  <button class="pbtn" id="profBtn" aria-label="Profil" title="Profil, zgodovina, skupine">👤</button>
   </div>
 </div>
 
