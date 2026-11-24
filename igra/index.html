@@ -784,7 +784,7 @@ float bumpH(){ float r=rockMask(); return fb(vW*vec3(30.0,45.0,30.0))*aa(80.0)*(
   // --- oblaki
   const cv=document.createElement('canvas');cv.width=cv.height=128;const cx=cv.getContext('2d');const gr=cx.createRadialGradient(64,64,4,64,64,62);gr.addColorStop(0,'rgba(255,255,255,.95)');gr.addColorStop(.5,'rgba(255,255,255,.45)');gr.addColorStop(1,'rgba(255,255,255,0)');cx.fillStyle=gr;cx.fillRect(0,0,128,128);
   const ctex=new THREE.CanvasTexture(cv);
-  for(let i=0;i<22;i++){const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:ctex,transparent:true,opacity:.25+Math.random()*.25,depthWrite:false,fog:true}));
+  for(let i=0;i<(MOB?0:22);i++){const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:ctex,transparent:true,opacity:.25+Math.random()*.25,depthWrite:false,fog:true}));
     const s=1.5+Math.random()*3; sp.scale.set(s,s*0.4,1); sp.position.set(-9+Math.random()*18, Y(3150)+Math.random()*0.5, -10+Math.random()*16); sp.userData.v=0.02+Math.random()*0.05; clouds.push(sp); scene.add(sp);}
   // --- naslov »DO VRHA« za Triglavom (začetni zaslon): gore v ospredju ga delno prekrijejo
   { const TW=2048, TH=760; const tcv=document.createElement('canvas'); tcv.width=TW; tcv.height=TH; const tc=tcv.getContext('2d');
