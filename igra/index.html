@@ -259,18 +259,26 @@ body.zacetek .alti{opacity:0;pointer-events:none}
   .ring{width:54px;height:54px}
   
   .brand b{white-space:nowrap}
-  #endp{top:auto;bottom:10px;transform:translateX(-50%);max-height:72vh}
+  #endp{top:auto;bottom:10px;transform:translateX(-50%);max-height:calc(100% - 84px)}
   #endp.out{transform:translateX(-50%) translateY(40px)}
   #profp{top:auto;bottom:10px;transform:translateX(-50%);max-height:80vh}
   #profp.out{transform:translateX(-50%) translateY(40px)}
   #lbp,#grpp{top:auto;bottom:10px;transform:translateX(-50%);max-height:80vh}
   #lbp.out,#grpp.out{transform:translateX(-50%) translateY(40px)}
-  .phead{padding:16px 16px 4px}
-  .phead .endhero .e{display:none}
-  .phead .endhero h2{font-size:20px;padding-top:4px}
-  .phead .endhero p{font-size:12px}
-  .phead .altcap{margin-bottom:8px}
-  .phead .bigalt{font-size:40px;margin:4px 0 0}
+  /* telefon: kompaktna glava rezultata, da je vidnih več odgovorov */
+  #endp .phead{padding:14px 16px 2px;text-align:left}
+  #endp .phead .endhero{padding:0 46px 0 0;text-align:left}
+  #endp .phead .endhero .e,.phead .endhero p{display:none}
+  #endp .phead .endhero h2{font-size:17px;line-height:1.15;margin:4px 0 2px}
+  #endp .phead .bigalt{display:inline-block;font-size:34px;margin:0;text-align:left}
+  #endp .phead .bigalt small{font-size:15px}
+  #endp .phead .altcap{display:inline-block;margin:0 0 0 8px;text-align:left;font-size:11px;max-width:52%;vertical-align:4px}
+  #endp .phead .stats{justify-content:flex-start;gap:6px;margin:6px 0 2px}
+  #endp .phead .stats span{font-size:11px;padding:4px 9px}
+  #endp .pin{padding:8px 14px 10px}
+  .srow{padding:6px 10px;grid-template-columns:28px 1fr auto;gap:8px}
+  .srow .e{font-size:17px}
+  .srow .a{font-size:13px}
   .pfoot{padding:8px 14px 14px}
   .pfoot .btn2{padding:11px 6px;font-size:13px}
   .pbtn{width:38px;height:38px;font-size:17px}
@@ -544,7 +552,7 @@ function placeName(vm){ let p=WP[0]; for(const w of WP){ if(w.vmAt<=vm+0.5) p=w;
 const canvas=document.getElementById('gl');
 let renderer,scene,camera,ok=true;
 const EX=1.08, Y=e=>e/1000*EX;
-try{ renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true,powerPreference:'high-performance',logarithmicDepthBuffer:true}); }catch(e){ok=false;}
+try{ renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true,powerPreference:'high-performance',logarithmicDepthBuffer:true,preserveDrawingBuffer:true}); /* ohrani zadnjo sliko, ko se nič ne riše (iOS sicer pokaže smeti na nebu) */ }catch(e){ok=false;}
 const MOB=innerWidth<760;
 let naslov=null, narisiSe=5; /* narisiSe: koliko slik še narisati, tudi če se nič ne premika */ const N_D=1.6, N_Y=innerWidth<760?0.04:0.02;
 // naslov postavi za vrh, gledano iz začetnega pogleda kamere; velikost glede na širino zaslona
