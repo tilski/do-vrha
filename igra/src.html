@@ -2,7 +2,7 @@
 <html lang="sl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content">
 <title>Do vrha? – dnevni izziv</title>
 <meta name="description" content="8 vprašanj na dan. Redkejši odgovor te pripelje višje na Triglav. Slovenska dnevna besedna igra.">
 <meta name="theme-color" content="#3f78b5">
@@ -222,7 +222,22 @@ button{font-family:inherit;cursor:pointer;border:0}
   #intro{left:10px;right:10px;width:auto;top:auto;bottom:10px;max-height:62vh;padding:20px}
   #intro h1{font-size:40px}
   .profile{height:70px}
-  #qp{bottom:10px;padding:14px}
+  #qp{bottom:calc(10px + var(--kb,0px));padding:14px;transition:opacity .55s ease, transform .65s cubic-bezier(.2,.9,.25,1), filter .55s, bottom .2s ease}
+  .alti{padding:7px 11px;border-radius:14px}
+  .alti .lab{font-size:8.5px}
+  .alti .sub{font-size:10.5px;max-width:44vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-left:auto}
+  .alti .bar{margin-top:6px}
+  .mode .v{display:none}
+  .mode .n{font-size:9.5px;min-height:0}
+  .mode .e{font-size:20px}
+  /* med tipkanjem: več prostora za odgovor */
+  body.tipkam .top{opacity:0;pointer-events:none;transition:opacity .2s}
+  body.tipkam #qp{padding:12px 14px}
+  body.tipkam .ring{width:44px;height:44px}
+  body.tipkam .ring .t{font-size:14px}
+  body.tipkam .qtitle{font-size:19px}
+  body.tipkam .qhead{margin-bottom:6px}
+  body.tipkam .ansrow{margin-top:10px}
   .ring{width:54px;height:54px}
   
   .brand b{white-space:nowrap}
@@ -1266,6 +1281,17 @@ function povratekGoogle(){ const q=new URLSearchParams(OAUTH_URL); const err=q.g
 /* view toggle */
 
 $('startBtn').addEventListener('click',startGame);
+
+// Telefon: tipkovnica prekrije spodnji del zaslona – okno z vprašanjem dvigni nad njo (iOS ne skrči strani sam)
+(function(){
+  const mobi=matchMedia('(max-width:760px)');
+  const upd=()=>{ const vv=window.visualViewport; const kb=vv?Math.max(0,Math.round(innerHeight-vv.height-vv.offsetTop)):0;
+    document.documentElement.style.setProperty('--kb',(kb>80?kb:0)+'px'); };
+  if(window.visualViewport){ visualViewport.addEventListener('resize',upd); visualViewport.addEventListener('scroll',upd); }
+  const ans=$('ans');
+  ans.addEventListener('focus',()=>{ if(mobi.matches) document.body.classList.add('tipkam'); setTimeout(upd,50); setTimeout(()=>{ upd(); window.scrollTo(0,0); },350); });
+  ans.addEventListener('blur',()=>{ document.body.classList.remove('tipkam'); setTimeout(upd,350); });
+})();
 
 /* ================= BOOT ================= */
 // povezava do politike zasebnosti samo na spletni strani (aplikacija ima svoj zaslon)
