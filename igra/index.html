@@ -37,8 +37,8 @@ button{font-family:inherit;cursor:pointer;border:0}
 .num{font-variant-numeric:tabular-nums}
 #sky{position:fixed;inset:0;background:linear-gradient(180deg,#5d8fc4 0%,#9fc0de 38%,#e3ebf1 62%,#eef1f2 100%)}
 @keyframes sonce{0%,100%{opacity:.85;transform:scale(1)}50%{opacity:1;transform:scale(1.06)}}
-#sun{animation:sonce 7s ease-in-out infinite;position:fixed;width:520px;height:520px;right:-120px;top:-160px;border-radius:50%;background:radial-gradient(circle,rgba(255,241,214,.9) 0%,rgba(255,232,190,.35) 30%,rgba(255,255,255,0) 65%);pointer-events:none}
-#gl{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}
+#sun{animation:sonce 7s ease-in-out infinite;z-index:1;mix-blend-mode:screen;position:fixed;width:520px;height:520px;right:-120px;top:-160px;border-radius:50%;background:radial-gradient(circle,rgba(255,241,214,.9) 0%,rgba(255,232,190,.35) 30%,rgba(255,255,255,0) 65%);pointer-events:none}
+#gl{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none;z-index:0}
 #labels{position:fixed;inset:0;pointer-events:none;overflow:hidden}
 .lbl{position:absolute;transform:translate(-50%,-100%);white-space:nowrap;font-size:11px;font-weight:700;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.55);padding-bottom:6px;transition:opacity .4s}
 .lbl::after{content:"";position:absolute;left:50%;bottom:0;width:1px;height:6px;background:rgba(255,255,255,.8)}
@@ -80,7 +80,7 @@ button{font-family:inherit;cursor:pointer;border:0}
 #home.out{opacity:0;transform:translate(-50%,30px);pointer-events:none}
 #labels{transition:opacity .5s}
 body.zacetek #labels{opacity:0}
-body.zacetek .alti{opacity:0;pointer-events:none}
+body.zacetek .alti,body.okno .alti{opacity:0;pointer-events:none}
 #home .cta{font-size:20px;padding:18px;border-radius:18px;margin:2px 0 10px}
 #homeTitle{font-size:clamp(56px,14vw,120px);line-height:.9;margin:0 0 24px;font-weight:800;color:#fff;text-shadow:0 6px 30px rgba(10,30,50,.35)}
 #homeTitle em{font-style:normal;color:var(--red)}
@@ -553,7 +553,7 @@ function placeName(vm){ let p=WP[0]; for(const w of WP){ if(w.vmAt<=vm+0.5) p=w;
 const canvas=document.getElementById('gl');
 let renderer,scene,camera,ok=true;
 const EX=1.08, Y=e=>e/1000*EX;
-try{ renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true,powerPreference:'high-performance',logarithmicDepthBuffer:true,preserveDrawingBuffer:true}); /* ohrani zadnjo sliko, ko se nič ne riše (iOS sicer pokaže smeti na nebu) */ }catch(e){ok=false;}
+try{ renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false,powerPreference:'high-performance',logarithmicDepthBuffer:true,preserveDrawingBuffer:true}); /* ohrani zadnjo sliko, ko se nič ne riše (iOS sicer pokaže smeti na nebu) */ }catch(e){ok=false;}
 const MOB=innerWidth<760;
 let naslov=null, narisiSe=5; /* narisiSe: koliko slik še narisati, tudi če se nič ne premika */ const N_D=1.6, N_Y=innerWidth<760?0.04:0.02;
 // naslov postavi za vrh, gledano iz začetnega pogleda kamere; velikost glede na širino zaslona
@@ -583,6 +583,10 @@ if(ok){
   renderer.toneMapping=THREE.ACESFilmicToneMapping; renderer.toneMappingExposure=1.05;
   scene=new THREE.Scene();
   scene.fog=new THREE.FogExp2(0xdfe8ef,0.042);
+  // nebo kot ozadje prizora (neprozorno platno – iOS sicer na prozornih delih kaže barvni šum)
+  { const sc=document.createElement('canvas'); sc.width=4; sc.height=512; const sx=sc.getContext('2d'); const g=sx.createLinearGradient(0,0,0,512);
+    g.addColorStop(0,'#5d8fc4'); g.addColorStop(.38,'#9fc0de'); g.addColorStop(.62,'#e3ebf1'); g.addColorStop(1,'#eef1f2'); sx.fillStyle=g; sx.fillRect(0,0,4,512);
+    const bt=new THREE.CanvasTexture(sc); bt.colorSpace=THREE.SRGBColorSpace; scene.background=bt; }
   camera=new THREE.PerspectiveCamera(38,innerWidth/innerHeight,0.01,90);
   scene.add(new THREE.HemisphereLight(0xd6e8ff,0x6b5d48,1.15));
   const sun=new THREE.DirectionalLight(0xfff1dc,2.6);
@@ -1079,8 +1083,10 @@ function markWaypoints(vm){ WP.forEach(w=>{ if(w.el) w.el.classList.toggle('done
 
 /* ================= GAME FLOW ================= */
 const PRE=5,DUR=25; let timer=null,tStart=0,answered=false;
-function show(id){ $(id).classList.remove('out'); }
-function hide(id){ $(id).classList.add('out'); }
+function show(id){ $(id).classList.remove('out'); okna(); }
+function hide(id){ $(id).classList.add('out'); okna(); }
+// ko je odprto okno (rezultat, lestvica, skupine, profil), skrij višinomer – višina je že v oknu
+function okna(){ document.body.classList.toggle('okno',['endp','lbp','grpp','profp'].some(i=>$(i)&&!$(i).classList.contains('out'))); }
 function startGame(){
   if(st.done){ return showEnd(); }
   hide('home'); hide('intro'); $('alti').classList.remove('hide'); climberEl.classList.remove('hidden');
