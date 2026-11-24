@@ -956,7 +956,8 @@ async function initDb(){
     await Promise.all([loadToday(),loadProfil(),loadSkupine()]);
     povabilo(); povratekGoogle();
     $('status').textContent=plays.length?`Danes ${stevec(plays.length)}.`:'Bodi danes prvi na poti!';
-    const mine=plays.find(p=>p.uid===myId); if(mine&&mine.done&&mine.vm!=null&&!st.done){ st={i:8,vm:mine.vm,done:true,res:DAY.map(c=>({cat:c.id,ans:mine.answers?.[c.id]||null,vm:0,mode:null}))}; persist(); setStartLabel(); }
+    const mine=plays.find(p=>p.uid===myId);
+    if(mine&&mine.done&&mine.vm!=null&&(!st.done||st.res.every(r=>!r||!r.mode))){ st={i:8,vm:mine.vm,done:true,krst:st.krst,res:await obnoviRezultat(mine)}; persist(); setStartLabel(); }
   }catch(e){ console.log('db',e); }
 }
 function stevec(n){const m=n%100;
@@ -970,8 +971,23 @@ async function loadToday(){ if(!sb) return; const rows=await vse(()=>sb.from('ig
 const PRIOR_MIN=0.012;
 function shareFor(cat,it){ const K=20; let c=0,t=0; for(const p of plays){ if(p.uid===myId) continue; const a=p.answers&&p.answers[cat.id]; if(a!==undefined){t++; if(a===it.canon)c++;} } return (c+K*Math.max(it.base,PRIOR_MIN))/(t+K); }
 let chain=Promise.resolve();
+let brezPodrobnosti=false; // če stolpec podrobnosti v bazi še ne obstaja
 function save(){ if(!sb||!myId) return; const payload={datum:TODAY,uid:myId,vm:Math.round(st.vm),odgovori:Object.fromEntries(st.res.filter(r=>r&&r.ans).map(r=>[r.cat,r.ans])),koncano:!!st.done,posodobljeno:new Date().toISOString()};
-  chain=chain.then(async()=>{ const {error}=await sb.from('igre').upsert(payload); if(error) throw new Error(error.message); }).catch(e=>console.log('save',e)); }
+  // metri in način vsakega odgovora – da se rezultat na drugi napravi prikaže enako
+  if(!brezPodrobnosti) payload.podrobnosti=Object.fromEntries(st.res.filter(r=>r&&r.cat).map(r=>[r.cat,{vm:r.vm||0,mode:r.mode||null,share:r.share||0,sp:r.sp||''}]));
+  chain=chain.then(async()=>{ let {error}=await sb.from('igre').upsert(payload);
+    if(error&&/podrobnosti/.test(error.message)){ brezPodrobnosti=true; delete payload.podrobnosti; ({error}=await sb.from('igre').upsert(payload)); }
+    if(error) throw new Error(error.message); }).catch(e=>console.log('save',e)); }
+// obnovi rezultat s strežnika: natančno iz podrobnosti, sicer približno iz redkosti odgovorov
+async function obnoviRezultat(mine){
+  let pod=null; try{ const {data,error}=await sb.from('igre').select('podrobnosti').eq('datum',TODAY).eq('uid',myId).maybeSingle(); if(!error&&data) pod=data.podrobnosti; }catch(e){}
+  const res=DAY.map(c=>{ const ans=mine.answers?.[c.id]||null; const d=pod&&pod[c.id];
+    if(d) return {cat:c.id,ans,vm:d.vm||0,mode:d.mode||null,share:d.share||0,sp:d.sp||''};
+    if(!ans) return {cat:c.id,ans:null,vm:0,mode:null,share:0,sp:''};
+    const it=c.items.find(x=>x.canon===ans); const share=it?shareFor(c,it):0.2; return {cat:c.id,ans,vm:gainFor(share),mode:modeFor(share).id,share,sp:'',ocena:true}; });
+  const ocen=res.filter(r=>r.ocena), znano=res.filter(r=>!r.ocena).reduce((a,r)=>a+r.vm,0), vsota=ocen.reduce((a,r)=>a+r.vm,0);
+  if(ocen.length&&vsota>0){ const f=Math.max(0,mine.vm-znano)/vsota; let ost=Math.max(0,mine.vm-znano); ocen.forEach((r,i)=>{ r.vm=i===ocen.length-1?ost:Math.round(r.vm*f); ost-=r.vm; }); }
+  return res; }
 
 /* ================= STATE ================= */
 const LS='dovrha2-'+TODAY; let st={i:0,vm:0,res:[],done:false};
