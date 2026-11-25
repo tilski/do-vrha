@@ -159,14 +159,14 @@ body.zacetek .alti,body.okno .alti{opacity:0;pointer-events:none}
 @keyframes aiIskra{0%{transform:rotate(0) scale(.8);opacity:.7}50%{transform:rotate(180deg) scale(1.15);opacity:1}100%{transform:rotate(360deg) scale(.8);opacity:.7}}
 .ansrow.potrjeno input{border-color:#1d9a56;box-shadow:0 0 0 6px rgba(29,154,86,.16);transition:border-color .15s,box-shadow .15s}
 .msg.ai{color:var(--ink2);display:flex;align-items:center;gap:6px}
-.msg.ai .iskra{background:linear-gradient(135deg,#2f7fbf,#7b4fd6,#e0312d);-webkit-background-clip:text;background-clip:text;color:transparent;font-size:14px;animation:aiIskra 1.1s ease-in-out infinite;display:inline-block}
-.msg.ai .aitxt{animation:aiTxt .35s ease}
+.msg.ai .iskra{color:#7b4fd6;font-size:14px;animation:aiIskra 1.1s ease-in-out infinite;display:inline-block}
+.msg.ai .aitxt.nov{animation:aiTxt .35s ease}
 @keyframes aiTxt{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 .msg.ai .pike i{font-style:normal;animation:aiPika 1.2s infinite;opacity:.2}
 .msg.ai .pike i:nth-child(2){animation-delay:.2s}.msg.ai .pike i:nth-child(3){animation-delay:.4s}
 @keyframes aiPika{30%{opacity:1}60%,100%{opacity:.2}}
 .msg.ai .stoji{margin-left:auto;font-size:11px;color:var(--mute);font-weight:700}
-@media (prefers-reduced-motion:reduce){.ansrow.preverja input,.ansrow.preverja::after,.ansrow.preverja .send::after,.msg.ai .iskra,.msg.ai .pike i{animation:none}.msg.ai .pike i{opacity:1}}
+@media (prefers-reduced-motion:reduce){.ansrow.preverja input,.ansrow.preverja::after,.ansrow.preverja .send::after,.msg.ai .iskra,.msg.ai .aitxt.nov,.msg.ai .pike i{animation:none}.msg.ai .pike i{opacity:1}}
 .sug{font:inherit;font-weight:800;color:#fff;background:#0f1a24;border:0;border-radius:999px;padding:3px 10px;margin:0 2px;cursor:pointer}
 .res{display:flex;align-items:center;gap:14px;animation:resIn .6s cubic-bezier(.2,1.3,.4,1)}
 @keyframes resIn{from{opacity:0;transform:scale(.92) translateY(10px)}to{opacity:1;transform:none}}
@@ -1161,7 +1161,7 @@ async function preveriAI(c,v){
   const f=$('form'), m=$('msg'); f.classList.add('preverja');
   m.className='msg ai'; m.innerHTML='<span class="iskra">✦</span><span class="aitxt">AI preverja odgovor</span><span class="pike"><i>.</i><i>.</i><i>.</i></span><span class="stoji">⏸ čas stoji</span>';
   const besedila=['AI preverja odgovor','Primerjam z vprašanjem','Še trenutek']; let bi=0;
-  const menjaj=setInterval(()=>{ const t=m.querySelector('.aitxt'); if(!t) return; bi=Math.min(bi+1,besedila.length-1); const n=t.cloneNode(); n.textContent=besedila[bi]; t.replaceWith(n); },1700);
+  const menjaj=setInterval(()=>{ const t=m.querySelector('.aitxt'); if(!t) return; bi=Math.min(bi+1,besedila.length-1); const n=t.cloneNode(); n.className='aitxt nov'; n.textContent=besedila[bi]; t.replaceWith(n); },1700);
   let r=null;
   try{ r=await Promise.race([
       sb.functions.invoke('preveri-odgovor',{body:{vprasanje_id:c.id,vnos:v.trim()}}).then(x=>x.error?null:x.data),
