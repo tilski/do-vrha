@@ -1,7 +1,8 @@
 // Pregled odločitev AI (funkcija preveri-odgovor) – za nočni pregled ali ročno.
 //   npm run ai-odgovori                         še nepregledane presoje (sprejete in zavrnjene)
 //   npm run ai-odgovori -- --vse                vse presoje
-//   npm run ai-odgovori -- --oznaci             izpiše in označi kot pregledane
+//   npm run ai-odgovori -- --oznaci             izpiše, označi kot pregledane in POTRDI sprejete nove odgovore
+//        (nepotrjen AI odgovor ima v igri nevtralno začetno redkost) – napačne pred tem odstrani z --odstrani
 //   npm run ai-odgovori -- --odstrani <vprasanje_id> "<odgovor>"
 //        napačen NOV odgovor, ki ga je sprejel AI: izbriše ga (samo vir 'ai') in vse vnose, ki so vodili do njega,
 //        označi kot zavrnjene. Ne izbriše, če ga je kdo izbral v igri včeraj ali danes (njegova igra se ne bi več shranila).
@@ -75,6 +76,11 @@ async function odstraniSop(vid, odg, sop) {
   console.log(`\n${p.length} presoj: ${s.filter((x) => x.vrsta === 'nov').length} novih, ${s.filter((x) => x.vrsta === 'sopomenka').length} sopomenk, ${p.length - s.length} zavrnjenih.`);
   if (args.includes('--oznaci')) {
     for (const x of p) await api('PATCH', `ai_presoje?vprasanje_id=eq.${enc(x.vprasanje_id)}&kljuc=eq.${enc(x.kljuc)}`, { pregledano: true });
-    console.log('Označeno kot pregledano.');
+    // presoje, ki so še ostale sprejete kot nov odgovor, so prestale pregled → odgovor je potrjen
+    let n = 0;
+    for (const x of p.filter((y) => y.stanje === 'sprejeto' && y.vrsta === 'nov' && y.odgovor)) {
+      n += (await api('PATCH', `odgovori?vprasanje_id=eq.${enc(x.vprasanje_id)}&odgovor=eq.${enc(x.odgovor)}&vir=eq.ai&potrjeno=eq.false`, { potrjeno: true })).length;
+    }
+    console.log(`Označeno kot pregledano · potrjenih novih odgovorov: ${n}.`);
   }
 })().catch((e) => { console.error('Napaka:', e.message); process.exit(1); });

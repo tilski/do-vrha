@@ -1,13 +1,17 @@
 -- AI preverjanje novih odgovorov (Supabase › SQL Editor › Run). Varno za ponovni zagon.
 -- Kaj doda:
 --   odgovori.vir       'rocno' (iz datotek, npm run baza) ali 'ai' (sprejela funkcija preveri-odgovor)
+--   odgovori.potrjeno  false za AI odgovor, dokler ga nočni pregled ne potrdi (vpliva na začetno redkost)
 --   ai_presoje         vsak vnos, ki ga je AI že presodil – isti vnos se ne pošlje AI-ju dvakrat
 --   ai_sopomenke       sopomenke, ki jih je dodal AI (da jih npm run baza ne izbriše)
 --   ai_zacni / ai_zapisi   atomarno: zaklep vnosa, zapis ocene, novega odgovora ali sopomenke
--- Redkosti, metrov ali iger se nič od tega ne dotika.
+-- Iger se nič od tega ne dotika; redkosti samo prek odgovori.potrjeno.
 
 alter table odgovori add column if not exists vir text not null default 'rocno';
 alter table odgovori add column if not exists dodano timestamptz not null default now();
+-- Nepotrjen AI odgovor dobi v igri nevtralno začetno redkost (ne najredkejše), dokler ga nočni pregled ne potrdi
+-- (npm run ai-odgovori -- --oznaci). Odgovori iz datotek so vedno potrjeni.
+alter table odgovori add column if not exists potrjeno boolean not null default true;
 
 create table if not exists ai_presoje (
   vprasanje_id text not null,
@@ -63,8 +67,8 @@ language plpgsql security definer set search_path = public as $$
 begin
   if p_stanje = 'sprejeto' then
     if p_vrsta = 'nov' then
-      insert into odgovori (vprasanje_id, rang, odgovor, sopomenke, vir)
-      values (p_vid, coalesce((select max(rang) from odgovori where vprasanje_id = p_vid), 0) + 1, p_odgovor, '{}', 'ai')
+      insert into odgovori (vprasanje_id, rang, odgovor, sopomenke, vir, potrjeno)
+      values (p_vid, coalesce((select max(rang) from odgovori where vprasanje_id = p_vid), 0) + 1, p_odgovor, '{}', 'ai', false)
       on conflict (vprasanje_id, odgovor) do nothing;
     end if;
     if p_sopomenka is not null and p_sopomenka <> '' then

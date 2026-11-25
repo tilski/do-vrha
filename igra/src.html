@@ -504,6 +504,9 @@ const MODES = [
 const gainFor=share=>{ const t=Math.max(0,Math.min(1,Math.log(0.45/Math.max(share,1e-4))/Math.log(0.45/0.002))); return Math.round(5+335*Math.pow(t,1.25)); };
 MODES.forEach((m,i)=>{ m.hi=gainFor(m.min||0.002); m.lo=i?MODES[i-1].hi:5; m.vm=m.hi; });
 const modeFor=s=>MODES.find(m=>s>=m.min)||MODES[MODES.length-1];
+// Odgovor, ki ga je sprejel AI in ga nočni pregled še ni potrdil, začne kot srednje redek (Planinec, ~100 m), ne kot najredkejši –
+// sicer bi vsak smiseln obskuren vnos prinesel največ metrov. Pravi odgovori drugih igralcev ga nato premaknejo kot vsakega drugega.
+const AI_PRIOR=0.06;
 
 /* ================= PRAVI TEREN (Copernicus DEM 30 m + OpenStreetMap) ================= */
 // x = vzhod (km), z = jug (km), višina v m. Vrh Triglava v izhodišču.
@@ -898,8 +901,8 @@ function sklonFraze(v,k){ const a=v.split(' '),b=k.split(' '); if(a.length!==b.l
 // c.ans = [{o:'Novo mesto', s:['NM']}, …] razvrščeno po rangu (najpogostejši prvi)
 function prep(c){
   const seen=new Set(); c.items=[];
-  for(const a of c.ans){ const parts=[a.o,...(a.s||[])].map(s=>String(s).trim()).filter(Boolean); if(!parts.length) continue; const k=norm(parts[0]); if(!k||seen.has(k)) continue; seen.add(k); c.items.push({canon:parts[0],keys:[...new Set(parts.map(norm).filter(Boolean))]}); }
-  let sum=0; const w=c.items.map((_,r)=>{const v=1/Math.pow(r+1,1.05); sum+=v; return v;}); c.items.forEach((it,r)=>it.base=w[r]/sum);
+  for(const a of c.ans){ const parts=[a.o,...(a.s||[])].map(s=>String(s).trim()).filter(Boolean); if(!parts.length) continue; const k=norm(parts[0]); if(!k||seen.has(k)) continue; seen.add(k); c.items.push({canon:parts[0],keys:[...new Set(parts.map(norm).filter(Boolean))],nep:!!a.n}); }
+  let sum=0; const w=c.items.map((_,r)=>{const v=1/Math.pow(r+1,1.05); sum+=v; return v;}); c.items.forEach((it,r)=>it.base=it.nep?Math.max(w[r]/sum,AI_PRIOR):w[r]/sum);
   c.map=new Map(); c.items.forEach(it=>it.keys.forEach(k=>{ if(!c.map.has(k)) c.map.set(k,it); }));
   c.items.forEach(it=>it.keys.forEach(k=>{ const b=brezClenov(k); if(b.length>=3&&!c.map.has(b)) c.map.set(b,it); }));
   c.fmap=new Map(); c.items.forEach(it=>it.keys.forEach(k=>{ const fk=fon(k); if(fk&&!c.fmap.has(fk)) c.fmap.set(fk,it); }));
@@ -986,14 +989,16 @@ async function sbClient(){
 async function vse(q){ const out=[]; for(let od=0;;od+=1000){ const {data,error}=await q().range(od,od+999); if(error) throw new Error(error.message); out.push(...data); if(data.length<1000) return out; } }
 async function naloziDan(date){
   // današnja vprašanja si zapomnimo – ob ponovnem odprtju so enaka, tudi brez povezave
-  const KEY='dovrha-vpr4-'+date;
+  const KEY='dovrha-vpr5-'+date;
   try{ const c=JSON.parse(localStorage.getItem(KEY)||'null'); if(Array.isArray(c)&&c.length===8){ c.forEach(prep); return c; } }catch(e){}
   await sbClient();
   const vpr=await vse(()=>sb.from('vprasanja').select('id,kategorija_id,vprasanje,namig,slovenija,odstrani').eq('aktivno',true).order('vrstni_red').order('id'));
   const day=pickDay(date,vpr.map(v=>({id:v.id,g:v.kategorija_id,s:v.slovenija?0:1,t:v.vprasanje,h:v.namig,strip:v.odstrani||[]})));
   if(day.length<8) throw new Error('V bazi je premalo vprašanj za današnji vzpon.');
-  const odg=await vse(()=>sb.from('odgovori').select('vprasanje_id,odgovor,sopomenke').in('vprasanje_id',day.map(c=>c.id)).order('vprasanje_id').order('rang'));
-  day.forEach(c=>{ c.ans=odg.filter(o=>o.vprasanje_id===c.id).map(o=>({o:o.odgovor,s:o.sopomenke})); });
+  const q=sel=>()=>sb.from('odgovori').select(sel).in('vprasanje_id',day.map(c=>c.id)).order('vprasanje_id').order('rang');
+  // stolpec potrjeno doda supabase/ai-preverjanje.sql – brez njega beri po starem
+  const odg=await vse(q('vprasanje_id,odgovor,sopomenke,potrjeno')).catch(()=>vse(q('vprasanje_id,odgovor,sopomenke')));
+  day.forEach(c=>{ c.ans=odg.filter(o=>o.vprasanje_id===c.id).map(o=>o.potrjeno===false?{o:o.odgovor,s:o.sopomenke,n:1}:{o:o.odgovor,s:o.sopomenke}); });
   try{ localStorage.setItem(KEY,JSON.stringify(day)); }catch(e){}
   day.forEach(prep); return day;
 }
@@ -1125,7 +1130,7 @@ $('form').addEventListener('submit',e=>{ e.preventDefault(); if(answered) return
 });
 function zavrni(c,v,txt){ const i=$('ans'); zgresen(c,v); i.classList.remove('bad'); void i.offsetWidth; i.classList.add('bad'); $('msg').textContent=txt; $('msg').className='msg err'; i.select(); }
 // Vnos, ki ga ni na seznamu, presodi AI (Edge Function preveri-odgovor). Med čakanjem čas stoji.
-// AI odloča samo, ali je odgovor pravilen in h kateremu spada – redkost in metri se računajo kot vedno.
+// AI odloča samo, ali je odgovor pravilen in h kateremu spada. Nov AI odgovor do potrditve začne pri AI_PRIOR.
 let aiTece=false;
 async function preveriAI(c,v){
   if(aiTece) return; aiTece=true; const i=$('ans'); i.readOnly=true; const t0=performance.now(); clearInterval(timer);
@@ -1145,11 +1150,11 @@ async function preveriAI(c,v){
 function dodajAI(c,canon,v){
   let it=c.items.find(x=>x.canon===canon);
   if(!it){ const n=c.items.length; let sum=0; for(let r=0;r<=n;r++) sum+=1/Math.pow(r+1,1.05);
-    it={canon,keys:[norm(canon)].filter(Boolean),base:(1/Math.pow(n+1,1.05))/sum}; c.items.push(it); }
+    it={canon,keys:[norm(canon)].filter(Boolean),base:Math.max((1/Math.pow(n+1,1.05))/sum,AI_PRIOR),nep:true}; c.items.push(it); }
   const k=norm(v); if(k&&!it.keys.includes(k)) it.keys.push(k);
   it.keys.forEach(x=>{ if(!c.map.has(x)) c.map.set(x,it); });
-  try{ const KEY='dovrha-vpr4-'+TODAY, d=JSON.parse(localStorage.getItem(KEY)||'null'), q=d&&d.find(x=>x.id===c.id);
-    if(q){ const a=q.ans.find(x=>x.o===canon); if(a){ if(!(a.s||[]).includes(v.trim())) (a.s=a.s||[]).push(v.trim()); } else q.ans.push({o:canon,s:[v.trim()]}); localStorage.setItem(KEY,JSON.stringify(d)); } }catch(e){}
+  try{ const KEY='dovrha-vpr5-'+TODAY, d=JSON.parse(localStorage.getItem(KEY)||'null'), q=d&&d.find(x=>x.id===c.id);
+    if(q){ const a=q.ans.find(x=>x.o===canon); if(a){ if(!(a.s||[]).includes(v.trim())) (a.s=a.s||[]).push(v.trim()); } else q.ans.push({o:canon,s:[v.trim()],n:1}); localStorage.setItem(KEY,JSON.stringify(d)); } }catch(e){}
   return it;
 }
 let sugIt=null;
