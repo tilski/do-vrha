@@ -93,7 +93,7 @@
       "namig": "Nogomet, košarka, rokomet, hokej, odbojka …",
       "slovenija": true,
       "odgovori": [
-        "Olimpija|nk olimpija|olimpija ljubljana",
+        "Olimpija|nk olimpija",
         "Maribor|nk maribor",
         "Celje|nk celje",
         "Cedevita Olimpija|cedevita",
@@ -716,7 +716,7 @@
         "klub"
       ],
       "odgovori": [
-        "Cedevita Olimpija|olimpija|kk olimpija|union olimpija",
+        "Cedevita Olimpija|olimpija|kk olimpija",
         "Krka|kk krka",
         "Helios|helios suns|helios domžale",
         "Rogaška|kk rogaška",
