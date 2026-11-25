@@ -85,7 +85,7 @@ Deno.serve(async (req) => {
   // 7) AI presoja + varovala; ob napaki ali časovni omejitvi NE sprejmemo
   let p;
   try {
-    const { ai } = await vprasajAI({ kljuc: KLJUC, modeli: MODELI, vpr, odgovori: odg, vnos, rokMs: 9000 });
+    const { ai } = await vprasajAI({ kljuc: KLJUC, modeli: MODELI, vpr, odgovori: odg, vnos, rokMs: 10500 }); // igra čaka 12 s; pred AI gre ~1 s za prijavo in bazo
     p = presodi(ai, odg, vnos);
   } catch (e) {
     console.error('AI napaka', vid, String(e));
