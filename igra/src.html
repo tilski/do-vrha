@@ -923,19 +923,22 @@ function match(cat,input){
   return null;
 }
 // Ne sprejme samodejno – vrne najbolj podoben odgovor, ki ga igralec potrdi
+const PREDLOGI=new Set(['na','v','z','s','za','pod','nad','ob','pri','iz','od','do','po','k','h','brez','med','pred','proti','skozi','of','de','du','di','del','von','van']);
 const brezKonc=w=>w.split(' ').map(x=>x.length>=5?x.replace(/[aeiou]+$/,''):x).join(' ');
 function suggest(cat,input){
   const k=norm(input); if(k.length<4) return null; let best=null,bd=9;
   for(const t of stripTries(cat,k)){ if(t.length<4) continue; const lim=t.length>=11?3:t.length>=7?2:1;
     const ft=fon(t), nt=brezPresl(t), kt=brezKonc(t);
-    for(const it of cat.items) for(const key of it.keys){ if(key.length<3) continue;
+    // kratek vnos: ena črka razlike do še krajšega odgovora je navadno druga beseda (stol ≠ sol)
+    for(const it of cat.items) for(const key of it.keys){ if(key.length<3||(t.length<=4&&key.length<4)) continue;
       const d=Math.min(lev(t,key), lev(ft,fon(key)), nt.length>=6?lev(nt,brezPresl(key)):9, kt.length>=4?lev(kt,brezKonc(key))+0.5:9);
       if(d<=lim&&d<bd){bd=d;best=it;} } }
   if(best) return best;
   // del odgovora: vnos je cela beseda (ali začetek, vsaj 5 črk) daljšega odgovora – predlagaj najpogostejšega takega
   for(const t of stripTries(cat,k)){ if(t.length<4) continue; const ft=fon(t);
     for(const it of cat.items) for(const key of it.keys){ const besede=key.split(' '); if(besede.length<2) continue;
-      if(besede.some(w=>w===t||fon(w)===ft||sklon(t,w)||(t.length>=5&&w.length>t.length&&w.startsWith(t)))) return it; } }
+      // beseda za predlogom ni bistvo odgovora (»prt na mizi« ni miza)
+      if(besede.some((w,j)=>!PREDLOGI.has(besede[j-1])&&(w===t||fon(w)===ft||sklon(t,w)||(t.length>=5&&w.length>t.length&&w.startsWith(t))))) return it; } }
   return null;
 }
 /* ===/ISKANJE=== */
@@ -1122,8 +1125,10 @@ function speed(){ const el=Math.max(0,(performance.now()-tStart)/1000-PRE); cons
   return {m, l: m>=1.03?`⚡ ×${m.toFixed(2).replace('.',',')}`: m<=0.97?`🐢 ×${m.toFixed(2).replace('.',',')}`:''}; }
 $('form').addEventListener('submit',e=>{ e.preventDefault(); if(answered) return; const v=$('ans').value; if(!v.trim()) return;
   const it=match(DAY[st.i],v);
-  if(!it){ const i=$('ans'); const sg=suggest(DAY[st.i],v);
-    if(sg){ sugIt=sg; $('msg').innerHTML=`Si mislil/a <button type="button" class="sug" id="sugBtn">${esc(sg.canon)}</button> ?`; $('msg').className='msg'; $('sugBtn').addEventListener('click',()=>{ if(!answered&&sugIt) finish(sugIt,speed()); }); return; }
+  // predlog pokažemo enkrat; ponovni Enter z istim vnosom pomeni »ne, mislil sem to« → preverjanje
+  if(!it){ const i=$('ans'); const sg=sugIt?null:suggest(DAY[st.i],v);
+    if(sg){ sugIt=sg; $('msg').innerHTML=`Si mislil/a <button type="button" class="sug" id="sugBtn">${esc(sg.canon)}</button> ? Če ne, pritisni Enter.`; $('msg').className='msg'; $('sugBtn').addEventListener('click',()=>{ if(!answered&&sugIt) finish(sugIt,speed()); }); return; }
+    sugIt=null;
     if(sb&&myId){ preveriAI(DAY[st.i],v); return; }
     zavrni(DAY[st.i],v,`»${v.trim()}« ni na seznamu – poskusi znova.`); return; }
   finish(it,speed());
