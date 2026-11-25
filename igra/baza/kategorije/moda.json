@@ -1054,15 +1054,15 @@
       "slovenija": false,
       "odgovori": [
         "Striženje",
-        "Manikura",
+        "Manikura|piljenje nohtov",
         "Pedikura",
         "Barvanje las",
         "Masaža|masažni salon",
         "Depilacija|voskanje",
-        "Feniranje|sušenje las",
+        "Feniranje|sušenje las|blowout",
         "Gel nohti|gel lak",
         "Prameni|pramenčki",
-        "Trajna|trajna ondulacija",
+        "Trajna|trajna ondulacija|perm",
         "Ravnanje las|keratinsko ravnanje",
         "Podaljševanje las",
         "Pričeska",
@@ -1072,9 +1072,9 @@
         "Nega obraza|čiščenje obraza",
         "Piling",
         "Maska|zaščitna maska",
-        "Laserska depilacija",
+        "Laserska depilacija|lasersko odstranjevanje dlak",
         "Sladkorna depilacija|sugaring",
-        "Oblikovanje obrvi",
+        "Oblikovanje obrvi|urejanje obrvi",
         "Barvanje obrvi",
         "Laminacija obrvi",
         "Laminacija trepalnic",
@@ -1104,7 +1104,8 @@
         "Anticelulitna masaža",
         "Belilo za zobe|beljenje zob",
         "Pranje las",
-        "Stilsko svetovanje"
+        "Stilsko svetovanje",
+        "Vroča brisača"
       ]
     },
     {
