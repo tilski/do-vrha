@@ -829,8 +829,7 @@
         "Arnika",
         "Zoisova zvončica",
         "Blagajev volčin",
-        "Ruša",
-        "Rušje",
+        "Rušje|ruševje|ruša",
         "Alpski mak|julijski mak",
         "Planinski pelin|pelin",
         "Orhideja|kukavičevka",
@@ -854,11 +853,13 @@
         "Lipa",
         "Lešnik|leska",
         "Bukev",
-        "Smreka|smrekovi iglice",
+        "Smreka",
         "Macesen",
         "Jelka",
         "Bor|rdeči bor",
-        "Ruševje"
+        "Vijolica|dišeča vijolica",
+        "Zlatica",
+        "Žajbelj"
       ]
     },
     {
