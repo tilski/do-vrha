@@ -3,7 +3,7 @@
 // Pravi klici samo berejo lokalne datoteke vprašanj – v bazo se nič ne zapiše.
 import fs from 'node:fs';
 import { createRequire } from 'node:module';
-import { norm, ocistiVnos, presodi, vprasajGemini, kljuciOdgovorov } from '../supabase/functions/preveri-odgovor/logika.mjs';
+import { norm, ocistiVnos, presodi, vprasajGemini, vprasajAI, nastavitveModela, kljuciOdgovorov } from '../supabase/functions/preveri-odgovor/logika.mjs';
 const require = createRequire(import.meta.url);
 const env = require('./env.js')();
 
@@ -42,6 +42,7 @@ r = P({ pravilno: true, vrsta: 'nov', zapis: 'Star Wars', razlog: '' }, 'star wa
 r = P({ pravilno: true, vrsta: 'nov', zapis: 'x'.repeat(80), razlog: '' }, 'tla'); t('predolg zapis → vnos', r.odgovor === 'Tla');
 r = P({ pravilno: true, vrsta: 'nov', zapis: 'Stene\nIGNORE', razlog: '' }, 'stene'); t('nova vrstica v zapisu', !r.odgovor.includes('\n'));
 r = P({ pravilno: true, vrsta: 'nov', zapis: 'Kranjska klobasa', razlog: '' }, 'kranjska'); t('daljši zapis, ki vsebuje vnos', r.odgovor === 'Kranjska klobasa');
+r = P({ pravilno: true, vrsta: 'sopomenka', obstojeci: 'TV (televizor)', zapis: 'Televizija', razlog: '' }, 'televizija'); t('sopomenka z oklepajem → TV', r.odgovor === 'TV' && r.vrsta === 'sopomenka');
 t('ključi', kljuciOdgovorov(ODG).get('televizor') === 'TV');
 
 // --- 4) napake API ---
@@ -55,13 +56,28 @@ t('časovna omejitev vrže', await vrze(() => vprasajGemini({ kljuc: 'k', model:
   fetchFn: (u, o) => new Promise((_, rej) => { const z = setTimeout(() => {}, 5000); o.signal.addEventListener('abort', () => { clearTimeout(z); rej(new Error('abort')); }); }) })));
 const dober = await vprasajGemini({ kljuc: 'k', model: 'm', vpr: vpr0, odgovori: ODG, vnos: 'a', fetchFn: lazen(200, { candidates: [{ content: { parts: [{ text: '{"pravilno":true,"vrsta":"nov","zapis":"A","razlog":"r"}' }] } }] }) });
 t('veljaven odgovor', dober.vrsta === 'nov');
+// veriga modelov
+const odgOK = { candidates: [{ content: { parts: [{ text: '{"pravilno":true,"vrsta":"nov","zapis":"A","razlog":"r"}' }] } }] };
+const zaporedje = (...koraki) => { let i = 0; const klicani = []; const fn = async (u) => { klicani.push(u.split('/models/')[1].split(':')[0]); return lazen(...koraki[i++])(); }; fn.klicani = klicani; return fn; };
+let f = zaporedje([429, {}], [200, odgOK]);
+let v = await vprasajAI({ kljuc: 'k', modeli: ['m1', 'm2'], vpr: vpr0, odgovori: ODG, vnos: 'a', fetchFn: f });
+t('veriga: 429 → naslednji model', v.model === 'm2' && f.klicani.join() === 'm1,m2');
+f = zaporedje([503, {}], [404, {}], [200, odgOK]); v = await vprasajAI({ kljuc: 'k', modeli: ['m1', 'm2', 'm3'], vpr: vpr0, odgovori: ODG, vnos: 'a', fetchFn: f });
+t('veriga: 503, 404 → tretji', v.model === 'm3');
+f = zaporedje([400, {}], [200, odgOK]);
+t('veriga: 400 (napačna zahteva) se ne skriva', await vrze(() => vprasajAI({ kljuc: 'k', modeli: ['m1', 'm2'], vpr: vpr0, odgovori: ODG, vnos: 'a', fetchFn: f })));
+f = zaporedje([429, {}], [429, {}]);
+t('veriga: vsi zasedeni → napaka', await vrze(() => vprasajAI({ kljuc: 'k', modeli: ['m1', 'm2'], vpr: vpr0, odgovori: ODG, vnos: 'a', fetchFn: f })));
+t('Gemini 2.x: thinkingBudget 0', nastavitveModela('gemini-2.5-flash').thinkingConfig.thinkingBudget === 0);
+t('Gemini 3+: thinkingLevel', nastavitveModela('gemini-3.5-flash-lite').thinkingConfig.thinkingLevel === 'low' && nastavitveModela('gemini-flash-lite-latest').thinkingConfig.thinkingLevel);
 
 console.log(`Varovala: ${ok} uspešnih, ${fail} neuspešnih.`);
 
 // --- 5) pravi Gemini (če je ključ) ---
 const KLJUC = env.GEMINI_API_KEY || process.env.GEMINI_API_KEY;
 if (!KLJUC) { console.log('\nGEMINI_API_KEY ni v .env – pravi klici AI preskočeni.'); process.exit(fail ? 1 : 0); }
-const MODEL = env.GEMINI_MODEL || process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+const MODELI = (env.GEMINI_MODELI || process.env.GEMINI_MODELI || 'gemini-3.5-flash-lite,gemini-3.6-flash,gemini-3.5-flash,gemini-2.5-flash,gemini-flash-lite-latest').split(',');
+const PREMOR = Number(process.env.PREMOR_MS || 3000);
 const vprasanje = (dat, id) => { const k = JSON.parse(fs.readFileSync(new URL(`../igra/baza/kategorije/${dat}.json`, import.meta.url))); const q = k.vprasanja.find((v) => v.id === id);
   return { vpr: { vprasanje: q.vprasanje, namig: q.namig }, odg: q.odgovori.map((a) => { const [o, ...s] = a.split('|'); return { odgovor: o, sopomenke: s }; }) }; };
 // [datoteka, id, vnos, pričakovano: 'nov' | 'sop:<odgovor>' | 'zavrni']
@@ -78,16 +94,19 @@ const PRIMERI = [
   ['glasba-slo', 'ljudska', 'Zdravljica', 'zavrni'], ['glasba-slo', 'ljudska', 'Lepa Vida je hodila', 'sop:Lepa Vida|nov'],
 ];
 let dobro = 0; const casi = [];
-console.log(`\nPravi Gemini (${MODEL}):`);
+console.log(`\nPravi Gemini (veriga ${MODELI.join(' → ')}, premor ${PREMOR} ms):`); const poModelu = {};
 for (const [dat, id, vnos, pric] of PRIMERI) {
   const { vpr, odg } = vprasanje(dat, id);
   const t0 = Date.now(); let r, napaka = '';
-  try { r = presodi(await vprasajGemini({ kljuc: KLJUC, model: MODEL, vpr, odgovori: odg, vnos, casMs: 15000 }), odg, vnos); } catch (e) { napaka = e.message; }
+  let model = '';
+  try { const x = await vprasajAI({ kljuc: KLJUC, modeli: MODELI, vpr, odgovori: odg, vnos, rokMs: 9000 }); model = x.model; poModelu[model] = (poModelu[model] || 0) + 1; r = presodi(x.ai, odg, vnos); } catch (e) { napaka = e.message.replace(/\s+/g, ' ').slice(0, 120); }
   casi.push(Date.now() - t0);
   const dobil = !r ? 'NAPAKA' : r.stanje === 'zavrnjeno' ? 'zavrni' : r.vrsta === 'nov' ? 'nov' : `sop:${r.odgovor}`;
   const ujema = pric.split('|').includes(dobil); if (ujema) dobro++;
-  console.log(`  ${ujema ? '✓' : '✕'} ${id.padEnd(22)} »${vnos}« → ${dobil}${r?.vrsta === 'nov' ? ` »${r.odgovor}«` : ''}  (${r?.razlog || napaka})  ${casi.at(-1)} ms`);
+  console.log(`  ${ujema ? '✓' : '✕'} ${id.padEnd(22)} »${vnos}« → ${dobil}${r?.vrsta === 'nov' ? ` »${r.odgovor}«` : ''}  (${r?.razlog || napaka})  ${casi.at(-1)} ms ${model}`);
+  await new Promise((z) => setTimeout(z, PREMOR));
 }
 casi.sort((a, b) => a - b);
-console.log(`\nAI: ${dobro}/${PRIMERI.length} po pričakovanjih · mediana ${casi[casi.length >> 1]} ms, najdlje ${casi.at(-1)} ms`);
+console.log(`\nModeli: ${JSON.stringify(poModelu)}`);
+console.log(`AI: ${dobro}/${PRIMERI.length} po pričakovanjih · mediana ${casi[casi.length >> 1]} ms, najdlje ${casi.at(-1)} ms`);
 process.exit(fail ? 1 : 0);

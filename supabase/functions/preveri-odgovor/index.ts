@@ -1,16 +1,16 @@
 // Supabase Edge Function: preveri vnos, ki ga ni na seznamu odgovorov, z Google Gemini.
 // Objava:   npx supabase functions deploy preveri-odgovor --no-verify-jwt --project-ref <ref>
 // Skrivnost: npx supabase secrets set GEMINI_API_KEY=… --project-ref <ref>
-//   (neobvezno GEMINI_MODEL, privzeto gemini-2.5-flash; AI_DNEVNA_MEJA, privzeto 40)
+//   (neobvezno GEMINI_MODELI = seznam z vejicami; AI_DNEVNA_MEJA, privzeto 40)
 // Prijavo preverimo sami (getUser), zato --no-verify-jwt.
 import { createClient } from 'npm:@supabase/supabase-js@2.45.4';
-import { norm, ocistiVnos, kljuciOdgovorov, presodi, vprasajGemini } from './logika.mjs';
+import { ocistiVnos, kljuciOdgovorov, presodi, vprasajAI } from './logika.mjs';
 
 const IZVORI = ['https://dovrha.top', 'https://www.dovrha.top', 'https://tilski.github.io', 'http://localhost:8765', 'http://127.0.0.1:8765'];
-const MODEL = Deno.env.get('GEMINI_MODEL') || 'gemini-2.5-flash';
+// Veriga modelov (prvi je glavni); vsak ima na brezplačni ravni svojo omejitev klicev na minuto.
+const MODELI = (Deno.env.get('GEMINI_MODELI') || 'gemini-3.5-flash-lite,gemini-3.6-flash,gemini-3.5-flash,gemini-2.5-flash,gemini-flash-lite-latest').split(',').map((m) => m.trim()).filter(Boolean);
 const KLJUC = Deno.env.get('GEMINI_API_KEY') || '';
 const MEJA = Number(Deno.env.get('AI_DNEVNA_MEJA')) || 40;
-const RAZMISLEK = Deno.env.get('GEMINI_RAZMISLEK') === 'privzeto' ? null : Number(Deno.env.get('GEMINI_RAZMISLEK') || 0);
 
 const db = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!, { auth: { persistSession: false } });
 const pocakaj = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -85,7 +85,7 @@ Deno.serve(async (req) => {
   // 7) AI presoja + varovala; ob napaki ali časovni omejitvi NE sprejmemo
   let p;
   try {
-    const ai = await vprasajGemini({ kljuc: KLJUC, model: MODEL, vpr, odgovori: odg, vnos, razmislek: RAZMISLEK });
+    const { ai } = await vprasajAI({ kljuc: KLJUC, modeli: MODELI, vpr, odgovori: odg, vnos, rokMs: 9000 });
     p = presodi(ai, odg, vnos);
   } catch (e) {
     console.error('AI napaka', vid, String(e));

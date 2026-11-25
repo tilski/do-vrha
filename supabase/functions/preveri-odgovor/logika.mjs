@@ -52,10 +52,12 @@ Presodi tako, kot bi ga razumel običajen slovenski igralec, ne po strogih učbe
 - Upoštevaj tipkarske napake, sklanjatve, narečne in pogovorne izraze, angleške ali izvirne naslove in imena.
 - ZAVRNI: nesmisel, šalo, vulgarnost, odgovor, ki ne spada v kategorijo (bližnji zgrešek: država ni otok, če ni otoška; regija ni mesto), preveč splošen odgovor (»stvar«, »nekaj«, »hrana« pri vprašanju o jedeh), ali dejansko napačno trditev.
 - Upoštevaj namig pri vprašanju.
+- Primeri radodarnosti: otoška država (Japonska, Islandija, Nova Zelandija) ŠTEJE kot otok; posamezen film iz franšize šteje kot film; vrsta ali sorta (Kalateja crocata) šteje kot rastlina. Regija pa ni otok (Karibi), država ni mesto.
 
 KORAK 2 – samo če je pravilen: sopomenka ali nov odgovor?
+- Seznam obstoječih odgovorov ima pri vsakem v oklepaju tudi že znane druge zapise – upoštevaj jih (zamiokulkas = Zamija, ker ima Zamija zapis »zamioculcas«).
 - »sopomenka«: vnos pomeni ISTO kot eden od obstoječih odgovorov – drug zapis, tipkarska napaka, okrajšava, pogovorna ali narečna beseda za isto stvar, prevod ali izvirni naslov, ednina/množina (Bajta → Hiša, Televizija → TV, Star Wars → Vojna zvezd).
-  V »obstojeci« napiši obstoječi odgovor TOČNO tako, kot je zapisan na seznamu.
+  V »obstojeci« napiši obstoječi odgovor TOČNO tako, kot je zapisan na seznamu (brez oklepaja).
 - »nov«: vnos je drug pojem, tudi če je soroden (Vrata ≠ Okna, Tla ≠ Streha, Mačka ≠ Tiger, Star Trek ≠ Star Wars, Ljubljana ≠ Ljubljanica).
   Če dvomiš med sopomenko in novim odgovorom, izberi »nov«. Združevanje različnih pojmov je hujša napaka kot podvojitev.
 
@@ -67,7 +69,7 @@ export function sestaviPoziv(vpr, odgovori, vnos) {
   return JSON.stringify({
     vprasanje: vpr.vprasanje,
     namig: vpr.namig || '',
-    obstojeci_odgovori: odgovori.map((o) => o.odgovor),
+    obstojeci_odgovori: odgovori.map((o) => (o.sopomenke?.length ? `${o.odgovor} (${o.sopomenke.slice(0, 6).join(', ')})` : o.odgovor)),
     vnos_igralca: vnos,
   });
 }
@@ -94,6 +96,8 @@ const velika = (s) => s.charAt(0).toLocaleUpperCase('sl') + s.slice(1);
 // Vrne {stanje:'sprejeto'|'zavrnjeno', odgovor, vrsta, sopomenka, razlog}
 export function presodi(ai, odgovori, vnos) {
   const razlog = String(ai?.razlog ?? '').slice(0, 200);
+  const k0 = kljuciOdgovorov(odgovori).get(norm(vnos));
+  if (k0) return { stanje: 'sprejeto', odgovor: k0, vrsta: 'sopomenka', sopomenka: null, razlog };
   if (!ai || ai.pravilno !== true || ai.vrsta === 'zavrni' || !['nov', 'sopomenka'].includes(ai.vrsta)) {
     return { stanje: 'zavrnjeno', odgovor: null, vrsta: null, sopomenka: null, razlog };
   }
@@ -104,7 +108,9 @@ export function presodi(ai, odgovori, vnos) {
   if (kljuci.has(kv)) { const c = kljuci.get(kv); return { stanje: 'sprejeto', odgovor: c, vrsta: 'sopomenka', sopomenka: null, razlog }; }
 
   if (ai.vrsta === 'sopomenka' && ai.obstojeci) {
-    const tocen = odgovori.find((o) => o.odgovor === ai.obstojeci) || odgovori.find((o) => norm(o.odgovor) === norm(ai.obstojeci));
+    // AI včasih prepiše tudi oklepaj z drugimi zapisi (»Televizor (tv)«) – ujemamo s celim in brez oklepaja
+    const cel = String(ai.obstojeci).trim(), brez = cel.replace(/\s*\([^)]*\)\s*$/, '').trim();
+    const tocen = odgovori.find((o) => o.odgovor === cel || o.odgovor === brez) || odgovori.find((o) => norm(o.odgovor) === norm(brez) || norm(o.odgovor) === norm(cel));
     if (tocen) return { stanje: 'sprejeto', odgovor: tocen.odgovor, vrsta: 'sopomenka', sopomenka: sop(tocen.odgovor), razlog };
   }
 
@@ -119,26 +125,50 @@ export function presodi(ai, odgovori, vnos) {
   return { stanje: 'sprejeto', odgovor: zapis, vrsta: 'nov', sopomenka: norm(zapis) === kv ? null : vnos, razlog };
 }
 
-/** @param {{kljuc:string, model:string, vpr:{vprasanje:string, namig?:string|null}, odgovori:{odgovor:string, sopomenke?:string[]}[], vnos:string, casMs?:number, razmislek?:number|null, fetchFn?:Function}} o */
-// Klic Gemini API. Vrne razčlenjen JSON ali vrže napako (tudi ob časovni omejitvi).
+// Nastavitve glede na družino modela: Gemini 2.x izklopi razmišljanje s thinkingBudget 0,
+// Gemini 3+ tega ne dovoli (400), zato thinkingLevel 'low'; temperaturo pri 3+ pustimo privzeto (priporočilo Googla).
+export function nastavitveModela(model) {
+  const g2 = /^gemini-2\./.test(model);
+  return g2 ? { temperature: 0, thinkingConfig: { thinkingBudget: 0 } } : { thinkingConfig: { thinkingLevel: 'low' } };
+}
+
+export class NapakaAI extends Error {
+  constructor(sporocilo, status) { super(sporocilo); this.status = status; }
+}
+
+/** @param {{kljuc:string, model:string, vpr:{vprasanje:string, namig?:string|null}, odgovori:{odgovor:string, sopomenke?:string[]}[], vnos:string, casMs?:number, fetchFn?:Function}} o */
+// En klic Gemini API. Vrne razčlenjen JSON ali vrže NapakaAI (tudi ob časovni omejitvi, status 0).
 export async function vprasajGemini(o) {
-  const { kljuc, model, vpr, odgovori, vnos, casMs = 7000, razmislek = 0, fetchFn = fetch } = o;
-  const r = await fetchFn(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'x-goog-api-key': kljuc },
-    signal: AbortSignal.timeout(casMs),
-    body: JSON.stringify({
-      systemInstruction: { parts: [{ text: SISTEM }] },
-      contents: [{ role: 'user', parts: [{ text: sestaviPoziv(vpr, odgovori, vnos) }] }],
-      generationConfig: {
-        temperature: 0, responseMimeType: 'application/json', responseSchema: SHEMA, maxOutputTokens: 2048,
-        // brez »razmišljanja« je odgovor v ~1 s; razmislek=null pusti privzeto nastavitev modela
-        ...(razmislek === null ? {} : { thinkingConfig: { thinkingBudget: razmislek } }),
-      },
-    }),
-  });
-  if (!r.ok) throw new Error(`Gemini ${r.status}: ${(await r.text()).slice(0, 300)}`);
+  const { kljuc, model, vpr, odgovori, vnos, casMs = 7000, fetchFn = fetch } = o;
+  let r;
+  try {
+    r = await fetchFn(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-goog-api-key': kljuc },
+      signal: AbortSignal.timeout(casMs),
+      body: JSON.stringify({
+        systemInstruction: { parts: [{ text: SISTEM }] },
+        contents: [{ role: 'user', parts: [{ text: sestaviPoziv(vpr, odgovori, vnos) }] }],
+        generationConfig: { responseMimeType: 'application/json', responseSchema: SHEMA, maxOutputTokens: 2048, ...nastavitveModela(model) },
+      }),
+    });
+  } catch (e) { throw new NapakaAI(`Gemini ${model}: ${e?.name === 'TimeoutError' ? 'časovna omejitev' : String(e)}`, 0); }
+  if (!r.ok) throw new NapakaAI(`Gemini ${model} ${r.status}: ${(await r.text()).slice(0, 300)}`, r.status);
   const d = await r.json();
-  const t = d?.candidates?.[0]?.content?.parts?.map((p) => p.text || '').join('') || '';
-  try { return JSON.parse(t); } catch { throw new Error('Gemini: neveljaven JSON: ' + t.slice(0, 200)); }
+  const t = d?.candidates?.[0]?.content?.parts?.filter((p) => !p.thought).map((p) => p.text || '').join('') || '';
+  try { return JSON.parse(t); } catch { throw new NapakaAI(`Gemini ${model}: neveljaven JSON: ` + t.slice(0, 200), 200); }
+}
+
+// Veriga modelov: vsak ima na brezplačni ravni svojo omejitev na minuto. Ob 429/503/404 ali časovni
+// omejitvi poskusi naslednjega, dokler je še časa. Vrne {ai, model}; če nobeden ne uspe, vrže zadnjo napako.
+export async function vprasajAI(o) {
+  const { modeli, rokMs = 9000, naModelMs = 4000, ...ostalo } = o;
+  const konec = Date.now() + rokMs; let zadnja;
+  for (const model of modeli) {
+    const ostane = konec - Date.now();
+    if (ostane < 800) break;
+    try { return { ai: await vprasajGemini({ ...ostalo, model, casMs: Math.min(naModelMs, ostane) }), model }; }
+    catch (e) { zadnja = e; if (!(e instanceof NapakaAI) || ![0, 404, 429, 500, 503].includes(e.status)) throw e; }
+  }
+  throw zadnja || new NapakaAI('Ni časa za klic AI', 0);
 }
