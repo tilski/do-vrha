@@ -112,6 +112,17 @@ async function rest(metoda, pot, telo, prefer) {
   });
   if (!r.ok) throw new Error(`${metoda} ${pot.split('?')[0]}: ${r.status} ${await r.text()}`);
 }
+// GET po straneh; manjkajoča tabela (npr. ai_sopomenke pred ai-preverjanje.sql) → prazno, če neobvezna
+async function beri(pot, neobvezno) {
+  const out = [];
+  for (let i = 0; ; i += 1000) {
+    const r = await fetch(`${URL}/rest/v1/${pot}`, {
+      headers: { apikey: KLJUC, ...(KLJUC.startsWith('sb_') ? {} : { Authorization: `Bearer ${KLJUC}` }), Range: `${i}-${i + 999}` },
+    });
+    if (!r.ok) { if (neobvezno) return null; throw new Error(`GET ${pot.split('?')[0]}: ${r.status} ${await r.text()}`); }
+    const kos = await r.json(); out.push(...kos); if (kos.length < 1000) return out;
+  }
+}
 const kosi = (arr, n) => Array.from({ length: Math.ceil(arr.length / n) }, (_, i) => arr.slice(i * n, i * n + n));
 const upsert = 'resolution=merge-duplicates,return=minimal';
 
@@ -120,10 +131,36 @@ const upsert = 'resolution=merge-duplicates,return=minimal';
   console.log(`✓ kategorije (${kategorije.length})`);
   for (const k of kosi(vprasanja, 500)) await rest('POST', 'vprasanja', k, upsert);
   console.log(`✓ vprašanja (${vprasanja.length})`);
+  // Odgovori, ki jih je sprejel AI (vir 'ai'), ostanejo. Če je isti odgovor medtem prišel v datoteke,
+  // velja datoteka (AI vrstico izbrišemo), sopomenke, ki jih je dodal AI, pa se ohranijo.
+  // Pred supabase/ai-preverjanje.sql stolpca vir še ni – takrat po starem (izbriši vse in naloži znova).
+  const aiVrstice = await beri('odgovori?select=id,vprasanje_id,odgovor,sopomenke&vir=eq.ai', true);
+  const imaVir = aiVrstice !== null;
+  const ai = aiVrstice || [];
+  const aiSop = (await beri('ai_sopomenke?select=vprasanje_id,odgovor,sopomenka', true)) || [];
+  const poVpr = new Map();
+  for (const o of odgovori) { if (!poVpr.has(o.vprasanje_id)) poVpr.set(o.vprasanje_id, []); poVpr.get(o.vprasanje_id).push(o); }
+  const najdi = (vid, besedilo) => (poVpr.get(vid) || []).find((o) => [o.odgovor, ...o.sopomenke].some((z) => norm(z) === norm(besedilo)));
+  const dodajSop = (o, z) => { if (o && ![o.odgovor, ...o.sopomenke].some((x) => norm(x) === norm(z))) o.sopomenke.push(z); };
+  const brisi = [], ostanejo = [];
+  for (const a of ai) {
+    const f = najdi(a.vprasanje_id, a.odgovor);
+    // enak zapis → velja datoteka; samo podoben zapis → AI vrstica ostane (igra ju združi, stare igre z njim ostanejo veljavne)
+    if (f) a.sopomenke.forEach((z) => dodajSop(f, z));
+    if (f && f.odgovor === a.odgovor) brisi.push(a.id); else ostanejo.push(a);
+  }
+  for (const s of aiSop) dodajSop(najdi(s.vprasanje_id, s.odgovor), s.sopomenka);
+  for (const k of kosi(brisi, 200)) await rest('DELETE', `odgovori?id=in.(${k.join(',')})`);
   for (const k of kosi(vprasanja.map((v) => v.id), 100)) {
     const seznam = k.map((id) => `"${id}"`).join(',');
-    await rest('DELETE', `odgovori?vprasanje_id=in.(${encodeURIComponent(seznam)})`);
+    await rest('DELETE', `odgovori?vprasanje_id=in.(${encodeURIComponent(seznam)})${imaVir ? '&vir=eq.rocno' : ''}`);
   }
+  // AI odgovori ostanejo na koncu seznama (za odgovori iz datotek)
+  for (const a of ostanejo) {
+    const rang = (poVpr.get(a.vprasanje_id) || []).length + 1 + ostanejo.filter((x) => x.vprasanje_id === a.vprasanje_id && x.id < a.id).length;
+    await rest('PATCH', `odgovori?id=eq.${a.id}`, { rang });
+  }
+  if (ai.length) console.log(`✓ AI odgovori: ${ostanejo.length} ohranjenih, ${brisi.length} jih je že v datotekah · ${aiSop.length} AI sopomenk`);
   let n = 0;
   for (const k of kosi(odgovori, 1000)) {
     await rest('POST', 'odgovori', k);

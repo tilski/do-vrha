@@ -37,6 +37,8 @@
     "baza": "node scripts/napolni-bazo.js",
     "zgreseni": "node scripts/zgreseni.js",
     "igralci": "node scripts/igralci.js",
+    "ai-odgovori": "node scripts/ai-odgovori.js",
+    "test:ai": "node scripts/test-ai.mjs",
     "test:iskanje": "node scripts/test-iskanje.js"
   },
   "private": true

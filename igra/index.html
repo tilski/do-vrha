@@ -1119,10 +1119,39 @@ $('form').addEventListener('submit',e=>{ e.preventDefault(); if(answered) return
   const it=match(DAY[st.i],v);
   if(!it){ const i=$('ans'); const sg=suggest(DAY[st.i],v);
     if(sg){ sugIt=sg; $('msg').innerHTML=`Si mislil/a <button type="button" class="sug" id="sugBtn">${esc(sg.canon)}</button> ?`; $('msg').className='msg'; $('sugBtn').addEventListener('click',()=>{ if(!answered&&sugIt) finish(sugIt,speed()); }); return; }
-    zgresen(DAY[st.i],v);
-    i.classList.remove('bad'); void i.offsetWidth; i.classList.add('bad'); $('msg').textContent=`»${v.trim()}« ni na seznamu – poskusi znova.`; $('msg').className='msg err'; i.select(); return; }
+    if(sb&&myId){ preveriAI(DAY[st.i],v); return; }
+    zavrni(DAY[st.i],v,`»${v.trim()}« ni na seznamu – poskusi znova.`); return; }
   finish(it,speed());
 });
+function zavrni(c,v,txt){ const i=$('ans'); zgresen(c,v); i.classList.remove('bad'); void i.offsetWidth; i.classList.add('bad'); $('msg').textContent=txt; $('msg').className='msg err'; i.select(); }
+// Vnos, ki ga ni na seznamu, presodi AI (Edge Function preveri-odgovor). Med čakanjem čas stoji.
+// AI odloča samo, ali je odgovor pravilen in h kateremu spada – redkost in metri se računajo kot vedno.
+let aiTece=false;
+async function preveriAI(c,v){
+  if(aiTece) return; aiTece=true; const i=$('ans'); i.readOnly=true; const t0=performance.now(); clearInterval(timer);
+  $('msg').textContent='Preverjam odgovor …'; $('msg').className='msg';
+  let r=null;
+  try{ r=await Promise.race([
+      sb.functions.invoke('preveri-odgovor',{body:{vprasanje_id:c.id,vnos:v.trim()}}).then(x=>x.error?null:x.data),
+      new Promise(res=>setTimeout(()=>res(null),12000)) ]); }catch(e){ r=null; }
+  tStart+=performance.now()-t0; i.readOnly=false; aiTece=false;
+  if(answered||c!==DAY[st.i]) return;
+  timer=setInterval(tick,100); tick();
+  if(r&&r.stanje==='sprejeto'&&r.odgovor){ finish(dodajAI(c,r.odgovor,v),speed()); return; }
+  if(r&&r.stanje==='zavrnjeno') zavrni(c,v,`»${v.trim()}« ne spada sem – poskusi znova.`);
+  else zavrni(c,v,`»${v.trim()}« ni na seznamu. Pogledali ga bomo pozneje – poskusi z drugim.`);
+}
+// Sprejeti odgovor doda na seznam tega vprašanja (na konec, kot ga naloži baza), ne da bi spremenil ostale.
+function dodajAI(c,canon,v){
+  let it=c.items.find(x=>x.canon===canon);
+  if(!it){ const n=c.items.length; let sum=0; for(let r=0;r<=n;r++) sum+=1/Math.pow(r+1,1.05);
+    it={canon,keys:[norm(canon)].filter(Boolean),base:(1/Math.pow(n+1,1.05))/sum}; c.items.push(it); }
+  const k=norm(v); if(k&&!it.keys.includes(k)) it.keys.push(k);
+  it.keys.forEach(x=>{ if(!c.map.has(x)) c.map.set(x,it); });
+  try{ const KEY='dovrha-vpr4-'+TODAY, d=JSON.parse(localStorage.getItem(KEY)||'null'), q=d&&d.find(x=>x.id===c.id);
+    if(q){ const a=q.ans.find(x=>x.o===canon); if(a){ if(!(a.s||[]).includes(v.trim())) (a.s=a.s||[]).push(v.trim()); } else q.ans.push({o:canon,s:[v.trim()]}); localStorage.setItem(KEY,JSON.stringify(d)); } }catch(e){}
+  return it;
+}
 let sugIt=null;
 // zapomni si vnos, ki ga ni na seznamu (enkrat na vprašanje in vnos) – tabela zgreseni v Supabase
 const zgreseniPoslani=new Set();
