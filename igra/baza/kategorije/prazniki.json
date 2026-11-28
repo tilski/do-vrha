@@ -1117,7 +1117,7 @@
         "Vlakec smrti",
         "Hiša strahov",
         "Labirint ogledal|smejalnica",
-        "Stojnice",
+        "Stojnice|štant",
         "Krošnjarji",
         "Igrače",
         "Piščalke|trobentice",
@@ -1181,7 +1181,8 @@
         "Nogavice|smrdljive nogavice",
         "Copati|šolski copati",
         "Nože|noži",
-        "Orodje"
+        "Orodje",
+        "Medičar"
       ]
     },
     {
